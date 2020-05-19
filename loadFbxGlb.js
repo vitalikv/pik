@@ -67,8 +67,21 @@ function setParamObj(cdm)
 	{
 		if(child.isMesh) 
 		{ 
+	
+			if(child.material)
+			{
+				var material = new THREE.MeshPhongMaterial({ color: child.material.color });
+				
+				material.transparent = child.material.transparent;
+				material.opacity = child.material.opacity;
+				material.lightMap = child.material.lightMap_1;
+				material.map = child.material.map;
+				
+				child.material = material;
+			}
+
 			child.castShadow = true;	
-			child.receiveShadow = true;				
+			child.receiveShadow = true;							
 		}
 	});			
 

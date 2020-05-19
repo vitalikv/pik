@@ -59,8 +59,8 @@ camera3D.userData.camera.save.radius = 0;
 
 
 //new THREE.MeshLambertMaterial( { color : 0x030202, transparent: true, opacity: 1, depthTest: false } )
-var cube = new THREE.Mesh( createGeometryCube(1.07, 1.07, 1.07), new THREE.MeshPhongMaterial( { color : 0x0000ff } ) );
-scene.add( cube ); 
+//var cube = new THREE.Mesh( createGeometryCube(1.07, 1.07, 1.07), new THREE.MeshPhongMaterial( { color : 0x0000ff } ) );
+//scene.add( cube ); 
 
 
 

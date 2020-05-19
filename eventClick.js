@@ -24,28 +24,42 @@ $(window).mouseup(function () { zoomLoop = ''; });
 
 // загрузка obj --->
 
-$('#load_obj_1').change(readURL_2);
 
-function readURL_2(e) 
+$('#load_obj_glb').change(readURL_glb);
+function readURL_glb(e) 
 {
 	if (this.files[0]) 
 	{		
 		var reader = new FileReader();
 		reader.onload = function (e) 
 		{						
-			loadInputFile({data: e.target.result});
+			loadInputFile({data: e.target.result, type: 'glb'});
 		};				
+		reader.readAsArrayBuffer(this.files[0]);  									
+	};
+};
 
+
+
+$('#load_obj_fbx').change(readURL_fbx);
+function readURL_fbx(e) 
+{
+	if (this.files[0]) 
+	{		
+		var reader = new FileReader();
+		reader.onload = function (e) 
+		{						
+			loadInputFile({data: e.target.result, type: 'fbx'});
+		};				
 		reader.readAsArrayBuffer(this.files[0]);  									
 	};
 };
 
 
 $('[nameId="butt_main_load_obj"]').mousedown(function () { $('[nameId="window_main_load_obj"]').css({"display":"block"}); });
-
 $('[nameId="button_close_main_load_obj"]').mousedown(function () { $('[nameId="window_main_load_obj"]').css({"display":"none"}); });
 
-$('[nameId="butt_load_obj_2"]').mousedown(function () { loadUrlFile(); });
+
 // <--- загрузка obj
 
 });

@@ -47,20 +47,15 @@
 	</div>
 	<div style="width: 80%; height: 160px; margin: auto; padding-top: 30px;">
 
-		<input name="file" type="file" id="load_obj_1" class="input_load_substrate">
-		<label for="load_obj_1" class="button1 button_gradient_1" style="margin: auto;">
-			загрузить с вашего компьютера
+		<input name="file" type="file" id="load_obj_glb" class="input_load_substrate">
+		<label for="load_obj_glb" class="button1 button_gradient_1" style="margin: auto;">
+			загрузить glb
 		</label>
 
-		<div style="font-size: 20px; font-family: arial,sans-serif; color: #666; margin: 10px auto; text-align:center;">
-			или
-		</div>
-		
-		<div class="flex_1">		
-			<input type="text" nameId="input_link_obj_1" value="">			
-		</div>
-		
-		<div class="button1 button_gradient_1" nameId='butt_load_obj_2'>загрузить по ссылке</div>
+		<input name="file" type="file" id="load_obj_fbx" class="input_load_substrate">
+		<label for="load_obj_fbx" class="button1 button_gradient_1" style="margin: 30px auto auto auto;">
+			загрузить fbx
+		</label>
 	</div>			
 </div>	
 

@@ -29,8 +29,8 @@ function loadUrlFile()
 
 function loadInputFile(cdm)
 {
-console.log(9999999);
-	if(1==1)	// gltf/glb
+
+	if(cdm.type == 'glb')	// gltf/glb
 	{
 		var loader = new THREE.GLTFLoader();
 		loader.parse( cdm.data, '', function ( obj ) 						
@@ -40,14 +40,12 @@ console.log(9999999);
 		});
 		
 	}
-	else	// fbx
+	else if(cdm.type == 'fbx')	// fbx
 	{
 		var loader = new THREE.FBXLoader();
 		var obj = loader.parse( cdm.data );		
 		setParamObj({obj: obj});			
 	}
-
-
 }
 
 
@@ -69,8 +67,8 @@ function setParamObj(cdm)
 	{
 		if(child.isMesh) 
 		{ 
-			//child.castShadow = true;	
-			//child.receiveShadow = true;				
+			child.castShadow = true;	
+			child.receiveShadow = true;				
 		}
 	});			
 

@@ -34,7 +34,12 @@
 	<script src="<?=$path?>js/dp/DepthLimitedBlurShader.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/dp/UnpackDepthRGBAShader.js?<?=$vrs?>"></script>		
 
-
+	<script src="<?=$path?>js/loader/inflate.min.js?<?=$vrs?>"></script>
+	<script src="<?=$path?>js/loader/FBXLoader.js?<?=$vrs?>"></script>
+	<script src="<?=$path?>js/loader/STLExporter.js?<?=$vrs?>"></script>
+	<script src="<?=$path?>js/loader/GLTFLoader.js?<?=$vrs?>"></script>	
+	
+	
 	
 	<div id="canvasFrame" style="position: fixed; width: 100%; height: 100%; top: 0; right: 0; overflow: hidden;">
 		<div class="frame block_select_text">
@@ -56,6 +61,7 @@
 	<script src="<?=$path?>changeCamera.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>moveCamera.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>eventClick.js?<?=$vrs?>"></script>
+	<script src="<?=$path?>loadFbxGlb.js?<?=$vrs?>"></script>
     <script src="<?=$path?>script.js?<?=$vrs?>"></script>    		 
 		
 		

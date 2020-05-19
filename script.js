@@ -122,6 +122,8 @@ var infProject = {};
 infProject.camera = { d3: { theta: 0, phi: 75 } };
 infProject.camera.d3.targetO = createCenterCamObj();
 
+createPointGrid(100);
+
 var zoomLoop = '';
 var clickO = {keys:[]};
 	
@@ -231,6 +233,36 @@ var offset = new THREE.Vector3();
 }
 
 //----------- start
+
+
+
+function createPointGrid(size) 
+{
+	var pointMaterial = new THREE.PointsMaterial({ size: 0.04, color: 0xafafaf });
+	var pointGeometry = new THREE.Geometry();
+	var x = y = z = 0;
+	
+	for (var i = -size; i < size; i++) 
+	{
+		for (var k = -size; k < size; k++) 
+		{
+
+			var point = new THREE.Vector3();
+			point.x = x + i * 0.5;
+			point.y = -0.05;
+			point.z = z + k * 0.5;
+
+			// pointMaterial.sizeAttenuation = false;
+			pointGeometry.vertices.push(point);
+		}
+	}
+
+	var pointGrid = new THREE.Points(pointGeometry, pointMaterial);
+
+	scene.add(pointGrid);
+
+	return pointGrid;
+}
 
 
 
@@ -381,6 +413,27 @@ function rayIntersect( event, obj, t )
 
 
 
+//----------- Math			
+function localTransformPoint(dir1, qt)
+{	
+	return dir1.clone().applyQuaternion( qt.clone().inverse() );
+}
+
+
+function worldTransformPoint(dir1, dir_local)
+{	
+	var qt = quaternionDirection(dir1);			
+	return dir_local.applyQuaternion( qt );
+}
+
+
+function quaternionDirection(dir1)
+{
+	var mx = new THREE.Matrix4().lookAt( dir1, new THREE.Vector3(0,0,0), new THREE.Vector3(0,1,0) );
+	return new THREE.Quaternion().setFromRotationMatrix(mx);	
+}
+//----------- Math
+
 
 
 animate();
@@ -398,8 +451,8 @@ containerF.addEventListener( 'touchstart', onDocumentMouseDown, false );
 containerF.addEventListener( 'touchmove', onDocumentMouseMove, false );
 containerF.addEventListener( 'touchend', onDocumentMouseUp, false );
 
-//containerF.addEventListener('DOMMouseScroll', onDocumentMouseWheel, false);
-//containerF.addEventListener('mousewheel', onDocumentMouseWheel, false);	
+containerF.addEventListener('DOMMouseScroll', onDocumentMouseWheel, false);
+containerF.addEventListener('mousewheel', onDocumentMouseWheel, false);	
 
 
 document.addEventListener("keydown", function (e) 

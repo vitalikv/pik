@@ -237,7 +237,7 @@ function cameraMove3D( event )
 		if ( isMouseDown3 )    
 		{
 			newCameraPosition = null;
-			console.log(99999);
+			//console.log(99999);
 			var intersects = rayIntersect( event, planeMath, 'one' );
 			var offset = new THREE.Vector3().subVectors( camera3D.userData.camera.click.pos, intersects[0].point );
 			camera.position.add( offset );

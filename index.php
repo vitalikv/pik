@@ -38,7 +38,7 @@
 	<script src="<?=$path?>js/loader/FBXLoader.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/loader/STLExporter.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/loader/GLTFLoader.js?<?=$vrs?>"></script>	
-	
+	<script src="<?=$path?>js/loader/RGBELoader.js?<?=$vrs?>"></script>
 	
 	
 	<div id="canvasFrame" style="position: fixed; width: 100%; height: 100%; top: 0; right: 0; overflow: hidden;">

@@ -9,12 +9,19 @@ var renderer = new THREE.WebGLRenderer( { canvas: canvas, context: context, pres
 
 
 //renderer.gammaInput = true;
-//renderer.gammaOutput = true;
+renderer.gammaFactor = 2.2;
+renderer.gammaOutput = true;
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.localClippingEnabled = true;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
 //renderer.autoClear = false;
+
+				renderer.toneMapping = THREE.ACESFilmicToneMapping;
+				renderer.toneMappingExposure = 0.8;
+				renderer.outputEncoding = THREE.sRGBEncoding;
+				
+				
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( containerF.clientWidth, containerF.clientHeight );
 //renderer.setClearColor (0xffffff, 1);
@@ -24,6 +31,26 @@ containerF.appendChild( renderer.domElement );
 var scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xffffff );
 //scene.fog = new THREE.Fog('lightblue', 100, 200);
+
+	//var cubeCam = new THREE.CubeCamera(0.1, 100, 1024);					
+	//scene.add(cubeCam);
+  {
+    
+    var texture = new THREE.CubeTextureLoader().load([
+      'img/1.jpg',
+      'img/1.jpg',
+      'img/1.jpg',
+      'img/1.jpg',
+      'img/1.jpg',
+      'img/1.jpg',
+    ]);
+    //scene.background = texture; 
+  }
+  
+  
+				var pmremGenerator = new THREE.PMREMGenerator( renderer );
+				pmremGenerator.compileEquirectangularShader();  
+  
 
 var aspect = containerF.clientWidth/containerF.clientHeight;
 var d = 5;
@@ -143,7 +170,7 @@ var lightMap_1 = new THREE.TextureLoader().load('img/lightMap_1.png');
 //----------- Light
 {
 
-if(1==1)
+if(1==2)
 {
 	var light = new THREE.DirectionalLight( 0xffffff, 0.33 );
 	light.position.set( 5, 10, 8 );
@@ -155,11 +182,14 @@ if(1==1)
 
 	var light = new THREE.DirectionalLight( 0xffffff, 0.33 );
 	light.position.set( 5, -5, -21 );
-	scene.add( light );		
-}
+	scene.add( light );	
+
 
 	var light = new THREE.AmbientLight( 0xffffff, 0.63 );
-	scene.add( light );
+	scene.add( light );	
+}
+
+
 
 }
 

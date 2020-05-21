@@ -62,6 +62,19 @@ function setParamObj(cdm)
 	//var obj = obj.children[0];		
 	obj.position.y = 0;	
 	
+	new THREE.RGBELoader().setDataType( THREE.UnsignedByteType ).load( 'img/royal_esplanade_1k.hdr', function ( texture ) 
+	{
+
+			var envMap = pmremGenerator.fromEquirectangular( texture ).texture;
+
+			scene.background = envMap;
+			scene.environment = envMap;
+
+			texture.dispose();
+			pmremGenerator.dispose();
+
+			// model
+
 	// накладываем тени
 	obj.traverse(function(child) 
 	{
@@ -78,12 +91,20 @@ function setParamObj(cdm)
 				material.map = child.material.map;
 				
 				//child.material = material;
+				
+				//child.material.envMap = texture;
+				
+				//console.log(child.material);
 			}
 
-			child.castShadow = true;	
-			child.receiveShadow = true;							
+			//child.castShadow = true;	
+			//child.receiveShadow = true;							
 		}
-	});			
+	});	
+
+		} ); 	
+	
+		
 
 	infProject.scene.obj[infProject.scene.obj.length] = obj;
 	

@@ -14,6 +14,9 @@ $('[nameId="butt_camera_3D"]').mousedown(function() { changeCamera(camera3D); $(
 
 
 				
+$('[nameId="zoom_camera_butt_m"]').bind('touchstart click', function(){ zoomLoop = 'zoomOut'; });
+$('[nameId="zoom_camera_butt_p"]').bind('touchstart click', function(){ zoomLoop = 'zoomIn'; });
+$(window).bind('touchend click', function(){ zoomLoop = ''; });
 
 
 $('[nameId="zoom_camera_butt_m"]').mousedown(function () { zoomLoop = 'zoomOut'; });
@@ -58,7 +61,7 @@ function readURL_fbx(e)
 
 $('[nameId="butt_main_load_obj"]').mousedown(function () { $('[nameId="window_main_load_obj"]').css({"display":"block"}); });
 $('[nameId="button_close_main_load_obj"]').mousedown(function () { $('[nameId="window_main_load_obj"]').css({"display":"none"}); });
-
+$('[nameId="butt_del_obj"]').mousedown(function () { deleteObj(); });
 
 // <--- загрузка obj
 

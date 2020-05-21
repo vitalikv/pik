@@ -85,6 +85,8 @@ function setParamObj(cdm)
 		}
 	});			
 
+	infProject.scene.obj[infProject.scene.obj.length] = obj;
+	
 	scene.add( obj );
 	
 	renderCamera();	

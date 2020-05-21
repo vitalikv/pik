@@ -121,7 +121,8 @@ var camera = cameraTop;
 var infProject = {}; 
 infProject.camera = { d3: { theta: 0, phi: 75 } };
 infProject.camera.d3.targetO = createCenterCamObj();
-
+infProject.scene = {};
+infProject.scene.obj = [];
 createPointGrid(100);
 
 var zoomLoop = '';
@@ -137,22 +138,29 @@ var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
 var offset = new THREE.Vector3();
   
-  
+var lightMap_1 = new THREE.TextureLoader().load('img/lightMap_1.png'); 
 
 //----------- Light
 {
 
-	var light = new THREE.DirectionalLight( 0xffffff, 0.93 );
+if(1==1)
+{
+	var light = new THREE.DirectionalLight( 0xffffff, 0.33 );
 	light.position.set( 5, 10, 8 );
 	scene.add( light );
 	
-	var light = new THREE.DirectionalLight( 0xffffff, 0.93 );
+	var light = new THREE.DirectionalLight( 0xffffff, 0.33 );
 	light.position.set( -10, 10, 8 );
 	scene.add( light );
 
-	var light = new THREE.DirectionalLight( 0xffffff, 0.93 );
+	var light = new THREE.DirectionalLight( 0xffffff, 0.33 );
 	light.position.set( 5, -5, -21 );
-	scene.add( light );	
+	scene.add( light );		
+}
+
+	var light = new THREE.AmbientLight( 0xffffff, 0.63 );
+	scene.add( light );
+
 }
 
 
@@ -436,6 +444,15 @@ function quaternionDirection(dir1)
 
 
 
+function deleteObj()
+{
+	for ( var i = 0; i < infProject.scene.obj.length; i++ )
+	{
+		scene.remove(infProject.scene.obj[i]); 
+	}
+}
+
+
 animate();
 renderCamera();
 
@@ -486,14 +503,19 @@ document.addEventListener("keyup", function (e)
 
 	if(zoomLoop != '')	{ zoomLoop = ''; }
 	
-	if(camera == cameraTop)
-	{
-		if(e.keyCode == 16){ selectionBoxHide(); } 
-	}
-	
 });
 
+document.addEventListener("keyup", function (e) 
+{ 
+	clickO.keys[e.keyCode] = false;
+	if(e.keyCode == 173) { zoomLoop = ''; }
+	if(e.keyCode == 61) { zoomLoop = ''; }
+	if(e.keyCode == 187) { zoomLoop = ''; }
+	if(e.keyCode == 189) { zoomLoop = ''; }
 
+	if(zoomLoop != '')	{ zoomLoop = ''; }
+	
+});
 
 
 
@@ -505,14 +527,21 @@ var docReady = false;
 $(document).ready(function () 
 { 
 	docReady = true; 	
-		 
-
-	
+		 	
+	loadStartScene();
 });
 
 
 
-
+function loadStartScene()
+{
+	var loader = new THREE.GLTFLoader();
+	loader.load( 'glb/1.glb', function ( obj ) 						
+	{ 
+		//var obj = obj.scene.children[0];
+		setParamObj({obj: obj.scene});
+	});	
+}
 
 
 

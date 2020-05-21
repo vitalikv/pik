@@ -9,7 +9,13 @@
 			<div class="button1 button_gradient_1"> 
 				<img src="img/download_1.png">
 			</div>	
-		</div>		
+		</div>	
+
+		<div class="button1-wrap-1" nameId='butt_del_obj'>
+			<div class="button1 button_gradient_1"> 
+				<img src="img/waste.png">
+			</div>	
+		</div>			
 
 		<div class="button1-wrap-1" nameId='zoom_camera_butt_m'>
 			<div class="button1 button_gradient_1" style="width: 19px;"> 
@@ -45,7 +51,7 @@
 	<div class="modal_window_close" nameId="button_close_main_load_obj">
 		+
 	</div>
-	<div style="width: 80%; height: 160px; margin: auto; padding-top: 30px;">
+	<div style="width: 180px; height: 160px; margin: auto; padding-top: 30px;">
 
 		<input name="file" type="file" id="load_obj_glb" class="input_load_substrate">
 		<label for="load_obj_glb" class="button1 button_gradient_1" style="margin: auto;">

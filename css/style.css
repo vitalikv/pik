@@ -140,7 +140,19 @@ canvas
 	top: 15px;
 	right: 20px;
 		
-	font-size: 70px;	
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	-o-transform: rotate(-45deg);
+	-ms-transform: rotate(-45deg);
+	transform: rotate(-45deg);
+	
+	font-family: arial,sans-serif;
+	font-size: 70px;
+	text-align: center;
+	text-decoration: none;
+	line-height: 0.6em;
+	color: #666;
+	cursor: pointer;
 }
 
 .modal_header 
@@ -798,7 +810,7 @@ canvas
 
 .window_main_load_obj
 {
-	width: 500px;
+	width: 250px;
 	height: 180px;		
 }
 

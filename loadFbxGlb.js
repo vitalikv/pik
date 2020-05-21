@@ -77,7 +77,7 @@ function setParamObj(cdm)
 				material.lightMap = child.material.lightMap_1;
 				material.map = child.material.map;
 				
-				child.material = material;
+				//child.material = material;
 			}
 
 			child.castShadow = true;	
@@ -88,6 +88,8 @@ function setParamObj(cdm)
 	infProject.scene.obj[infProject.scene.obj.length] = obj;
 	
 	scene.add( obj );
+	
+	fitCameraToObject({obj: obj}); 
 	
 	renderCamera();	
 }

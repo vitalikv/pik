@@ -237,7 +237,7 @@ if(1==1)
 
 // cdm
 {	
-	startPosCamera3D({radious: 10, theta: 90, phi: 35});		// стартовое положение 3D камеры
+	startPosCamera3D({radious: 10, theta: 90, phi: 65});		// стартовое положение 3D камеры
 }
 
 //----------- start

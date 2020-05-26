@@ -70,6 +70,7 @@ function animate()
 {
 	requestAnimationFrame( animate );	
 
+	moveCameraToNewPosition();
 	cameraZoomTopLoop();	
 	
 	updateKeyDown();
@@ -481,7 +482,7 @@ document.addEventListener("keydown", function (e)
 	}	
 
 
-	if(e.keyCode == 66) { changeCamera(camera3D); } 	// b
+	if(e.keyCode == 66) { switchCamera3D(); } 	// b
 } );
 
 document.addEventListener("keydown", function (e) 

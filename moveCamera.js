@@ -185,7 +185,8 @@ function clickSetCamera3D( event, click )
 	{
 		isMouseDown3 = true;
 		planeMath.position.copy( infProject.camera.d3.targetO.position );
-		planeMath.rotation.copy( camera.rotation );
+		//planeMath.rotation.copy( camera.rotation );
+		planeMath.rotation.set(-Math.PI/2, 0, 0);
 		planeMath.updateMatrixWorld();
 
 		var intersects = rayIntersect( event, planeMath, 'one' );	

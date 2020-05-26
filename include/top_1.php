@@ -15,6 +15,12 @@
 			<div class="button1 button_gradient_1"> 
 				<img src="img/waste.png">
 			</div>	
+		</div>
+
+		<div class="button1-wrap-1" nameId='butt_cam_walk' style="display: none;">
+			<div class="button1 button_gradient_1"> 
+				<img src="img/walk_2.png">
+			</div>	
 		</div>			
 
 		<div class="button1-wrap-1" nameId='zoom_camera_butt_m'>

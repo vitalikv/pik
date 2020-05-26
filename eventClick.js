@@ -8,9 +8,9 @@ $('[ui_1=""]').on('mousedown wheel DOMMouseScroll mousewheel mousemove touchstar
 
 
 
-
-$('[nameId="butt_camera_2D"]').mousedown(function() { changeCamera(cameraTop); $(this).hide(); $('[nameId="butt_camera_3D"]').show(); });
-$('[nameId="butt_camera_3D"]').mousedown(function() { changeCamera(camera3D); $(this).hide(); $('[nameId="butt_camera_2D"]').show(); });
+$('[nameId="butt_camera_2D"]').mousedown(function() { changeCamera(cameraTop); $(this).hide(); $('[nameId="butt_camera_3D"]').show(); $('[nameId="butt_cam_walk"]').hide(); });
+$('[nameId="butt_camera_3D"]').mousedown(function() { changeCamera(camera3D); $(this).hide(); $('[nameId="butt_camera_2D"]').show(); $('[nameId="butt_cam_walk"]').show(); });
+$('[nameId="butt_cam_walk"]').mousedown(function() { switchCamera3D(); });
 
 
 				

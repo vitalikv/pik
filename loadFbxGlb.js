@@ -122,13 +122,16 @@ function setParamObj(cdm)
 				if(wall.userData.wd[i2] == infProject.scene.array.door[i3].userData.id)
 				{
 					wall.userData.wall.arrO[wall.userData.wall.arrO.length] = infProject.scene.array.door[i3];
-				}
-				
+				}				
+			}
+			
+			for ( var i3 = 0; i3 < infProject.scene.array.window.length; i3++ )
+			{
 				if(wall.userData.wd[i2] == infProject.scene.array.window[i3].userData.id)
 				{
 					wall.userData.wall.arrO[wall.userData.wall.arrO.length] = infProject.scene.array.window[i3];
 				}				
-			}
+			}			
 			
 		}
 		

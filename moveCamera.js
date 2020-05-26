@@ -234,6 +234,8 @@ function cameraMove3D( event )
 			camera.lookAt( infProject.camera.d3.targetO.position );			
 			
 			infProject.camera.d3.targetO.rotation.set( 0, camera.rotation.y, 0 );
+			
+			wallAfterRender_2();
 		}
 		if ( isMouseDown3 )    
 		{
@@ -243,6 +245,8 @@ function cameraMove3D( event )
 			var offset = new THREE.Vector3().subVectors( camera3D.userData.camera.click.pos, intersects[0].point );
 			camera.position.add( offset );
 			infProject.camera.d3.targetO.position.add( offset );
+			
+			wallAfterRender_2();
 		}
 		
 	}

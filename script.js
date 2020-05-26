@@ -124,6 +124,7 @@ infProject.camera = { d3: { theta: 0, phi: 75 } };
 infProject.camera.d3.targetO = createCenterCamObj();
 infProject.scene = {};
 infProject.scene.obj = [];
+infProject.scene.array = { point: [], wall: [], window: [], door: [], floor: [], ceiling: [], obj: [] };
 createPointGrid(100);
 
 var zoomLoop = '';
@@ -451,6 +452,9 @@ function deleteObj()
 	{
 		scene.remove(infProject.scene.obj[i]); 
 	}
+	
+	infProject.scene.obj = [];
+	infProject.scene.array = { point: [], wall: [], window: [], door: [], floor: [], ceiling: [], obj: [] };
 }
 
 

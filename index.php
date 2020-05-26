@@ -62,6 +62,7 @@
 	<script src="<?=$path?>moveCamera.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>eventClick.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>loadFbxGlb.js?<?=$vrs?>"></script>
+	<script src="<?=$path?>hideWall.js?<?=$vrs?>"></script>
     <script src="<?=$path?>script.js?<?=$vrs?>"></script>    		 
 		
 		

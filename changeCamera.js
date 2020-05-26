@@ -16,10 +16,14 @@ function changeCamera(cam)
 	if(camera == cameraTop)
 	{						
 		//cameraZoomTop( camera.zoom );
+		showAllWallRender();	// показываем стены, которые были спрятаны
 	}
 	else if(camera == camera3D)
 	{	
-		infProject.camera.d3.targetO.visible = true;	
+		infProject.camera.d3.targetO.visible = true;
+
+		// прячем стены
+		wallAfterRender_2();		
 	}
 	
 	renderCamera();
@@ -64,7 +68,7 @@ function switchCamera3D(cdm)
 		newCameraPosition = { positionFirst: new THREE.Vector3(posCenter.x, 1.5, posCenter.z) };
 
 		// показываем стены, которые были спрятаны
-		//showAllWallRender();	
+		showAllWallRender();	
 	}
 	else
 	{
@@ -86,8 +90,7 @@ function switchCamera3D(cdm)
 		newCameraPosition = { positionFly: pos };
 
 		// прячем стены
-		//getInfoRenderWall();
-		//wallAfterRender_2();		 
+		wallAfterRender_2();		 
 	}
 }
 
@@ -165,5 +168,7 @@ function comparePos(pos1, pos2, cdm)
 
 	return equals;
 }
+
+
 
 

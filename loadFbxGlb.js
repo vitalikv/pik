@@ -65,19 +65,42 @@ function setParamObj(cdm)
 	// накладываем тени
 	obj.traverse(function(child) 
 	{
+		if(child.userData.tag)
+		{			
+			if(child.userData.tag == 'wall')
+			{
+				child.userData.wall = {};
+				child.userData.wall.show = true;
+				child.userData.wall.arrO = [];
+				infProject.scene.array.wall[infProject.scene.array.wall.length] = child;
+			}
+
+			if(child.userData.tag == 'door')
+			{
+				infProject.scene.array.door[infProject.scene.array.door.length] = child;
+			}
+			
+			if(child.userData.tag == 'window')
+			{
+				infProject.scene.array.window[infProject.scene.array.window.length] = child;
+			}			
+		}
+		
+		
 		if(child.isMesh) 
 		{ 
 	
-			if(child.material)
+			if(child.material && 1==1)
 			{
 				var material = new THREE.MeshPhongMaterial({ color: child.material.color });
 				
 				material.transparent = child.material.transparent;
+				//material.transparent = true;
 				material.opacity = child.material.opacity;
 				material.lightMap = child.material.lightMap_1;
 				material.map = child.material.map;
 				
-				//child.material = material;
+				child.material = material;
 			}
 
 			child.castShadow = true;	
@@ -86,6 +109,35 @@ function setParamObj(cdm)
 	});			
 
 	infProject.scene.obj[infProject.scene.obj.length] = obj;
+	
+	
+	for ( var i = 0; i < infProject.scene.array.wall.length; i++ )
+	{
+		var wall = infProject.scene.array.wall[i];
+		
+		for ( var i2 = 0; i2 < wall.userData.wd.length; i2++ )
+		{
+			for ( var i3 = 0; i3 < infProject.scene.array.door.length; i3++ )
+			{
+				if(wall.userData.wd[i2] == infProject.scene.array.door[i3].userData.id)
+				{
+					wall.userData.wall.arrO[wall.userData.wall.arrO.length] = infProject.scene.array.door[i3];
+				}
+				
+				if(wall.userData.wd[i2] == infProject.scene.array.window[i3].userData.id)
+				{
+					wall.userData.wall.arrO[wall.userData.wall.arrO.length] = infProject.scene.array.window[i3];
+				}				
+			}
+			
+		}
+		
+	}
+	
+	
+	getInfoRenderWall();
+	
+	console.log(infProject.scene);
 	
 	scene.add( obj );
 	

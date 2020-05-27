@@ -446,6 +446,101 @@ function quaternionDirection(dir1)
 
 
 
+
+function upUvs_4( obj )
+{
+	obj.updateMatrixWorld();
+	var geometry = obj.geometry;
+	
+    geometry.faceVertexUvs[0] = [];
+	var faces = geometry.faces;
+	
+    for (var i = 0; i < faces.length; i++) 
+	{		
+		var components = ['x', 'y', 'z'].sort(function(a, b) {			
+			return Math.abs(faces[i].normal[a]) - Math.abs(faces[i].normal[b]);
+		});	
+
+
+        var v1 = geometry.vertices[faces[i].a];
+        var v2 = geometry.vertices[faces[i].b];
+        var v3 = geometry.vertices[faces[i].c];				
+
+        geometry.faceVertexUvs[0].push([
+            new THREE.Vector2(v1[components[0]], v1[components[1]]),
+            new THREE.Vector2(v2[components[0]], v2[components[1]]),
+            new THREE.Vector2(v3[components[0]], v3[components[1]])
+        ]);
+    }
+
+    geometry.uvsNeedUpdate = true;
+	geometry.elementsNeedUpdate = true; 
+}
+
+
+
+
+
+var lamFloorMat = new THREE.TextureLoader().load('img/texture/1.jpg');
+var defFloorMat = new THREE.TextureLoader().load('img/texture/2.jpg');
+
+function activeFloorTexture()
+{
+	var floor = infProject.scene.array.floor;
+	
+	for ( var i = 0; i < floor.length; i++ )
+	{
+		setTexture({obj: floor[i]});
+	}	
+}
+
+
+// устанавливаем текстуру
+function setTexture(cdm)
+{	
+	var obj = cdm.obj;
+	var material = cdm.obj.material;
+	
+	if(obj.userData.img == 'img/texture/1.jpg') { var img = 'img/texture/2.jpg'; }
+	else { var img = 'img/texture/1.jpg'; }	
+	
+	obj.userData.img = img;
+	
+	new THREE.TextureLoader().load(img, function ( image )  
+	{
+		material.color = new THREE.Color( 0xffffff );
+		var texture = image;			
+		texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+		texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+		
+		if(cdm.repeat)
+		{
+			texture.repeat.x = cdm.repeat.x;
+			texture.repeat.y = cdm.repeat.y;			
+		}
+		else
+		{
+			texture.repeat.x = 1.0;
+			texture.repeat.y = 1.0;	
+		}
+		
+		if(cdm.offset)
+		{
+			texture.offset.x = cdm.offset.x;
+			texture.offset.y = cdm.offset.y;				
+		}
+		
+		texture.needsUpdate = true;
+		
+		material.map = texture; 
+		material.needsUpdate = true; 	
+		
+		renderCamera();
+	});			
+}
+
+
+
 function deleteObj()
 {
 	for ( var i = 0; i < infProject.scene.obj.length; i++ )

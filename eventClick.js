@@ -25,6 +25,11 @@ $(window).mouseup(function () { zoomLoop = ''; });
 
 
 
+//$('[nameId="texture_1"]').mousedown(function (e) { activeTexture({id: 1}); });
+$('[nameId="texture_2"]').mousedown(function (e) { activeFloorTexture({id: 1}); });
+
+
+
 // загрузка obj --->
 
 

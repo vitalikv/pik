@@ -51,6 +51,20 @@
 					
 				</div>
 				
+				<div style="position: absolute; left: 50px; bottom: 80px;">
+					<div class="button1-wrap-1" nameId='texture_1' style="display: none;">
+						<div class="button1 button_gradient_1" style="width: 130px;"> 
+							текстура 1
+						</div>	
+					</div>
+					
+					<div class="button1-wrap-1" nameId='texture_2' style="margin-top: 20px;">
+						<div class="button1 button_gradient_1" style="width: 130px;"> 
+							текстура пол
+						</div>	
+					</div>					
+				</div>				
+				
 			</div>
 		
 		</div>		

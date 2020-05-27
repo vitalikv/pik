@@ -83,6 +83,13 @@ function setParamObj(cdm)
 			if(child.userData.tag == 'window')
 			{
 				infProject.scene.array.window[infProject.scene.array.window.length] = child;
+			}
+
+			if(child.userData.tag == 'room')
+			{
+				child.geometry = new THREE.Geometry().fromBufferGeometry(child.geometry);
+				upUvs_4( child );
+				infProject.scene.array.floor[infProject.scene.array.floor.length] = child;
 			}			
 		}
 		

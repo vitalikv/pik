@@ -122,10 +122,11 @@ var camera = cameraTop;
 var infProject = {}; 
 infProject.camera = { d3: { theta: 0, phi: 75 } };
 infProject.camera.d3.targetO = createCenterCamObj();
+infProject.camera.d3.targetO.visible = false;
 infProject.scene = {};
 infProject.scene.obj = [];
 infProject.scene.array = { point: [], wall: [], window: [], door: [], floor: [], ceiling: [], obj: [] };
-createPointGrid(100);
+//createPointGrid(100);
 
 var zoomLoop = '';
 var clickO = {keys:[]};
@@ -629,6 +630,7 @@ $(document).ready(function ()
 	docReady = true; 	
 		 	
 	loadStartScene();
+	
 });
 
 
@@ -640,7 +642,14 @@ function loadStartScene()
 	{ 
 		//var obj = obj.scene.children[0];
 		setParamObj({obj: obj.scene});
-	});	
+		
+		changeCamera(camera3D);
+		
+		$('[nameId="butt_camera_3D"]').hide(); 
+		$('[nameId="butt_camera_2D"]').show();
+		$('[nameId="butt_cam_walk"]').show();				
+	});
+
 }
 
 

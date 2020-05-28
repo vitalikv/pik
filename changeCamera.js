@@ -20,7 +20,7 @@ function changeCamera(cam)
 	}
 	else if(camera == camera3D)
 	{	
-		infProject.camera.d3.targetO.visible = true;
+		//infProject.camera.d3.targetO.visible = true;
 
 		// прячем стены
 		wallAfterRender_2();		

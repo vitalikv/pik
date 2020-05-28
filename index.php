@@ -1,4 +1,4 @@
-<?php $vrs = '=31' ?>
+<?php $vrs = '=32' ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +42,7 @@
 	
 	
 	<div id="canvasFrame" style="position: fixed; width: 100%; height: 100%; top: 0; right: 0; overflow: hidden;">
-		<div class="frame block_select_text">
+		<div class="frame block_select_text" style="touch-action: none;">
 				
 			<div class="flex_1 height100">
 				

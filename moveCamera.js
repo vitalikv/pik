@@ -215,6 +215,9 @@ function moveCameraTop( event )
 
 function cameraMove3D( event )
 { 
+	var pos = camera.position.clone();
+	var rot = new THREE.Vector3(camera.rotation.x, camera.rotation.y, camera.rotation.z);
+	
 	if ( camera3D.userData.camera.type == 'fly' )
 	{
 		if ( isMouseDown2 ) 
@@ -240,7 +243,7 @@ function cameraMove3D( event )
 		if ( isMouseDown3 )    
 		{
 			newCameraPosition = null;
-			console.log(99999);
+			
 			var intersects = rayIntersect( event, planeMath, 'one' );
 			var offset = new THREE.Vector3().subVectors( camera3D.userData.camera.click.pos, intersects[0].point );
 			camera.position.add( offset );
@@ -269,10 +272,37 @@ function cameraMove3D( event )
 		}
 	} 		
 	
+	if(!comparePos(camera.position, pos))
+	{
+		console.log('pos', 99999);
+		long_click = true;		
+	}
+	else if(!comparePos(camera.rotation, rot))
+	{
+		console.log('rot', 99999);
+		long_click = true;		
+	}
 }
 
 
 
+function dblclickMovePosition()
+{ 
+	if(!dblclickPos) return;  
+	if(newCameraPosition) return;
+	if( new Date().getTime() - lastClickTime < doubleClickThreshold) return;
+	
+	if(camera3D.userData.camera.type == 'first')
+	{
+		newCameraPosition = { positionFirst: new THREE.Vector3(dblclickPos.x, camera.position.y, dblclickPos.z), stoDir: true };
+	}
+	else
+	{
+		newCameraPosition = { positionFly: new THREE.Vector3(dblclickPos.x, camera.position.y, dblclickPos.z), stoDir: true };
+	}
+	
+	dblclickPos = null;
+}
 
 
 

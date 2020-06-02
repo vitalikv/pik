@@ -70,6 +70,7 @@ function animate()
 {
 	requestAnimationFrame( animate );	
 
+	dblclickMovePosition();
 	moveCameraToNewPosition();
 	cameraZoomTopLoop();	
 	
@@ -564,7 +565,7 @@ containerF.addEventListener( 'mousedown', onDocumentMouseDown, false );
 containerF.addEventListener( 'mousemove', onDocumentMouseMove, false );
 containerF.addEventListener( 'mouseup', onDocumentMouseUp, false );
 
-containerF.addEventListener( 'dblclick', onDocumentDbMouseDown, false );
+
 
 
 containerF.addEventListener( 'touchstart', onDocumentMouseDown, false );

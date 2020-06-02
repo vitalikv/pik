@@ -38,6 +38,15 @@ function switchCamera3D(cdm)
 	
 	if(!cdm) { cdm = {}; }
 	
+	planeMath.position.set(camera.position.x,0,camera.position.z);
+	planeMath.rotation.set(-Math.PI/2,0,0);  
+	planeMath.updateMatrixWorld();
+	
+	var intersects = rayIntersect( event, planeMath, 'one' );
+
+	var posCenter = intersects[0].point;
+	
+	
 	if(cdm.type)
 	{
 		camera3D.userData.camera.type = cdm.type;
@@ -55,7 +64,7 @@ function switchCamera3D(cdm)
 	}
 
 	
-	var posCenter = infProject.camera.d3.targetO.position;
+	//var posCenter = infProject.camera.d3.targetO.position;
 	
 	if(camera3D.userData.camera.type == 'first')
 	{		
@@ -105,34 +114,40 @@ function moveCameraToNewPosition()
 	{
 		var pos = (newCameraPosition.positionFirst) ? newCameraPosition.positionFirst : newCameraPosition.positionFly;
 		
+		var pos2 = camera.position.clone();
 		camera.position.lerp( pos, 0.1 );
 		
-		
-		if(newCameraPosition.positionFirst)
+		if(!newCameraPosition.stoDir)
 		{
-			var dir = camera.getWorldDirection(new THREE.Vector3()); 			
-			dir.y = 0; 
-			dir.normalize();
-			dir.add( newCameraPosition.positionFirst );	
-			camera.lookAt( dir );
+			if(newCameraPosition.positionFirst)
+			{
+				var dir = camera.getWorldDirection(new THREE.Vector3()); 			
+				dir.y = 0; 
+				dir.normalize();
+				dir.add( newCameraPosition.positionFirst );	
+				camera.lookAt( dir );
+			}
+			if(newCameraPosition.positionFly)
+			{
+				var radius_1 = camera3D.userData.camera.save.radius;
+				var radius_2 = infProject.camera.d3.targetO.position.distanceTo(camera.position);
+				
+				var k = Math.abs((radius_2/radius_1) - 1);
+				
+				var dir = camera.getWorldDirection(new THREE.Vector3()); 			
+				dir.y = 0; 
+				dir.normalize();
+				dir.x *= 15*k;
+				dir.z *= 15*k;
+				dir.add( infProject.camera.d3.targetO.position );	
+				
+				camera.lookAt( dir ); 
+			}		
 		}
-		if(newCameraPosition.positionFly)
+		else
 		{
-			var radius_1 = camera3D.userData.camera.save.radius;
-			var radius_2 = infProject.camera.d3.targetO.position.distanceTo(camera.position);
-			
-			var k = Math.abs((radius_2/radius_1) - 1);
-			
-			var dir = camera.getWorldDirection(new THREE.Vector3()); 			
-			dir.y = 0; 
-			dir.normalize();
-			dir.x *= 15*k;
-			dir.z *= 15*k;
-			dir.add( infProject.camera.d3.targetO.position );	
-			
-			camera.lookAt( dir ); 
-		}		
-		
+			infProject.camera.d3.targetO.position.add(camera.position.clone().sub(pos2));
+		}
 		
 		if(comparePos(camera.position, pos)) 
 		{ 	

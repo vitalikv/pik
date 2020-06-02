@@ -7,6 +7,7 @@ var isMouseDown3 = false;
 var onMouseDownPosition = new THREE.Vector2();
 var long_click = false;
 var lastClickTime = 0;
+var doubleClickThreshold = 250;
 var isDoubleClick = false;
 var catchTime = 0.30;
 var vk_click = '';
@@ -21,16 +22,19 @@ function mouseDownRight()
 }
 
 
-function onDocumentDbMouseDown()
+function onDocumentDbMouseDown(event)
 {
-	switchCamera3D();
+	switchCamera3D({event: event});
 }
 
 
 function onDocumentMouseDown( event ) 
 {
+	if( new Date().getTime() - lastClickTime < doubleClickThreshold && !newCameraPosition) { onDocumentDbMouseDown(event); }
+	
 	long_click = false;
-	lastClickTime = new Date().getTime();
+	lastClickTime = new Date().getTime();	
+	
 	
 	if(event.changedTouches)
 	{
@@ -75,9 +79,21 @@ function onDocumentMouseMove( event )
 	renderCamera();
 }
 
+var dblclickPos = null;
 
 function onDocumentMouseUp( event )  
 {	
+	if(!long_click && camera == camera3D)
+	{
+		planeMath.position.set(camera.position.x,0,camera.position.z);
+		planeMath.rotation.set(-Math.PI/2,0,0);  
+		planeMath.updateMatrixWorld();
+		
+		var intersects = rayIntersect( event, planeMath, 'one' );
+
+		dblclickPos = intersects[0].point;
+	}
+	
 	isMouseDown1 = false;
 	isMouseRight1 = false;
 	isMouseDown2 = false;

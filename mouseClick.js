@@ -7,6 +7,7 @@ var isMouseDown3 = false;
 var onMouseDownPosition = new THREE.Vector2();
 var long_click = false;
 var lastClickTime = 0;
+var isDoubleClick = false;
 var catchTime = 0.30;
 var vk_click = '';
 
@@ -19,6 +20,11 @@ function mouseDownRight()
 
 }
 
+
+function onDocumentDbMouseDown()
+{
+	switchCamera3D();
+}
 
 
 function onDocumentMouseDown( event ) 

@@ -42,10 +42,17 @@ function switchCamera3D(cdm)
 	planeMath.rotation.set(-Math.PI/2,0,0);  
 	planeMath.updateMatrixWorld();
 	
-	var intersects = rayIntersect( event, planeMath, 'one' );
-
-	var posCenter = intersects[0].point;
 	
+
+	if(cdm.event) 
+	{ 
+		var intersects = rayIntersect( cdm.event, planeMath, 'one' );
+		var posCenter = intersects[0].point;  
+	}
+	else
+	{
+		var posCenter = infProject.camera.d3.targetO.position;
+	}
 	
 	if(cdm.type)
 	{
@@ -63,8 +70,6 @@ function switchCamera3D(cdm)
 		}
 	}
 
-	
-	//var posCenter = infProject.camera.d3.targetO.position;
 	
 	if(camera3D.userData.camera.type == 'first')
 	{		
@@ -101,6 +106,8 @@ function switchCamera3D(cdm)
 		// прячем стены
 		wallAfterRender_2();		 
 	}
+	
+	dblclickPos = null;
 }
 
 
@@ -109,6 +116,8 @@ function moveCameraToNewPosition()
 {
 
 	if ( !newCameraPosition ) return;
+	
+	console.log(newCameraPosition);
 	
 	if ( camera == camera3D && newCameraPosition.positionFirst || camera == camera3D && newCameraPosition.positionFly )
 	{

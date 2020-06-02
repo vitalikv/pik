@@ -1,4 +1,4 @@
-<?php $vrs = '=34' ?>
+<?php $vrs = '=37' ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +51,7 @@
 					
 				</div>
 				
-				<div style="position: absolute; left: 50px; bottom: 80px;">
+				<div style="position: absolute; left: 50px; bottom: 80px;"  data-action ='top_panel_1'>
 					<div class="button1-wrap-1" nameId='texture_1' style="display: none;">
 						<div class="button1 button_gradient_1" style="width: 130px;"> 
 							текстура 1

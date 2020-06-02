@@ -291,13 +291,15 @@ function dblclickMovePosition()
 	if(!dblclickPos) return;  
 	if(newCameraPosition) return;
 	if( new Date().getTime() - lastClickTime < doubleClickThreshold) return;
-	
+	console.log(dblclickPos);
+	console.trace();
 	if(camera3D.userData.camera.type == 'first')
 	{
 		newCameraPosition = { positionFirst: new THREE.Vector3(dblclickPos.x, camera.position.y, dblclickPos.z), stoDir: true };
 	}
 	else
 	{
+		dblclickPos = dblclickPos.sub(infProject.camera.d3.targetO.position).add(camera.position);
 		newCameraPosition = { positionFly: new THREE.Vector3(dblclickPos.x, camera.position.y, dblclickPos.z), stoDir: true };
 	}
 	

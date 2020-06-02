@@ -22,26 +22,29 @@ function mouseDownRight()
 }
 
 
-function onDocumentDbMouseDown(event)
+function onDocumentDbMouseDown()
 {
-	switchCamera3D({event: event});
+	isDoubleClick = true;
+	switchCamera3D({event: clickInf.event});
 }
 
 
 function onDocumentMouseDown( event ) 
 {
-	if( new Date().getTime() - lastClickTime < doubleClickThreshold && !newCameraPosition) { onDocumentDbMouseDown(event); }
-	
-	long_click = false;
-	lastClickTime = new Date().getTime();	
-	
-	
 	if(event.changedTouches)
 	{
 		event.clientX = event.changedTouches[0].clientX;
 		event.clientY = event.changedTouches[0].clientY;
-		vk_click = 'left';
-	}	
+		vk_click = 'left';		
+	}
+	clickInf.event = event;	
+	
+	isDoubleClick = false;
+	if( new Date().getTime() - lastClickTime < doubleClickThreshold && !newCameraPosition) { onDocumentDbMouseDown(); }
+	
+	long_click = false;
+	lastClickTime = new Date().getTime();	
+		
 
 	switch ( event.button ) 
 	{
@@ -51,8 +54,8 @@ function onDocumentMouseDown( event )
 	}
 
 
-	clickSetCamera2D( event, vk_click );
-	clickSetCamera3D( event, vk_click );
+	clickSetCamera2D( clickInf.event, vk_click );
+	clickSetCamera3D( clickInf.event, vk_click );
 	
 	renderCamera();
 }
@@ -64,32 +67,34 @@ function onDocumentMouseDown( event )
 function onDocumentMouseMove( event ) 
 { 
 	if(event.changedTouches)
-	{
+	{ 
 		event.clientX = event.changedTouches[0].clientX;
 		event.clientY = event.changedTouches[0].clientY;
-		isMouseDown2 = true;
+		isMouseDown2 = true;		
 	}
-		
+	clickInf.event = event;	
 
 	if ( !long_click ) { long_click = ( lastClickTime - new Date().getTime() < catchTime ) ? true : false; }
 
-	if ( camera == camera3D ) { cameraMove3D( event ); }
-	else if ( camera == cameraTop ) { moveCameraTop( event ); }
+	if ( camera == camera3D ) { cameraMove3D( clickInf.event ); }
+	else if ( camera == cameraTop ) { moveCameraTop( clickInf.event ); }
 
 	renderCamera();
 }
 
 var dblclickPos = null;
+var clickInf = {event: null};
 
-function onDocumentMouseUp( event )  
+function onDocumentMouseUp()  
 {	
-	if(!long_click && camera == camera3D)
+
+	if(!long_click && camera == camera3D && !isDoubleClick)
 	{
 		planeMath.position.set(camera.position.x,0,camera.position.z);
 		planeMath.rotation.set(-Math.PI/2,0,0);  
 		planeMath.updateMatrixWorld();
 		
-		var intersects = rayIntersect( event, planeMath, 'one' );
+		var intersects = rayIntersect( clickInf.event, planeMath, 'one' );
 
 		dblclickPos = intersects[0].point;
 	}

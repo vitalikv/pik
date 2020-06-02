@@ -40,7 +40,7 @@ function onDocumentMouseDown( event )
 	clickInf.event = event;	
 	
 	isDoubleClick = false;
-	if( new Date().getTime() - lastClickTime < doubleClickThreshold && !newCameraPosition) { onDocumentDbMouseDown(); }
+	//if( new Date().getTime() - lastClickTime < doubleClickThreshold && !newCameraPosition) { onDocumentDbMouseDown(); }
 	
 	long_click = false;
 	lastClickTime = new Date().getTime();	

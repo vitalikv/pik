@@ -151,7 +151,7 @@ function setParamObj(cdm)
 	
 	scene.add( obj );
 	
-	fitCameraToObject({obj: obj}); 
+	//fitCameraToObject({obj: obj}); 
 	
 	renderCamera();	
 }

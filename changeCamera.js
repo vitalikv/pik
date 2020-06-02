@@ -117,13 +117,14 @@ function moveCameraToNewPosition()
 
 	if ( !newCameraPosition ) return;
 	
-	console.log(newCameraPosition);
+	
 	
 	if ( camera == camera3D && newCameraPosition.positionFirst || camera == camera3D && newCameraPosition.positionFly )
 	{
 		var pos = (newCameraPosition.positionFirst) ? newCameraPosition.positionFirst : newCameraPosition.positionFly;
 		
-		var pos2 = camera.position.clone();
+		var pos2 = camera.position.clone();  
+		
 		camera.position.lerp( pos, 0.1 );
 		
 		if(!newCameraPosition.stoDir)

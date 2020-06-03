@@ -41,7 +41,7 @@ function onDocumentMouseDown( event )
 	
 	if(event.changedTouches)
 	{   
-console.log(event.targetTouches.length, event);
+
 		if(event.targetTouches.length == 1)
 		{
 			vk_click = 'left';
@@ -53,6 +53,17 @@ console.log(event.targetTouches.length, event);
 		
 		event.clientX = event.targetTouches[0].clientX;
 		event.clientY = event.targetTouches[0].clientY;
+		
+		if(event.targetTouches.length == 1)
+		{
+			console.log(new Date().getTime() - lastClickTime, doubleClickThreshold);	
+			
+			isDoubleClick = false;
+			if( new Date().getTime() - lastClickTime < doubleClickThreshold && !newCameraPosition) { onDocumentDbMouseDown(); }
+			
+			long_click = false;
+			lastClickTime = new Date().getTime();				
+		}		
 	}
 	else
 	{
@@ -65,13 +76,8 @@ console.log(event.targetTouches.length, event);
 		
 	}
 	
-	clickInf.event = event; 
-	
-	isDoubleClick = false;
-	//if( new Date().getTime() - lastClickTime < doubleClickThreshold && !newCameraPosition) { onDocumentDbMouseDown(); }
-	
-	long_click = false;
-	lastClickTime = new Date().getTime();	
+	clickInf.event = event;
+
 		
 
 	clickSetCamera2D( clickInf.event, vk_click );

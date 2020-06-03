@@ -131,27 +131,18 @@ function startPosCamera3D(cdm)
 // кликаем левой кнопокой мыши (собираем инфу для перемещения камеры в 2D режиме)
 function clickSetCamera2D( event, click )
 {
-	if ( camera == cameraTop) { }
-	else { return; }
-
-	isMouseDown1 = true;
-	isMouseRight1 = true;
-	onMouseDownPosition.x = event.clientX;
-	onMouseDownPosition.y = event.clientY;
+	if ( camera != cameraTop) return;
+	
 	newCameraPosition = null;
 	
-
-	if(camera == cameraTop) 
-	{
-		planeMath.position.set(camera.position.x,0,camera.position.z);
-		planeMath.rotation.set(-Math.PI/2,0,0);  
-		planeMath.updateMatrixWorld();
-		
-		var intersects = rayIntersect( event, planeMath, 'one' );
-		
-		onMouseDownPosition.x = intersects[0].point.x;
-		onMouseDownPosition.z = intersects[0].point.z;	 		
-	}	
+	planeMath.position.set(camera.position.x,0,camera.position.z);
+	planeMath.rotation.set(-Math.PI/2,0,0);  
+	planeMath.updateMatrixWorld();
+	
+	var intersects = rayIntersect( event, planeMath, 'one' );
+	
+	onMouseDownPosition.x = intersects[0].point.x;
+	onMouseDownPosition.z = intersects[0].point.z;	 		
 }
 
 
@@ -177,13 +168,13 @@ function clickSetCamera3D( event, click )
 		dir.y = 0; 
 		dir.normalize();    			
 		
-		isMouseDown2 = true;
+		
 		infProject.camera.d3.theta = THREE.Math.radToDeg( Math.atan2(dir.x, dir.z) - Math.PI ) * 2;
 		infProject.camera.d3.phi = dergree;
 	}
 	else if ( click == 'right' )		// 2
 	{
-		isMouseDown3 = true;
+		
 		planeMath.position.copy( infProject.camera.d3.targetO.position );
 		//planeMath.rotation.copy( camera.rotation );
 		planeMath.rotation.set(-Math.PI/2, 0, 0);
@@ -198,9 +189,8 @@ function clickSetCamera3D( event, click )
 
 function moveCameraTop( event ) 
 {
-	if(isMouseRight1 || isMouseDown1) {}
-	else { return; }
-
+	if(camera != cameraTop) return;
+	if(vk_click == '') return;
 
 	newCameraPosition = null;	
 	
@@ -220,8 +210,8 @@ function cameraMove3D( event )
 	
 	if ( camera3D.userData.camera.type == 'fly' )
 	{
-		if ( isMouseDown2 ) 
-		{  
+		if ( vk_click == 'left' ) 
+		{  console.log(2, vk_click);
 			newCameraPosition = null;
 			var radious = infProject.camera.d3.targetO.position.distanceTo( camera.position );
 			
@@ -240,8 +230,8 @@ function cameraMove3D( event )
 			
 			wallAfterRender_2();
 		}
-		if ( isMouseDown3 )    
-		{
+		if ( vk_click == 'right' )    
+		{ console.log(3, vk_click);
 			newCameraPosition = null;
 			
 			var intersects = rayIntersect( event, planeMath, 'one' );
@@ -255,7 +245,7 @@ function cameraMove3D( event )
 	}
 	else if ( camera3D.userData.camera.type == 'first' )
 	{
-		if ( isMouseDown2 )
+		if ( vk_click == 'left' )
 		{
 			newCameraPosition = null;
 			var y = ( ( event.clientX - onMouseDownPosition.x ) * 0.006 );

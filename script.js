@@ -565,7 +565,7 @@ containerF.addEventListener( 'mousedown', onDocumentMouseDown, false );
 containerF.addEventListener( 'mousemove', onDocumentMouseMove, false );
 containerF.addEventListener( 'mouseup', onDocumentMouseUp, false );
 
-
+//containerF.addEventListener( 'dblclick', onDocumentDbMouseDown2, false );
 
 
 containerF.addEventListener( 'touchstart', onDocumentMouseDown, false );

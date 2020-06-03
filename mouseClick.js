@@ -32,12 +32,38 @@ function onDocumentDbMouseDown()
 function onDocumentMouseDown( event ) 
 {
 	if(event.changedTouches)
-	{
-		event.clientX = event.changedTouches[0].clientX;
-		event.clientY = event.changedTouches[0].clientY;
-		vk_click = 'left';		
+	{   
+		if(event.changedTouches[0].identifier == 0)
+		{
+			event.clientX = event.changedTouches[0].clientX;
+			event.clientY = event.changedTouches[0].clientY;
+			vk_click = 'left';			
+			
+			if(event.changedTouches[1])
+			{
+				event.clientX = event.changedTouches[1].clientX;
+				event.clientY = event.changedTouches[1].clientY;
+				
+				vk_click = 'right';
+			}
+
+			clickInf.event = event;
+		}
 	}
-	clickInf.event = event;	
+	else
+	{
+		clickInf.event = event;
+		
+		switch ( event.button ) 
+		{
+			case 0: vk_click = 'left'; break;
+			case 1: vk_click = 'right'; /*middle*/ break;
+			case 2: vk_click = 'right'; break;
+		}
+		
+	}
+	
+	
 	
 	isDoubleClick = false;
 	//if( new Date().getTime() - lastClickTime < doubleClickThreshold && !newCameraPosition) { onDocumentDbMouseDown(); }
@@ -45,14 +71,6 @@ function onDocumentMouseDown( event )
 	long_click = false;
 	lastClickTime = new Date().getTime();	
 		
-
-	switch ( event.button ) 
-	{
-		case 0: vk_click = 'left'; break;
-		case 1: vk_click = 'right'; /*middle*/ break;
-		case 2: vk_click = 'right'; break;
-	}
-
 
 	clickSetCamera2D( clickInf.event, vk_click );
 	clickSetCamera3D( clickInf.event, vk_click );
@@ -68,11 +86,30 @@ function onDocumentMouseMove( event )
 { 
 	if(event.changedTouches)
 	{ 
-		event.clientX = event.changedTouches[0].clientX;
-		event.clientY = event.changedTouches[0].clientY;
-		isMouseDown2 = true;		
+		if(event.changedTouches[0].identifier == 0)
+		{ 
+			event.clientX = event.changedTouches[0].clientX;
+			event.clientY = event.changedTouches[0].clientY;
+			isMouseDown2 = true;
+			
+			if(event.changedTouches[1])
+			{
+				event.clientX = event.changedTouches[1].clientX;
+				event.clientY = event.changedTouches[1].clientY;
+				
+				isMouseDown2 = false;
+				isMouseDown3 = true;
+			}
+			
+			clickInf.event = event;
+		}
 	}
-	clickInf.event = event;	
+	else
+	{
+		clickInf.event = event;
+	}
+	
+	console.log(vk_click, event);
 
 	if ( !long_click ) { long_click = ( lastClickTime - new Date().getTime() < catchTime ) ? true : false; }
 

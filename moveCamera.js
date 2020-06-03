@@ -274,12 +274,12 @@ function cameraMove3D( event )
 	
 	if(!comparePos(camera.position, pos))
 	{
-		console.log('pos', 99999);
+		//console.log('pos', 99999);
 		long_click = true;		
 	}
 	else if(!comparePos(camera.rotation, rot))
 	{
-		console.log('rot', 99999);
+		//console.log('rot', 99999);
 		long_click = true;		
 	}
 }

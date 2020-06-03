@@ -1,7 +1,7 @@
 
 
 var dblclickPos = null;
-var clickInf = {event: null, touches: [false, false], touchA: -1};
+var clickInf = {event: null};
 
 var onMouseDownPosition = new THREE.Vector2();
 var long_click = false;
@@ -45,25 +45,17 @@ console.log(event.targetTouches.length, event);
 		if(event.targetTouches.length == 1)
 		{
 			vk_click = 'left';
-			clickInf.touches[0] = true;
-			clickInf.touchA = 0;
 		}
 		else
 		{	
-			clickInf.touches[1] = true;
-			clickInf.touchA = 1;
 			vk_click = 'right';			
 		}
 		
 		event.clientX = event.targetTouches[0].clientX;
 		event.clientY = event.targetTouches[0].clientY;
-		
-		clickInf.event = event;
 	}
 	else
 	{
-		clickInf.event = event;
-		
 		switch ( event.button ) 
 		{
 			case 0: vk_click = 'left'; break;
@@ -73,7 +65,7 @@ console.log(event.targetTouches.length, event);
 		
 	}
 	
-	 
+	clickInf.event = event; 
 	
 	isDoubleClick = false;
 	//if( new Date().getTime() - lastClickTime < doubleClickThreshold && !newCameraPosition) { onDocumentDbMouseDown(); }
@@ -98,16 +90,9 @@ function onDocumentMouseMove( event )
 	{ 
 		event.clientX = event.targetTouches[0].clientX;
 		event.clientY = event.targetTouches[0].clientY;
-
-	
-		clickInf.event = event;
-	}
-	else
-	{
-		clickInf.event = event;
 	}
 	
-	
+	clickInf.event = event;
 
 	if ( !long_click ) { long_click = ( lastClickTime - new Date().getTime() < catchTime ) ? true : false; }
 
@@ -124,20 +109,35 @@ function onDocumentMouseUp(event)
 
 	if(event.changedTouches)
 	{   
-		if(event.changedTouches[0].identifier == 0)
+		if(event.targetTouches.length == 1)
 		{
-			clickInf.touches[0] = false;
+			vk_click = 'left';
+		}
+		else if(event.targetTouches.length > 1)
+		{	
+			vk_click = 'right';			
 		}
 		else
-		{	
-			clickInf.touches[1] = false;			
+		{
+			vk_click = '';
 		}
 		
-		if(clickInf.touches[0]) { clickInf.touchA = 0; }
-		else if(clickInf.touches[1]) { clickInf.touchA = 1; }
-		else { clickInf.touchA = -1; }
+		
+		if(vk_click != '')
+		{
+			event.clientX = event.targetTouches[0].clientX;
+			event.clientY = event.targetTouches[0].clientY;
+			
+			clickInf.event = event;			
+			
+			clickSetCamera2D( clickInf.event, vk_click );
+			clickSetCamera3D( clickInf.event, vk_click );					
+		}
 	}	
-
+	else
+	{
+		vk_click = '';
+	}
 
 	if(!long_click && camera == camera3D && !isDoubleClick)
 	{
@@ -149,17 +149,6 @@ function onDocumentMouseUp(event)
 
 		dblclickPos = intersects[0].point;
 	}
-	
-	
-	if(!clickInf.touches[0] && !clickInf.touches[1])
-	{
-		vk_click = '';
-	}
-	
-	if(clickInf.touches[0] || clickInf.touches[1])
-	{
-		vk_click = 'left';
-	}	
 	
 	
 	

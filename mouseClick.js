@@ -1,6 +1,7 @@
 
 
-
+var dblclickPos = null;
+var clickInf = {event: null, touches: [false, false], touchA: -1};
 
 var onMouseDownPosition = new THREE.Vector2();
 var long_click = false;
@@ -28,24 +29,36 @@ function onDocumentDbMouseDown()
 
 
 
+function onDocumentMouseDown( event )
+{
+	
+}
+
+
 function onDocumentMouseDown( event ) 
 {
 	vk_click = '';
 	
 	if(event.changedTouches)
 	{   
-		if(event.changedTouches[0].identifier == 0)
+console.log(event.targetTouches.length, event);
+		if(event.targetTouches.length == 1)
 		{
-			event.clientX = event.changedTouches[0].clientX;
-			event.clientY = event.changedTouches[0].clientY;
-			vk_click = 'left';	
-
-			clickInf.event = event;
+			vk_click = 'left';
+			clickInf.touches[0] = true;
+			clickInf.touchA = 0;
 		}
 		else
-		{		
+		{	
+			clickInf.touches[1] = true;
+			clickInf.touchA = 1;
 			vk_click = 'right';			
 		}
+		
+		event.clientX = event.targetTouches[0].clientX;
+		event.clientY = event.targetTouches[0].clientY;
+		
+		clickInf.event = event;
 	}
 	else
 	{
@@ -83,20 +96,11 @@ function onDocumentMouseMove( event )
 { 
 	if(event.changedTouches)
 	{ 
-		if(event.changedTouches[0].identifier == 0)
-		{ 
-			event.clientX = event.changedTouches[0].clientX;
-			event.clientY = event.changedTouches[0].clientY;
-			
-			
-			if(event.changedTouches[1])
-			{ 
-				
-				
-			}
-			
-			clickInf.event = event;
-		}
+		event.clientX = event.targetTouches[0].clientX;
+		event.clientY = event.targetTouches[0].clientY;
+
+	
+		clickInf.event = event;
 	}
 	else
 	{
@@ -113,12 +117,28 @@ function onDocumentMouseMove( event )
 	renderCamera();
 }
 
-var dblclickPos = null;
-var clickInf = {event: null};
+
 
 function onDocumentMouseUp(event)  
 {	
-console.log(777, event);
+
+	if(event.changedTouches)
+	{   
+		if(event.changedTouches[0].identifier == 0)
+		{
+			clickInf.touches[0] = false;
+		}
+		else
+		{	
+			clickInf.touches[1] = false;			
+		}
+		
+		if(clickInf.touches[0]) { clickInf.touchA = 0; }
+		else if(clickInf.touches[1]) { clickInf.touchA = 1; }
+		else { clickInf.touchA = -1; }
+	}	
+
+
 	if(!long_click && camera == camera3D && !isDoubleClick)
 	{
 		planeMath.position.set(camera.position.x,0,camera.position.z);
@@ -130,7 +150,18 @@ console.log(777, event);
 		dblclickPos = intersects[0].point;
 	}
 	
-	vk_click = '';
+	
+	if(!clickInf.touches[0] && !clickInf.touches[1])
+	{
+		vk_click = '';
+	}
+	
+	if(clickInf.touches[0] || clickInf.touches[1])
+	{
+		vk_click = 'left';
+	}	
+	
+	
 	
 	renderCamera();
 }

@@ -581,7 +581,7 @@ document.addEventListener("keydown", function (e)
 	
 	if(clickO.keys[18] && e.keyCode == 90) 	// alt + z
 	{ 
-		
+		console.log(camera);
 	}	
 
 

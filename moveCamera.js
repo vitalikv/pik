@@ -211,7 +211,7 @@ function cameraMove3D( event )
 	if ( camera3D.userData.camera.type == 'fly' )
 	{
 		if ( vk_click == 'left' ) 
-		{  console.log(2, vk_click);
+		{  //console.log(2, vk_click);
 			newCameraPosition = null;
 			var radious = infProject.camera.d3.targetO.position.distanceTo( camera.position );
 			
@@ -231,15 +231,32 @@ function cameraMove3D( event )
 			wallAfterRender_2();
 		}
 		if ( vk_click == 'right' )    
-		{ console.log(3, vk_click);
+		{ //console.log(3, vk_click);
 			newCameraPosition = null;
 			
+			if(event.targetTouches)
+			{
+				if(event.targetTouches.length == 2)	
+				{
+					
+					var ratio2 = new THREE.Vector2(event.targetTouches[0].clientX, event.targetTouches[0].clientY).distanceTo(new THREE.Vector2(event.targetTouches[1].clientX, event.targetTouches[1].clientY));
+					
+					touchCameraZoom3D( clickInf.ratio1/ratio2 );
+					
+					event.clientX = (event.targetTouches[1].clientX - clickInf.th2.clientX) + event.targetTouches[0].clientX;
+					event.clientY = (event.targetTouches[1].clientY - clickInf.th2.clientY) + event.targetTouches[0].clientY;
+				}								
+			}
+			
+			if(1==1)
+			{
 			var intersects = rayIntersect( event, planeMath, 'one' );
 			var offset = new THREE.Vector3().subVectors( camera3D.userData.camera.click.pos, intersects[0].point );
 			camera.position.add( offset );
 			infProject.camera.d3.targetO.position.add( offset );
 			
 			wallAfterRender_2();
+			}
 		}
 		
 	}
@@ -276,13 +293,37 @@ function cameraMove3D( event )
 
 
 
+
+function touchCameraZoom3D( zoom )
+{
+	if ( camera != camera3D ) return;
+
+	if(camera3D.userData.camera.type == 'fly')
+	{
+		var dist = zoom * clickInf.camDist;
+
+		var pos1 = infProject.camera.d3.targetO.position;
+		var pos2 = camera.position.clone();
+		
+		var dir = new THREE.Vector3().subVectors( camera.position, pos1 ).normalize();
+		dir = new THREE.Vector3().addScaledVector( dir, dist );  
+		var pos3 = new THREE.Vector3().addVectors( pos1, dir );
+
+		console.log(clickInf.camDist, zoom, dist);
+
+		camera.position.copy( pos3 ); 			
+	}
+}
+
+
+
+
 function dblclickMovePosition()
 { 
 	if(!dblclickPos) return;  
 	if(newCameraPosition) return;
 	if( new Date().getTime() - lastClickTime < doubleClickThreshold) return;
-	console.log(dblclickPos);
-	console.trace();
+	
 	if(camera3D.userData.camera.type == 'first')
 	{
 		newCameraPosition = { positionFirst: new THREE.Vector3(dblclickPos.x, camera.position.y, dblclickPos.z), stoDir: true };
@@ -376,8 +417,7 @@ function cameraZoom3D( delta, z )
 		var pos2 = camera.position.clone();
 		
 		var dir = new THREE.Vector3().subVectors( pos1, camera.position ).normalize();
-		dir = new THREE.Vector3().addScaledVector( dir, vect );
-		dir.addScalar( 0.001 );
+		dir = new THREE.Vector3().addScaledVector( dir, vect );  
 		var pos3 = new THREE.Vector3().addVectors( camera.position, dir );	
 
 

@@ -1,7 +1,7 @@
 
 
 var dblclickPos = null;
-var clickInf = {event: null};
+var clickInf = {event: null, th1: {clientX:0, clientY:0}, th2: {clientX:0, clientY:0}, ratio1: 0, camDist: 0 };
 
 var onMouseDownPosition = new THREE.Vector2();
 var long_click = false;
@@ -41,14 +41,21 @@ function onDocumentMouseDown( event )
 	
 	if(event.changedTouches)
 	{   
-
+console.log(event);
 		if(event.targetTouches.length == 1)
 		{
 			vk_click = 'left';
 		}
 		else
 		{	
-			vk_click = 'right';			
+			vk_click = 'right';	
+			clickInf.th1.clientX = event.targetTouches[0].clientX;
+			clickInf.th1.clientY = event.targetTouches[0].clientY;				
+			clickInf.th2.clientX = event.targetTouches[1].clientX;
+			clickInf.th2.clientY = event.targetTouches[1].clientY;	
+
+			clickInf.ratio1 = new THREE.Vector2(clickInf.th2.clientX, clickInf.th2.clientY).distanceTo(new THREE.Vector2(clickInf.th1.clientX, clickInf.th1.clientY));
+			clickInf.camDist = infProject.camera.d3.targetO.position.distanceTo(camera.position);
 		}
 		
 		event.clientX = event.targetTouches[0].clientX;
@@ -56,8 +63,6 @@ function onDocumentMouseDown( event )
 		
 		if(event.targetTouches.length == 1)
 		{
-			console.log(new Date().getTime() - lastClickTime, doubleClickThreshold);	
-			
 			isDoubleClick = false;
 			if( new Date().getTime() - lastClickTime < doubleClickThreshold && !newCameraPosition) { onDocumentDbMouseDown(); }
 			

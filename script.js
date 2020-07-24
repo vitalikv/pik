@@ -147,7 +147,7 @@ var lightMap_1 = new THREE.TextureLoader().load('img/lightMap_1.png');
 //----------- Light
 {
 
-if(1==1)
+if(1==2)
 {
 	var light = new THREE.DirectionalLight( 0xffffff, 0.33 );
 	light.position.set( 5, 10, 8 );
@@ -206,7 +206,7 @@ if(1==1)
 		var fxaaPass = new THREE.ShaderPass( THREE.FXAAShader );	
 		fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( containerF.clientWidth * window.devicePixelRatio );
 		fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( containerF.clientHeight * window.devicePixelRatio );	
-		fxaaPass.enabled = false;
+		fxaaPass.enabled = true;
 		
 		composer.addPass( fxaaPass ); 	
 	}	
@@ -632,7 +632,21 @@ $(document).ready(function ()
 { 
 	docReady = true; 	
 		 	
-	loadStartScene();
+	//loadStartScene();
+	
+	
+	var loader = new THREE.ObjectLoader();
+	loader.load( 'glb/Falt_json.json', function ( obj ) 						
+	{ 
+		//var obj = obj.scene.children[0];
+		scene.add( obj );
+		
+		changeCamera(camera3D);
+		
+		$('[nameId="butt_camera_3D"]').hide(); 
+		$('[nameId="butt_camera_2D"]').show();
+		$('[nameId="butt_cam_walk"]').show();				
+	});	
 	
 });
 

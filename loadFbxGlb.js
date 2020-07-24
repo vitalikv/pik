@@ -97,7 +97,7 @@ function setParamObj(cdm)
 		if(child.isMesh) 
 		{ 
 	
-			if(child.material && 1==1)
+			if(child.material && 1==2)
 			{
 				var material = new THREE.MeshPhongMaterial({ color: child.material.color });
 				

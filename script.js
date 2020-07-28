@@ -8,6 +8,9 @@ var context = canvas.getContext( 'webgl2' );
 var renderer = new THREE.WebGLRenderer( { canvas: canvas, context: context, preserveDrawingBuffer: true, } );
 
 
+renderer.toneMapping = THREE.ReinhardToneMapping;
+renderer.toneMappingExposure = 2.2;
+renderer.outputEncoding = THREE.sRGBEncoding;
 //renderer.gammaInput = true;
 //renderer.gammaOutput = true;
 renderer.outputEncoding = THREE.sRGBEncoding;
@@ -126,6 +129,7 @@ infProject.camera.d3.targetO = createCenterCamObj();
 infProject.camera.d3.targetO.visible = false;
 infProject.scene = {};
 infProject.scene.obj = [];
+infProject.scene.lightMap = [];
 infProject.scene.array = { point: [], wall: [], window: [], door: [], floor: [], ceiling: [], obj: [] };
 //createPointGrid(100);
 
@@ -159,11 +163,13 @@ if(1==2)
 
 	var light = new THREE.DirectionalLight( 0xffffff, 0.33 );
 	light.position.set( 5, -5, -21 );
-	scene.add( light );		
-}
+	scene.add( light );	
 
 	var light = new THREE.AmbientLight( 0xffffff, 0.63 );
-	scene.add( light );
+	scene.add( light );	
+}
+
+
 
 }
 
@@ -581,7 +587,7 @@ document.addEventListener("keydown", function (e)
 	
 	if(clickO.keys[18] && e.keyCode == 90) 	// alt + z
 	{ 
-		console.log(camera);
+		switchJpgExr();
 	}	
 
 
@@ -625,6 +631,53 @@ document.addEventListener("keyup", function (e)
 
 
 
+		
+
+async function EXRLoader_1(cdm)
+{
+	var obj = cdm.obj;
+	var name = cdm.name;
+	
+	if(name == 'Lightmap-0_comp_light_LM') { name = 'Lightmap-0_comp_light'; }
+	if(name == 'Lightmap-1_comp_light_LM') { name = 'Lightmap-1_comp_light'; }
+	
+	var exist = null;
+	for ( var i = 0; i < infProject.scene.lightMap.length; i++ )
+	{
+		if(infProject.scene.lightMap[i].name == name) { exist = infProject.scene.lightMap[i].texture; break; }  
+	}	
+	
+	if(exist)
+	{
+		obj.material.lightMap = exist;
+		
+		renderCamera();
+	}
+	else
+	{
+		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( 'Flat/'+name+'.exr', function ( texture, textureData ) 
+		{
+			// memorial.exr is NPOT
+
+			//console.log( textureData );
+
+			// EXRLoader sets these default settings
+			//texture.generateMipmaps = false;
+			//texture.minFilter = LinearFilter;
+			//texture.magFilter = LinearFilter;
+			
+			obj.material.lightMap = texture;
+			
+			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
+			
+			renderCamera();
+		});		
+	}	
+	
+}
+
+
+var objF = null;
 
 var docReady = false;
 
@@ -632,24 +685,42 @@ $(document).ready(function ()
 { 
 	docReady = true; 	
 		 	
-	//loadStartScene();
+	//loadStartScene();		
+
+	new THREE.EXRLoader().setDataType( THREE.FloatType ).load( 'Flat/Lightmap-0_comp_light.exr', function ( texture, textureData ) 
+	{	
+		infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: 'Lightmap-0_comp_light', texture: texture};		
+	});
 	
+	new THREE.EXRLoader().setDataType( THREE.FloatType ).load( 'Flat/Lightmap-1_comp_light.exr', function ( texture, textureData ) 
+	{	
+		infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: 'Lightmap-1_comp_light', texture: texture};
+	});		
 	
+	loadStartSceneJson();
+	
+});
+
+
+
+async function loadStartSceneJson()
+{
 	var loader = new THREE.ObjectLoader();
-	loader.load( 'glb/Falt_json.json', function ( obj ) 						
+	loader.load( 'Flat/Falt_json.json', function ( obj ) 						
 	{ 
 		//var obj = obj.scene.children[0];
 		scene.add( obj );
-		
+		console.log(obj);
 		changeCamera(camera3D);
+		
+		objF = obj;
+		
 		
 		$('[nameId="butt_camera_3D"]').hide(); 
 		$('[nameId="butt_camera_2D"]').show();
 		$('[nameId="butt_cam_walk"]').show();				
 	});	
-	
-});
-
+}
 
 
 function loadStartScene()
@@ -671,7 +742,46 @@ function loadStartScene()
 
 
 
+function switchJpgExr()
+{
+	var obj = objF;
+	
+	obj.traverse(function(child) 
+	{
+		if(child.isMesh) 
+		{ 
+	
+			if(child.material)
+			{
+				if(child.material.lightMap) 
+				{
+					var name = child.material.lightMap.name;
+					child.material.lightMap = null;
+					
+					EXRLoader_1({obj: child, name: name});
+					
+					console.log(999999);
+				}
+			}							
+		}
+	});		
+	
+}
 
+
+
+// установить toneMapping
+function setTransparencySubstrate(cdm)
+{
+	var value = cdm.value;
+	
+	renderer.toneMappingExposure = value;					
+	
+	$('[nameId="input_transparency_substrate"]').val(value);
+	$('[nameId="value_transparency_substrate"]').text(value);
+	
+	renderCamera();	
+}
 
 
 

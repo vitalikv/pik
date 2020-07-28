@@ -86,6 +86,9 @@ $('[nameId="butt_del_obj"]').mousedown(function () { deleteObj(); });
 
 // <--- загрузка obj
 
+
+$('[nameId="input_transparency_substrate"]').on("input", function() { setTransparencySubstrate({value: $(this).val()}); });
+
 });
 
 

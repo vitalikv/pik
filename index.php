@@ -38,7 +38,7 @@
 	<script src="<?=$path?>js/loader/FBXLoader.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/loader/STLExporter.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/loader/GLTFLoader.js?<?=$vrs?>"></script>	
-	
+	<script src="<?=$path?>js/loader/EXRLoader.js?<?=$vrs?>"></script>
 	
 	
 	<div id="canvasFrame" style="position: fixed; width: 100%; height: 100%; top: 0; right: 0; overflow: hidden;">
@@ -52,7 +52,8 @@
 				</div>
 				
 				<div style="position: absolute; left: 50px; bottom: 80px;"  data-action ='top_panel_1'>
-					<div class="button1-wrap-1" nameId='texture_1' style="display: none;">
+					
+					<!--<div class="button1-wrap-1" nameId='texture_1' style="display: none;">
 						<div class="button1 button_gradient_1" style="width: 130px;"> 
 							текстура 1
 						</div>	
@@ -62,7 +63,12 @@
 						<div class="button1 button_gradient_1" style="width: 130px;"> 
 							текстура пол
 						</div>	
-					</div>					
+					</div>-->
+
+					<input type="range" nameId="input_transparency_substrate" min="0" max="4" value="2" step="0.1">
+					<div nameId="value_transparency_substrate" style="width: 130px;">
+						2
+					</div>
 				</div>				
 				
 			</div>

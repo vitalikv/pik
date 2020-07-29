@@ -811,7 +811,7 @@ function activeTextureMap(cdm)
 }
 
 
-
+// переключаем jpg/exr
 function setLightmapJpgExr(cdm)
 {
 	if(!cdm) cdm = {};
@@ -895,13 +895,13 @@ function setLightmapJpgExr(cdm)
 }
 
 
-
+// меняем тип ToneMapping
 function setToneMapping(cdm)
 {	
 
 	if(cdm.toneMapping == 'NoToneMapping')
 	{
-		renderer.toneMapping = THREE.NoToneMapping; console.log(333333);
+		renderer.toneMapping = THREE.NoToneMapping; 
 	}	
 	else if(cdm.toneMapping == 'LinearToneMapping')
 	{
@@ -943,18 +943,70 @@ function setToneMapping(cdm)
 
 
 
+
+
+// установить GammaInput
+function inputGammaInput(cdm)
+{
+	var value = cdm.value;
+	
+	renderer.gammaInput = value;					
+	console.log(renderer);
+	$('[nameId="input_gammaInput"]').val(value);
+	$('[nameId="value_gammaInput"]').text('gammaInput '+ value);
+	
+	renderCamera();	
+}
+
+
+// установить GammaOutput
+function inputGammaOutput(cdm)
+{
+	var value = cdm.value;
+	
+	renderer.gammaOutput = value;					
+	
+	$('[nameId="input_gammaOutput"]').val(value);
+	$('[nameId="value_gammaOutput"]').text('gammaOutput '+ value);
+	
+	renderCamera();	
+}
+
+
+// установить GammaFactor
+function inputGammaFactor(cdm)
+{
+	var value = cdm.value;
+	
+	renderer.gammaFactor = value;					
+	
+	$('[nameId="input_gammaFactor"]').val(value);
+	$('[nameId="value_gammaFactor"]').text('gammaFactor '+ value);
+	
+	renderCamera();	
+}
+
+
 // установить яркость toneMapping
-function setTransparencySubstrate(cdm)
+function inputTransparencySubstrate(cdm)
 {
 	var value = cdm.value;
 	
 	renderer.toneMappingExposure = value;					
 	
-	$('[nameId="input_transparency_substrate"]').val(value);
-	$('[nameId="value_transparency_substrate"]').text(value);
+	$('[nameId="input_toneMapping"]').val(value);
+	$('[nameId="value_toneMapping"]').text('toneMapping '+ value);
 	
 	renderCamera();	
 }
+
+
+
+
+
+
+
+
 
 
 

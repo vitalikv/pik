@@ -64,8 +64,30 @@
 							текстура пол
 						</div>	
 					</div>-->
+					
+					
+					<div style="border:solid 1px #b3b3b3; margin-top: 5px; font:12px Arial, Helvetica, sans-serif; color: #737373;">						
+						<div nameId="value_gammaInput" style="text-align:center;">
+							gammaInput 1
+						</div>
+						<input type="range" nameId="input_gammaInput" min="0" max="4" value="1" step="0.1">
+					</div>
+					
+					<div style="border:solid 1px #b3b3b3; margin-top: 5px; font:12px Arial, Helvetica, sans-serif; color: #737373;">						
+						<div nameId="value_gammaOutput" style="text-align:center;">
+							gammaOutput 1
+						</div>
+						<input type="range" nameId="input_gammaOutput" min="0" max="4" value="1" step="0.1">
+					</div>
+					
+					<div style="border:solid 1px #b3b3b3; margin-top: 5px; font:12px Arial, Helvetica, sans-serif; color: #737373;">						
+						<div nameId="value_gammaFactor" style="text-align:center;">
+							gammaFactor 2.2
+						</div>
+						<input type="range" nameId="input_gammaFactor" min="0" max="4" value="2.2" step="0.1">
+					</div>
 
-					<div class="button1-wrap-1" nameId='switchTexture' style="margin-top: 5px;">
+					<div class="button1-wrap-1" nameId='switchTexture' style="margin-top: 35px;">
 						<div class="button1 button_gradient_1" nameId='textswitchTexture' style="width: 130px;"> 
 							текстура (вкл)
 						</div>	
@@ -111,11 +133,13 @@
 							jpg/exr (jpg)
 						</div>	
 					</div>					
-
-					<input type="range" nameId="input_transparency_substrate" min="0" max="4" value="2" step="0.1">
-					<div nameId="value_transparency_substrate" style="width: 130px;">
-						2
-					</div>
+					
+					<div style="border:solid 1px #b3b3b3; margin-top: 35px; font:12px Arial, Helvetica, sans-serif; color: #737373;">						
+						<div nameId="value_toneMapping" style="text-align:center;">
+							toneMapping 2
+						</div>
+						<input type="range" nameId="input_toneMapping" min="0" max="4" value="2" step="0.1">
+					</div>					
 				</div>				
 				
 			</div>

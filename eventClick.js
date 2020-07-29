@@ -97,8 +97,10 @@ $('[nameId="butt_del_obj"]').mousedown(function () { deleteObj(); });
 // <--- загрузка obj
 
 
-$('[nameId="input_transparency_substrate"]').on("input", function() { setTransparencySubstrate({value: $(this).val()}); });
-
+$('[nameId="input_gammaInput"]').on("input", function() { inputGammaInput({value: $(this).val()}); });
+$('[nameId="input_gammaOutput"]').on("input", function() { inputGammaOutput({value: $(this).val()}); });
+$('[nameId="input_gammaFactor"]').on("input", function() { inputGammaFactor({value: $(this).val()}); });
+$('[nameId="input_toneMapping"]').on("input", function() { inputTransparencySubstrate({value: $(this).val()}); });
 });
 
 

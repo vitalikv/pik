@@ -1,4 +1,4 @@
-<?php $vrs = '=38' ?>
+<?php $vrs = '=41' ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -65,23 +65,41 @@
 						</div>	
 					</div>-->
 
-					<div class="button1-wrap-1" nameId='LinearToneMapping' style="margin-top: 20px;">
-						<div class="button1 button_gradient_1" style="width: 230px;"> 
+					<div class="button1-wrap-1" nameId='switchTexture' style="margin-top: 5px;">
+						<div class="button1 button_gradient_1" nameId='textswitchTexture' style="width: 130px;"> 
+							текстура (вкл)
+						</div>	
+					</div>
+					
+					<div class="button1-wrap-1" nameId='switchLightMap' style="margin-top: 5px;">
+						<div class="button1 button_gradient_1" nameId='textSwitchLightMap' style="width: 130px;"> 
+							lightMap (вкл)
+						</div>	
+					</div>
+					
+					
+					<div class="button1-wrap-1" nameId='NoToneMapping' style="margin-top: 35px;">
+						<div class="button1 button_gradient_1" style="width: 130px;"> 
+							выкл ToneMapping
+						</div>	
+					</div>
+					<div class="button1-wrap-1" nameId='LinearToneMapping' style="margin-top: 5px;">
+						<div class="button1 button_gradient_1" style="width: 130px;"> 
 							LinearToneMapping
 						</div>	
 					</div>
-					<div class="button1-wrap-1" nameId='ReinhardToneMapping' style="margin-top: 20px;">
-						<div class="button1 button_gradient_1" style="width: 230px;"> 
+					<div class="button1-wrap-1" nameId='ReinhardToneMapping' style="margin-top: 5px;">
+						<div class="button1 button_gradient_1" style="width: 130px;"> 
 							ReinhardToneMapping
 						</div>	
 					</div>
-					<div class="button1-wrap-1" nameId='CineonToneMapping' style="margin-top: 20px;">
-						<div class="button1 button_gradient_1" style="width: 230px;"> 
+					<div class="button1-wrap-1" nameId='CineonToneMapping' style="margin-top: 5px;">
+						<div class="button1 button_gradient_1" style="width: 130px;"> 
 							CineonToneMapping
 						</div>	
 					</div>
-					<div class="button1-wrap-1" nameId='ACESFilmicToneMapping' style="margin-top: 20px;">
-						<div class="button1 button_gradient_1" style="width: 230px;"> 
+					<div class="button1-wrap-1" nameId='ACESFilmicToneMapping' style="margin-top: 5px;">
+						<div class="button1 button_gradient_1" style="width: 130px;"> 
 							ACESFilmicToneMapping
 						</div>	
 					</div>					
@@ -89,7 +107,7 @@
 
 					
 					<div class="button1-wrap-1" nameId='jpg_exr' style="margin-top: 20px;">
-						<div class="button1 button_gradient_1" nameId='text_jpg_exr' style="width: 230px;"> 
+						<div class="button1 button_gradient_1" nameId='text_jpg_exr' style="width: 130px;"> 
 							jpg/exr (jpg)
 						</div>	
 					</div>					

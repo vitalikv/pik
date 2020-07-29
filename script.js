@@ -131,6 +131,8 @@ infProject.scene = {};
 infProject.scene.obj = [];
 infProject.scene.lightMap = [];
 infProject.scene.array = { point: [], wall: [], window: [], door: [], floor: [], ceiling: [], obj: [] };
+infProject.settings = {};
+infProject.settings.lightMap = {type: 'jpg', act: true};
 //createPointGrid(100);
 
 var zoomLoop = '';
@@ -722,10 +724,21 @@ async function loadStartSceneJson()
 	
 			if(child.material)
 			{
+				var userData = {};
+				
+				if(child.material.map)
+				{
+					userData.map = child.material.map;
+					userData.mapAct = true;
+				}
 				if(child.material.lightMap)
 				{
-					child.material.userData = { lightMap: 'jpg', jpg: child.material.lightMap };
-				}				
+					userData.lightMap = 'jpg';
+					userData.jpg = child.material.lightMap;
+					userData.lightmapName = child.material.lightMap.name;
+				}
+
+				child.material.userData = userData;
 			}							
 		}
 	});		
@@ -756,54 +769,141 @@ function loadStartScene()
 }
 
 
-
-function switchJpgExr()
+// вкл/выкл текстуру
+function activeTextureMap(cdm)
 {
+	if(!cdm) cdm = {};
+
+	var type = '';
+
+	
 	var obj = objF;
 	
 	obj.traverse(function(child) 
 	{
 		if(child.isMesh) 
-		{ 
-	
+		{ 	
 			if(child.material)
 			{
-				if(child.material.lightMap) 
+				if(child.material.userData.map) 
 				{
-					var name = child.material.lightMap.name;
+					if(child.material.userData.mapAct)
+					{
+						child.material.map = null;
+						child.material.userData.mapAct = false;
+						$('[nameId="textswitchTexture"]').text('текстура (выкл)');
+					}
+					else
+					{
+						child.material.map = child.material.userData.map;
+						child.material.userData.mapAct = true;
+						$('[nameId="textswitchTexture"]').text('текстура (вкл)');
+					}
+
+					child.material.needsUpdate = true;
+					renderCamera();
+				}
+			}							
+		}
+	});
+
+
+}
+
+
+
+function setLightmapJpgExr(cdm)
+{
+	if(!cdm) cdm = {};
+
+	var type = '';
+	
+	if(cdm.active)
+	{
+		infProject.settings.lightMap.act = !infProject.settings.lightMap.act;
+		
+		if(infProject.settings.lightMap.act){ type = infProject.settings.lightMap.type; }
+		else { type = ''; }
+	}
+	else
+	{
+		if(infProject.settings.lightMap.type == 'jpg'){ infProject.settings.lightMap.type = 'exr'; }
+		else{ infProject.settings.lightMap.type = 'jpg'; }
+		
+		infProject.settings.lightMap.act = true;
+		
+		type = infProject.settings.lightMap.type;
+	}
+	
+	
+	
+	var obj = objF;
+	
+	obj.traverse(function(child) 
+	{
+		if(child.isMesh) 
+		{ 	
+			if(child.material)
+			{
+				if(child.material.userData.lightmapName) 
+				{
+					var name = child.material.userData.lightmapName;
 					child.material.lightMap = null;
 					
-					if(child.material.userData.lightMap == 'jpg')
+					if(type == 'exr')
 					{
 						EXRLoader_1({obj: child, name: name});
 						child.material.userData.lightMap = 'exr';
 						child.material.needsUpdate = true;
-						
-						$('[nameId="text_jpg_exr"]').text('jpg/exr (exr)');
 					}
-					else
+					else if(type == 'jpg')
 					{
 						
-						child.material.lightMap = child.material.userData.jpg;
+						child.material.lightMap = child.material.userData.jpg;  
 						child.material.userData.lightMap = 'jpg';
 						child.material.needsUpdate = true;
 						renderCamera();
-						
-						$('[nameId="text_jpg_exr"]').text('jpg/exr (jpg)');
 					}
+					else
+					{
+						child.material.needsUpdate = true;
+						renderCamera();
+					}
+					
+					
 				}
 			}							
 		}
-	});		
-	
+	});
+
+
+	if(type == 'jpg')
+	{
+		$('[nameId="text_jpg_exr"]').text('jpg/exr (jpg)');
+		$('[nameId="textSwitchLightMap"]').text('lightMap (вкл)');
+	}
+	else if(type == 'exr')
+	{
+		$('[nameId="text_jpg_exr"]').text('jpg/exr (exr)');
+		$('[nameId="textSwitchLightMap"]').text('lightMap (вкл)');
+	}
+	else
+	{
+		$('[nameId="text_jpg_exr"]').text('jpg/exr (выкл)');
+		$('[nameId="textSwitchLightMap"]').text('lightMap (выкл)');
+	}
 }
 
 
 
 function setToneMapping(cdm)
 {	
-	
-	if(cdm.toneMapping == 'LinearToneMapping')
+
+	if(cdm.toneMapping == 'NoToneMapping')
+	{
+		renderer.toneMapping = THREE.NoToneMapping; console.log(333333);
+	}	
+	else if(cdm.toneMapping == 'LinearToneMapping')
 	{
 		renderer.toneMapping = THREE.LinearToneMapping;
 	}
@@ -843,7 +943,7 @@ function setToneMapping(cdm)
 
 
 
-// установить toneMapping
+// установить яркость toneMapping
 function setTransparencySubstrate(cdm)
 {
 	var value = cdm.value;

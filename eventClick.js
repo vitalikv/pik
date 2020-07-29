@@ -54,7 +54,7 @@ $('[nameId="LinearToneMapping"]').mousedown(function (e) { setToneMapping({toneM
 $('[nameId="ReinhardToneMapping"]').mousedown(function (e) { setToneMapping({toneMapping: 'ReinhardToneMapping'}); });
 $('[nameId="CineonToneMapping"]').mousedown(function (e) { setToneMapping({toneMapping: 'CineonToneMapping'}); });
 $('[nameId="ACESFilmicToneMapping"]').mousedown(function (e) { setToneMapping({toneMapping: 'ACESFilmicToneMapping'}); });
-
+$('[nameId="CustomToneMapping"]').mousedown(function (e) { setToneMapping({toneMapping: 'CustomToneMapping'}); });
 
 // загрузка obj --->
 

@@ -40,7 +40,7 @@
 	<script src="<?=$path?>js/loader/STLExporter.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/loader/GLTFLoader.js?<?=$vrs?>"></script>	
 	<script src="<?=$path?>js/loader/EXRLoader.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/loader/RGBELoader.js?<?=$vrs?>"></script>
+	
 	
 	<div id="canvasFrame" style="position: fixed; width: 100%; height: 100%; top: 0; right: 0; overflow: hidden;">
 		<div class="frame block_select_text" style="touch-action: none;">
@@ -113,7 +113,11 @@
 							ACESFilmicToneMapping
 						</div>	
 					</div>					
-
+					<div class="button1-wrap-1" nameId='CustomToneMapping' style="margin-top: 5px;">
+						<div class="button1 button_gradient_1" style="width: 130px;"> 
+							формула ToneMapping
+						</div>	
+					</div>
 
 					
 					<div class="button1-wrap-1" nameId='jpg_exr' style="margin-top: 20px;">

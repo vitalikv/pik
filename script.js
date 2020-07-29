@@ -228,30 +228,33 @@ if(1==1)
 		composer.addPass( fxaaPass ); 	
 	}	
 	
-	var ccc = new THREE.Color().setHex( '0x00ff00' );
-	outlinePass.visibleEdgeColor.set( ccc );
-	outlinePass.hiddenEdgeColor.set( ccc );
-	outlinePass.edgeStrength = Number( 5 );		// сила/прочность
-	outlinePass.edgeThickness = Number( 0.01 );	// толщина
-
-	outlinePass.selectedObjects = [];
-
-
-	function outlineAddObj( cdm )
-	{	
-		if(!cdm) cdm = {};
-		
-		var arr = cdm.arr;	
-		
-		if(cdm.type == 'hover') { if(clickO.last_obj) { arr.push(clickO.last_obj); } }
-		
-		outlinePass.selectedObjects = arr;  
-	}
-
-	function outlineRemoveObj()
+	if(1 == 1)
 	{
+		var ccc = new THREE.Color().setHex( '0x00ff00' );
+		outlinePass.visibleEdgeColor.set( ccc );
+		outlinePass.hiddenEdgeColor.set( ccc );
+		outlinePass.edgeStrength = Number( 5 );		// сила/прочность
+		outlinePass.edgeThickness = Number( 0.01 );	// толщина
+
 		outlinePass.selectedObjects = [];
-	}	
+
+
+		function outlineAddObj( cdm )
+		{	
+			if(!cdm) cdm = {};
+			
+			var arr = cdm.arr;	
+			
+			if(cdm.type == 'hover') { if(clickO.last_obj) { arr.push(clickO.last_obj); } }
+			
+			outlinePass.selectedObjects = arr;  
+		}
+
+		function outlineRemoveObj()
+		{
+			outlinePass.selectedObjects = [];
+		}			
+	}
 }
 
 
@@ -928,6 +931,10 @@ function setToneMapping(cdm)
 	{
 		renderer.toneMapping = THREE.ACESFilmicToneMapping;
 	}
+	else if(cdm.toneMapping == 'CustomToneMapping')
+	{
+		renderer.toneMapping = THREE.CustomToneMapping;
+	}	
 	else 
 	{
 		return;
@@ -983,11 +990,13 @@ function inputTransparencySubstrate(cdm)
 }
 
 
+//(5.3 * x^2 + 0.104 * x) / (5.184 * x^2 + 4.052 * x + 0.362)
 
+//((5.3 * x)*(5.3 * x) + 0.104 * x) / ((5.184 * x)*(5.184 * x) + 4.052 * x + 0.362)
 
 THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
 	'vec3 CustomToneMapping( vec3 color ) { return color; }',
-	`#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
+	`#define Uncharted2Helper( x ) max( ((5.3 * x)*(5.3 * x) + 0.104 * x) / ((5.184 * x)*(5.184 * x) + 4.052 * x + 0.362), vec3( 0.0 ) )
 	float toneMappingWhitePoint = 1.0;
 	vec3 CustomToneMapping( vec3 color ) {
 		color *= toneMappingExposure;

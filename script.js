@@ -9,9 +9,9 @@ var renderer = new THREE.WebGLRenderer( { canvas: canvas, context: context, pres
 
 
 renderer.toneMapping = THREE.ReinhardToneMapping;
-renderer.toneMappingExposure = 2;
+renderer.toneMappingExposure = 1;
 renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.gammaFactor = 2.2;
+renderer.gammaFactor = 2;
 renderer.gammaInput = true;
 renderer.gammaOutput = true;
 //renderer.localClippingEnabled = true;
@@ -83,8 +83,10 @@ function animate()
 
 function renderCamera()
 {
-	camera.updateMatrixWorld();	
-	composer.render();
+	camera.updateMatrixWorld();
+
+	if(composer){ composer.render(); }
+	else { renderer.render( scene, camera ); }
 }
 //----------- render
 
@@ -180,6 +182,7 @@ if(1==2)
 
 
 // outline render
+if(1==1)
 {
 	var composer = new THREE.EffectComposer( renderer );
 	var renderPass = new THREE.RenderPass( scene, cameraTop );
@@ -189,7 +192,13 @@ if(1==2)
 	composer.addPass( renderPass );
 	composer.addPass( outlinePass );
 
+	if(1 == 1)	
+	{
+		var gammaCorrection = new THREE.ShaderPass( THREE.GammaCorrectionShader );	
 
+		composer.addPass( gammaCorrection );	
+	}
+	
 	if(1==2)
 	{
 		var saoPass = new THREE.SAOPass(scene, camera, true, true);	
@@ -945,33 +954,6 @@ function setToneMapping(cdm)
 
 
 
-// установить GammaInput
-function inputGammaInput(cdm)
-{
-	var value = cdm.value;
-	
-	renderer.gammaInput = value;					
-	console.log(renderer);
-	$('[nameId="input_gammaInput"]').val(value);
-	$('[nameId="value_gammaInput"]').text('gammaInput '+ value);
-	
-	renderCamera();	
-}
-
-
-// установить GammaOutput
-function inputGammaOutput(cdm)
-{
-	var value = cdm.value;
-	
-	renderer.gammaOutput = value;					
-	
-	$('[nameId="input_gammaOutput"]').val(value);
-	$('[nameId="value_gammaOutput"]').text('gammaOutput '+ value);
-	
-	renderCamera();	
-}
-
 
 // установить GammaFactor
 function inputGammaFactor(cdm)
@@ -1003,7 +985,15 @@ function inputTransparencySubstrate(cdm)
 
 
 
-
+THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
+	'vec3 CustomToneMapping( vec3 color ) { return color; }',
+	`#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
+	float toneMappingWhitePoint = 1.0;
+	vec3 CustomToneMapping( vec3 color ) {
+		color *= toneMappingExposure;
+		return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
+	}`
+);
 
 
 

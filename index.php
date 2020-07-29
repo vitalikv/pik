@@ -32,14 +32,15 @@
 	<script src="<?=$path?>js/dp/SAOPass.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/dp/SAOShader.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/dp/DepthLimitedBlurShader.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/dp/UnpackDepthRGBAShader.js?<?=$vrs?>"></script>		
+	<script src="<?=$path?>js/dp/UnpackDepthRGBAShader.js?<?=$vrs?>"></script>
+	<script src="<?=$path?>js/dp/GammaCorrectionShader.js?<?=$vrs?>"></script>	
 
 	<script src="<?=$path?>js/loader/inflate.min.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/loader/FBXLoader.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/loader/STLExporter.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/loader/GLTFLoader.js?<?=$vrs?>"></script>	
 	<script src="<?=$path?>js/loader/EXRLoader.js?<?=$vrs?>"></script>
-	
+	<script src="<?=$path?>js/loader/RGBELoader.js?<?=$vrs?>"></script>
 	
 	<div id="canvasFrame" style="position: fixed; width: 100%; height: 100%; top: 0; right: 0; overflow: hidden;">
 		<div class="frame block_select_text" style="touch-action: none;">
@@ -66,25 +67,12 @@
 					</div>-->
 					
 					
-					<div style="border:solid 1px #b3b3b3; margin-top: 5px; font:12px Arial, Helvetica, sans-serif; color: #737373;">						
-						<div nameId="value_gammaInput" style="text-align:center;">
-							gammaInput 1
-						</div>
-						<input type="range" nameId="input_gammaInput" min="0" max="4" value="1" step="0.1">
-					</div>
-					
-					<div style="border:solid 1px #b3b3b3; margin-top: 5px; font:12px Arial, Helvetica, sans-serif; color: #737373;">						
-						<div nameId="value_gammaOutput" style="text-align:center;">
-							gammaOutput 1
-						</div>
-						<input type="range" nameId="input_gammaOutput" min="0" max="4" value="1" step="0.1">
-					</div>
 					
 					<div style="border:solid 1px #b3b3b3; margin-top: 5px; font:12px Arial, Helvetica, sans-serif; color: #737373;">						
 						<div nameId="value_gammaFactor" style="text-align:center;">
-							gammaFactor 2.2
+							gammaFactor 2
 						</div>
-						<input type="range" nameId="input_gammaFactor" min="0" max="4" value="2.2" step="0.1">
+						<input type="range" nameId="input_gammaFactor" min="0" max="4" value="2" step="0.1">
 					</div>
 
 					<div class="button1-wrap-1" nameId='switchTexture' style="margin-top: 35px;">
@@ -136,9 +124,9 @@
 					
 					<div style="border:solid 1px #b3b3b3; margin-top: 35px; font:12px Arial, Helvetica, sans-serif; color: #737373;">						
 						<div nameId="value_toneMapping" style="text-align:center;">
-							toneMapping 2
+							toneMapping 1
 						</div>
-						<input type="range" nameId="input_toneMapping" min="0" max="4" value="2" step="0.1">
+						<input type="range" nameId="input_toneMapping" min="0" max="4" value="1" step="0.1">
 					</div>					
 				</div>				
 				

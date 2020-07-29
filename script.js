@@ -9,14 +9,14 @@ var renderer = new THREE.WebGLRenderer( { canvas: canvas, context: context, pres
 
 
 renderer.toneMapping = THREE.ReinhardToneMapping;
-renderer.toneMappingExposure = 2.2;
+renderer.toneMappingExposure = 2;
 renderer.outputEncoding = THREE.sRGBEncoding;
-//renderer.gammaInput = true;
-//renderer.gammaOutput = true;
-renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.localClippingEnabled = true;
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
+renderer.gammaFactor = 2.2;
+renderer.gammaInput = true;
+renderer.gammaOutput = true;
+//renderer.localClippingEnabled = true;
+//renderer.shadowMap.enabled = true;
+//renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
 //renderer.autoClear = false;
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( containerF.clientWidth, containerF.clientHeight );
@@ -587,7 +587,7 @@ document.addEventListener("keydown", function (e)
 	
 	if(clickO.keys[18] && e.keyCode == 90) 	// alt + z
 	{ 
-		switchJpgExr();
+		setToneMapping();
 	}	
 
 
@@ -715,6 +715,21 @@ async function loadStartSceneJson()
 		
 		objF = obj;
 		
+	obj.traverse(function(child) 
+	{
+		if(child.isMesh) 
+		{ 
+	
+			if(child.material)
+			{
+				if(child.material.lightMap)
+				{
+					child.material.userData = { lightMap: 'jpg', jpg: child.material.lightMap };
+				}				
+			}							
+		}
+	});		
+		
 		
 		$('[nameId="butt_camera_3D"]').hide(); 
 		$('[nameId="butt_camera_2D"]').show();
@@ -758,14 +773,72 @@ function switchJpgExr()
 					var name = child.material.lightMap.name;
 					child.material.lightMap = null;
 					
-					EXRLoader_1({obj: child, name: name});
-					
-					console.log(999999);
+					if(child.material.userData.lightMap == 'jpg')
+					{
+						EXRLoader_1({obj: child, name: name});
+						child.material.userData.lightMap = 'exr';
+						child.material.needsUpdate = true;
+						
+						$('[nameId="text_jpg_exr"]').text('jpg/exr (exr)');
+					}
+					else
+					{
+						
+						child.material.lightMap = child.material.userData.jpg;
+						child.material.userData.lightMap = 'jpg';
+						child.material.needsUpdate = true;
+						renderCamera();
+						
+						$('[nameId="text_jpg_exr"]').text('jpg/exr (jpg)');
+					}
 				}
 			}							
 		}
 	});		
 	
+}
+
+
+
+function setToneMapping(cdm)
+{	
+	
+	if(cdm.toneMapping == 'LinearToneMapping')
+	{
+		renderer.toneMapping = THREE.LinearToneMapping;
+	}
+	else if(cdm.toneMapping == 'ReinhardToneMapping')
+	{
+		renderer.toneMapping = THREE.ReinhardToneMapping;
+	}
+	else if(cdm.toneMapping == 'CineonToneMapping')
+	{
+		renderer.toneMapping = THREE.CineonToneMapping;
+	}
+	else if(cdm.toneMapping == 'ACESFilmicToneMapping')
+	{
+		renderer.toneMapping = THREE.ACESFilmicToneMapping;
+	}
+	else 
+	{
+		return;
+	}
+	
+	var obj = objF;
+	
+	obj.traverse(function(child) 
+	{
+		if(child.isMesh) 
+		{ 	
+			if(child.material)
+			{
+				child.material.needsUpdate = true;
+			}							
+		}
+	});	
+	
+	console.log(renderer.toneMapping);
+	renderCamera();	
 }
 
 

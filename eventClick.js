@@ -43,7 +43,13 @@ $(window).mouseup(function () { zoomLoop = ''; });
 
 //$('[nameId="texture_1"]').mousedown(function (e) { activeTexture({id: 1}); });
 $('[nameId="texture_2"]').mousedown(function (e) { activeFloorTexture({id: 1}); });
+$('[nameId="jpg_exr"]').mousedown(function (e) { switchJpgExr(); });
 
+
+$('[nameId="LinearToneMapping"]').mousedown(function (e) { setToneMapping({toneMapping: 'LinearToneMapping'}); });
+$('[nameId="ReinhardToneMapping"]').mousedown(function (e) { setToneMapping({toneMapping: 'ReinhardToneMapping'}); });
+$('[nameId="CineonToneMapping"]').mousedown(function (e) { setToneMapping({toneMapping: 'CineonToneMapping'}); });
+$('[nameId="ACESFilmicToneMapping"]').mousedown(function (e) { setToneMapping({toneMapping: 'ACESFilmicToneMapping'}); });
 
 
 // загрузка obj --->

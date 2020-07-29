@@ -65,6 +65,35 @@
 						</div>	
 					</div>-->
 
+					<div class="button1-wrap-1" nameId='LinearToneMapping' style="margin-top: 20px;">
+						<div class="button1 button_gradient_1" style="width: 230px;"> 
+							LinearToneMapping
+						</div>	
+					</div>
+					<div class="button1-wrap-1" nameId='ReinhardToneMapping' style="margin-top: 20px;">
+						<div class="button1 button_gradient_1" style="width: 230px;"> 
+							ReinhardToneMapping
+						</div>	
+					</div>
+					<div class="button1-wrap-1" nameId='CineonToneMapping' style="margin-top: 20px;">
+						<div class="button1 button_gradient_1" style="width: 230px;"> 
+							CineonToneMapping
+						</div>	
+					</div>
+					<div class="button1-wrap-1" nameId='ACESFilmicToneMapping' style="margin-top: 20px;">
+						<div class="button1 button_gradient_1" style="width: 230px;"> 
+							ACESFilmicToneMapping
+						</div>	
+					</div>					
+
+
+					
+					<div class="button1-wrap-1" nameId='jpg_exr' style="margin-top: 20px;">
+						<div class="button1 button_gradient_1" nameId='text_jpg_exr' style="width: 230px;"> 
+							jpg/exr (jpg)
+						</div>	
+					</div>					
+
 					<input type="range" nameId="input_transparency_substrate" min="0" max="4" value="2" step="0.1">
 					<div nameId="value_transparency_substrate" style="width: 130px;">
 						2

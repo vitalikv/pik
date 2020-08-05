@@ -27,7 +27,8 @@ function changeCamera(cam)
 		//infProject.camera.d3.targetO.visible = true;
 
 		// прячем стены
-		wallAfterRender_2();		
+		//wallAfterRender_2();
+		wallAfterRender_3();
 	}
 	
 	renderCamera();
@@ -108,7 +109,8 @@ function switchCamera3D(cdm)
 		newCameraPosition = { positionFly: pos };
 
 		// прячем стены
-		wallAfterRender_2();		 
+		//wallAfterRender_2();
+		wallAfterRender_3();		
 	}
 	
 	dblclickPos = null;

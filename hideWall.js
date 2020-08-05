@@ -135,3 +135,84 @@ function setTransparentMat(cdm)
 
 
 
+// скрываем внешние стены, когда она перекрывает обзор
+function wallAfterRender_3()
+{ //return; 
+
+	var camPos = camera.getWorldDirection(new THREE.Vector3());
+	
+	camPos = new THREE.Vector3(camPos.x, 0, camPos.z).normalize();
+	
+	for ( var i = 0; i < wallVisible.length; i++ )
+	{
+		var wall = wallVisible[ i ];		
+		
+		var res = camPos.dot( wallVisible[ i ].userData.direction.clone() );
+		
+		if ( res > 0.2 )  
+		{ 	
+			wall.renderOrder = Math.abs(res);
+			wall.userData.wall.show = false;
+			setTransparentMat_2({obj: wall, value: 1 - Math.abs(res)});
+		}
+		else
+		{
+			wall.renderOrder = 0;
+			wall.userData.wall.show = true;
+			setTransparentMat_2({obj: wall, value: 1});
+		}
+	}
+}
+
+
+
+function setTransparentMat_2(cdm) 
+{
+	var obj = cdm.obj;
+	
+	var arrM = [];
+	
+	obj.traverse(function(child)
+	{
+		if(child.material)
+		{
+			arrM[arrM.length] = child.material;
+		}			
+	});
+
+	
+	
+	for( var i = 0; i < arrM.length; i++ ) 
+	{
+		// устанавливаем заданное значение
+		if(cdm.value)
+		{
+			var value = (arrM[i].userData.opacity < cdm.value) ? arrM[i].userData.opacity : cdm.value;
+			
+			arrM[i].opacity = value;
+		}
+		
+		// восстанавливаем значение
+		if(cdm.default)
+		{
+			arrM[i].opacity = arrM[i].userData.opacity;
+		}		
+	}
+}
+
+
+function showAllWallRender_2()
+{		
+	for ( var i = 0; i < wallVisible.length; i++ ) 
+	{ 
+		var wall = wallVisible[i];
+
+		wall.renderOrder = 0;
+		wall.userData.wall.show = true;
+		setTransparentMat({obj: wall, value: 1});		
+	}
+}
+
+
+
+

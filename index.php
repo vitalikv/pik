@@ -1,4 +1,4 @@
-<?php $vrs = '=41' ?>
+<?php $vrs = '=45' ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -68,12 +68,12 @@
 					
 					
 					
-					<div style="border:solid 1px #b3b3b3; margin-top: 5px; font:12px Arial, Helvetica, sans-serif; color: #737373;">						
+					<!--<div style="border:solid 1px #b3b3b3; margin-top: 5px; font:12px Arial, Helvetica, sans-serif; color: #737373;">						
 						<div nameId="value_gammaFactor" style="text-align:center;">
 							gammaFactor 2
 						</div>
 						<input type="range" nameId="input_gammaFactor" min="0" max="4" value="2" step="0.1">
-					</div>
+					</div>-->
 
 					<div class="button1-wrap-1" nameId='switchTexture' style="margin-top: 35px;">
 						<div class="button1 button_gradient_1" nameId='textswitchTexture' style="width: 130px;"> 

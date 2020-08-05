@@ -228,7 +228,8 @@ function cameraMove3D( event )
 			
 			infProject.camera.d3.targetO.rotation.set( 0, camera.rotation.y, 0 );
 			
-			wallAfterRender_2();
+			//wallAfterRender_2();
+			wallAfterRender_3();
 		}
 		if ( vk_click == 'right' )    
 		{ //console.log(3, vk_click);
@@ -255,7 +256,8 @@ function cameraMove3D( event )
 			camera.position.add( offset );
 			infProject.camera.d3.targetO.position.add( offset );
 			
-			wallAfterRender_2();
+			//wallAfterRender_2();
+			wallAfterRender_3();
 			}
 		}
 		

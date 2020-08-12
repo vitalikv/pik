@@ -20,7 +20,8 @@ function changeCamera(cam)
 	if(camera == cameraTop)
 	{						
 		//cameraZoomTop( camera.zoom );
-		showAllWallRender();	// показываем стены, которые были спрятаны
+		//showAllWallRender();	// показываем стены, которые были спрятаны
+		showAllWallRender_2();
 	}
 	else if(camera == camera3D)
 	{	
@@ -87,7 +88,8 @@ function switchCamera3D(cdm)
 		newCameraPosition = { positionFirst: new THREE.Vector3(posCenter.x, 1.5, posCenter.z) };
 
 		// показываем стены, которые были спрятаны
-		showAllWallRender();	
+		//showAllWallRender();
+		showAllWallRender_2();
 	}
 	else
 	{

@@ -135,7 +135,7 @@ infProject.scene.lightMap = [];
 infProject.scene.array = { point: [], wall: [], window: [], door: [], floor: [], ceiling: [], obj: [] };
 infProject.settings = {};
 infProject.settings.lightMap = {type: 'jpg', act: true};
-createPointGrid(100);
+//createPointGrid(100);
 
 var zoomLoop = '';
 var clickO = {keys:[]};
@@ -739,75 +739,77 @@ async function loadStartSceneJson()
 		
 		//getBoundObject_1({obj: obj});
 		
-	obj.traverse(function(child) 
-	{
-		
-		
-		if(child.type == 'Group')
+		obj.traverse(function(child) 
 		{
-			if(new RegExp( 'HiddenObject' ,'i').test( child.name ))
+			if(child.type == 'Group')
 			{
+				if(new RegExp( 'HiddenObject' ,'i').test( child.name ))
+				{
+					
+					wallVisible[wallVisible.length] = child;
+					
+					child.userData.wall = {};
+					child.userData.wall.show = true;
+					
+					//child.geometry.computeBoundingBox();
+					//obj3D.rotation.set(rot.x, -rot.y, rot.z);
+					//getBoundObject_1({obj: child});
+					
+					var dir = child.getWorldDirection(new THREE.Vector3());
+					
+					//scene.add( new THREE.BoxHelper( child, 0xff0000 ) );
+					//console.log(child.name, dir, child.geometry.boundingBox);
+					
+					var dir = new THREE.Vector3(-child.userData.direction.x, child.userData.direction.y, -child.userData.direction.z); 
+					
+					child.userData.direction = dir; 
+					
+					if(1==2)
+					{
+						var pos = obj.localToWorld( child.position.clone() );
+						pos.y = 1;
+						var arrowHelper = new THREE.ArrowHelper( dir, pos, 1, 0xff0000 );
+						scene.add( arrowHelper );											
+					}
+				}
 				
-				wallVisible[wallVisible.length] = child;
-				
-				child.userData.wall = {};
-				child.userData.wall.show = true;
-				
-				//child.geometry.computeBoundingBox();
-				//obj3D.rotation.set(rot.x, -rot.y, rot.z);
-				//getBoundObject_1({obj: child});
-				
-				var dir = child.getWorldDirection(new THREE.Vector3());
-				
-				//scene.add( new THREE.BoxHelper( child, 0xff0000 ) );
-				//console.log(child.name, dir, child.geometry.boundingBox);
-				
-				var dir = new THREE.Vector3(-child.userData.direction.x, child.userData.direction.y, -child.userData.direction.z); 
-				
-				child.userData.direction = dir; 
-				 
-				console.log(child.name, dir);
-				
-				var pos = obj.localToWorld( child.position.clone() );
-				pos.y = 1;
-				var arrowHelper = new THREE.ArrowHelper( dir, pos, 1, 0xff0000 );
-				scene.add( arrowHelper );					
 			}
 			
-		}
+			if(child.isMesh) 
+			{ 
 		
-		if(child.isMesh) 
-		{ 
-	
-			if(child.material)
-			{
-				var userData = {};
-				
-				if(child.material.map)
+				if(child.material)
 				{
-					userData.map = child.material.map;
-					userData.mapAct = true;
-				}
-				if(child.material.lightMap)
-				{
-					userData.lightMap = 'jpg';
-					userData.jpg = child.material.lightMap;
-					userData.lightmapName = child.material.lightMap.name;
-				}
+					var userData = {};
+					
+					if(child.material.map)
+					{
+						userData.map = child.material.map;
+						userData.mapAct = true;
+					}
+					if(child.material.lightMap)
+					{
+						userData.lightMap = 'jpg';
+						userData.jpg = child.material.lightMap;
+						userData.lightmapName = child.material.lightMap.name;
+					}
 
-				userData.opacity = child.material.opacity;
-				
-				child.material.transparent = true;
-				
-				child.material.userData = userData;
-				
-				//child.material.opacity = 0.2;
-				//child.material.transparent = true;
-			}							
-		}
-	});		
+					userData.opacity = child.material.opacity;
+					
+					child.material.transparent = true;
+					
+					child.material.userData = userData;
+					
+					//child.material.opacity = 0.2;
+					//child.material.transparent = true;
+				}							
+			}
+		});		
 		
-		console.log(wallVisible);
+		wallAfterRender_3();
+		
+		renderCamera();
+		
 		$('[nameId="butt_camera_3D"]').hide(); 
 		$('[nameId="butt_camera_2D"]').show();
 		$('[nameId="butt_cam_walk"]').show();				
@@ -820,116 +822,7 @@ async function loadStartSceneJson()
 
 
 
-// получаем габариты объекта и строим box-форму
-function getBoundObject_1(cdm)
-{
-	var obj = cdm.obj;
-	
-	if(!obj) return;
-	
-	var arr = [];
-	
-	obj.traverse(function(child) 
-	{
-		if (child instanceof THREE.Mesh)
-		{
-			if(child.geometry) { arr[arr.length] = child; }
-		}
-	});	
 
-	//scene.updateMatrixWorld();
-	
-	var v = [];
-	
-	for ( var i = 0; i < arr.length; i++ )
-	{
-		arr[i].updateMatrixWorld();
-		arr[i].geometry.computeBoundingBox();	
-		arr[i].geometry.computeBoundingSphere();
-
-		var bound = arr[i].geometry.boundingBox;
-		
-		//console.log(111111, arr[i], bound);
-
-		v[v.length] = new THREE.Vector3(bound.min.x, bound.min.y, bound.max.z).applyMatrix4( arr[i].matrixWorld );
-		v[v.length] = new THREE.Vector3(bound.max.x, bound.min.y, bound.max.z).applyMatrix4( arr[i].matrixWorld );
-		v[v.length] = new THREE.Vector3(bound.min.x, bound.min.y, bound.min.z).applyMatrix4( arr[i].matrixWorld );
-		v[v.length] = new THREE.Vector3(bound.max.x, bound.min.y, bound.min.z).applyMatrix4( arr[i].matrixWorld );
-
-		v[v.length] = new THREE.Vector3(bound.min.x, bound.max.y, bound.max.z).applyMatrix4( arr[i].matrixWorld );
-		v[v.length] = new THREE.Vector3(bound.max.x, bound.max.y, bound.max.z).applyMatrix4( arr[i].matrixWorld );
-		v[v.length] = new THREE.Vector3(bound.min.x, bound.max.y, bound.min.z).applyMatrix4( arr[i].matrixWorld );
-		v[v.length] = new THREE.Vector3(bound.max.x, bound.max.y, bound.min.z).applyMatrix4( arr[i].matrixWorld );		
-	}
-	
-	var bound = { min : { x : 999999, y : 999999, z : 999999 }, max : { x : -999999, y : -999999, z : -999999 } };
-	
-	for(var i = 0; i < v.length; i++)
-	{
-		if(v[i].x < bound.min.x) { bound.min.x = v[i].x; }
-		if(v[i].x > bound.max.x) { bound.max.x = v[i].x; }
-		if(v[i].y < bound.min.y) { bound.min.y = v[i].y; }
-		if(v[i].y > bound.max.y) { bound.max.y = v[i].y; }			
-		if(v[i].z < bound.min.z) { bound.min.z = v[i].z; }
-		if(v[i].z > bound.max.z) { bound.max.z = v[i].z; }		
-	}
-
-	var x = (bound.max.x - bound.min.x);
-	var y = (bound.max.y - bound.min.y);
-	var z = (bound.max.z - bound.min.z);	
-	
-	var material = new THREE.MeshStandardMaterial({ color: 0xcccccc, transparent: true, opacity: 0.7, depthTest: false });
-	var geometry = createGeometryCube(x, y, z);	
-	
-	var v = geometry.vertices;
-	v[0].x = v[1].x = v[6].x = v[7].x = bound.min.x;
-	v[3].x = v[2].x = v[5].x = v[4].x = bound.max.x;
-
-	v[0].y = v[3].y = v[4].y = v[7].y = bound.min.y;
-	v[1].y = v[2].y = v[5].y = v[6].y = bound.max.y;
-	
-	v[0].z = v[1].z = v[2].z = v[3].z = bound.max.z;
-	v[4].z = v[5].z = v[6].z = v[7].z = bound.min.z;		
-		
-	geometry = new THREE.BufferGeometry().fromGeometry(geometry);	 
-	var box = new THREE.Mesh( geometry, material ); 	
-	//box.position.copy(centP);	
-	
-	//obj.position.set(0, 0, 0);
-	//obj.rotation.set(0, 0, 0);
-	
-	//box.position.copy(obj.position);
-	//box.rotation.copy(obj.rotation);
-	
-	box.updateMatrixWorld();
-	box.geometry.computeBoundingBox();	
-	box.geometry.computeBoundingSphere();	
-	
-	scene.add(box);
-	
-	return box;	
-}
-
-
-
-
-
-function loadStartScene()
-{
-	var loader = new THREE.GLTFLoader();
-	loader.load( 'glb/1.glb', function ( obj ) 						
-	{ 
-		//var obj = obj.scene.children[0];
-		setParamObj({obj: obj.scene});
-		
-		changeCamera(camera3D);
-		
-		$('[nameId="butt_camera_3D"]').hide(); 
-		$('[nameId="butt_camera_2D"]').show();
-		$('[nameId="butt_cam_walk"]').show();				
-	});
-
-}
 
 
 // вкл/выкл текстуру

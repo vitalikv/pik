@@ -151,15 +151,13 @@ function wallAfterRender_3()
 		
 		if ( res > 0.2 )  
 		{ 	
-			wall.renderOrder = Math.abs(res);
 			wall.userData.wall.show = false;
-			setTransparentMat_2({obj: wall, value: 1 - Math.abs(res)});
+			setTransparentMat_2({obj: wall, value: 1 - Math.abs(res), renderOrder: Math.abs(res)});
 		}
 		else
 		{
-			wall.renderOrder = 0;
 			wall.userData.wall.show = true;
-			setTransparentMat_2({obj: wall, value: 1});
+			setTransparentMat_2({obj: wall, default: true, renderOrder: 0});
 		}
 	}
 }
@@ -174,6 +172,8 @@ function setTransparentMat_2(cdm)
 	
 	obj.traverse(function(child)
 	{
+		child.renderOrder = cdm.renderOrder;
+		
 		if(child.material)
 		{
 			arrM[arrM.length] = child.material;
@@ -203,13 +203,12 @@ function setTransparentMat_2(cdm)
 
 function showAllWallRender_2()
 {		
-	for ( var i = 0; i < wallVisible.length; i++ ) 
+	for ( var i = 0; i < wallVisible.length; i++ )  
 	{ 
 		var wall = wallVisible[i];
 
-		wall.renderOrder = 0;
 		wall.userData.wall.show = true;
-		setTransparentMat({obj: wall, value: 1});		
+		setTransparentMat_2({obj: wall, default: true, renderOrder: 0});		
 	}
 }
 

@@ -132,174 +132,13 @@
 						</div>
 						<input type="range" nameId="input_toneMapping" min="0" max="4" value="1" step="0.1">
 					</div>					
-				</div>	
-
-	<div nameId="rightBlock" style="display: block; position: absolute; right: 50px; bottom: 80px; border:solid 1px #b3b3b3; background: #f5f5f5;">
-		<div nameId="textSphere" style="margin: 5px; font:18px Arial, Helvetica, sans-serif; color: #737373; text-align:center;">
-			объект
-		</div>
-		
-
-		<div class="button1-wrap-1" nameId="setCubeCamera" style="display: none; margin: 5px 0 15px 0;">
-			<div class="button1 button_gradient_1" nameId="txt_setCubeCamera" style="width: 100%; padding: 6px 0 6px 0;">
-				добавить CubeCamera 
-			</div>
-		</div>
-
-		<div class="button1-wrap-1" nameId="delCubeCamera" style="display: block; margin: 5px 0 15px 0;">
-			<div class="button1 button_gradient_1" style="width: 100%; padding: 6px 0 6px 0;">
-				удалить CubeCamera
-			</div>
-		</div>			
-		
-		<input name="file" type="file" accept="image/x-png,image/jpeg" id="load_substrate_1" class="input_load_substrate">
-		<label nameId="loadMap" for="load_substrate_1" class="button1 button_gradient_1" style="display: none;">		
-			загрузить текстуру
-		</label>
-		
-		<label nameId="delMap" class="button1 button_gradient_1" style="display: block;">		
-			удалить текстуру
-		</label>		
-
-
-		<input name="file" type="file" accept="image/x-png,image/jpeg" id="load_normal_1" class="input_load_substrate">
-		<label nameId="loadNormalMap" for="load_normal_1" class="button1 button_gradient_1" style="display: none;">		
-			загрузить normal
-		</label>
-		
-		<label nameId="delNormalMap" class="button1 button_gradient_1" style="display: block;">		
-			удалить normal
-		</label>
-
-		<input name="file" type="file" accept="image/x-png,image/jpeg" id="load_bump_1" class="input_load_substrate">
-		<label nameId="loadBumpMap" for="load_bump_1" class="button1 button_gradient_1" style="display: none;">		
-			загрузить bumpMap
-		</label>
-		
-		<label nameId="delBumpMap" class="button1 button_gradient_1" style="display: block;">		
-			удалить bumpMap
-		</label>		
-
-		<div class="prew_substrate" style="margin: auto;">
-			<img src="#" id="upload-img" alt=""/>
-		</div>		
-		
-		<div style="margin-top: 15px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
-			<div nameId="txt_envMapIntensity" style="text-align:center;">
-				envMapIntensity 1
-			</div>
-			<input type="range" nameId="input_envMapIntensity" min="0" max="1" value="1" step="0.01">
-		</div>
-		
-		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
-			<div nameId="txt_opacity" style="text-align:center;">
-				прозрачность 1
-			</div>
-			<input type="range" nameId="input_opacity" min="0" max="1" value="1" step="0.01">
-		</div>
-		
-		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
-			<div nameId="txt_transmission" style="text-align:center;">
-				transmission 0
-			</div>
-			<input type="range" nameId="input_transmission" min="0" max="1" value="0" step="0.01">
-		</div>		
-
-		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
-			<div nameId="txt_clearcoat" style="text-align:center;">
-				clearcoat 0
-			</div>
-			<input type="range" nameId="input_clearcoat" min="0" max="1" value="0" step="0.01">
-		</div>
-		
-		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
-			<div nameId="txt_clearcoatRoughness" style="text-align:center;">
-				clearcoatRoughness 0
-			</div>
-			<input type="range" nameId="input_clearcoatRoughness" min="0" max="1" value="0" step="0.01">
-		</div>		
-		
-		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
-			<div nameId="txt_metalness" style="text-align:center;">
-				metalness 1
-			</div>
-			<input type="range" nameId="input_metalness" min="0" max="1" value="1" step="0.01">
-		</div>
-		
-		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
-			<div nameId="txt_roughness" style="text-align:center;">
-				roughness 1
-			</div>
-			<input type="range" nameId="input_roughness" min="0" max="1" value="0" step="0.01">
-		</div>		
-	</div>				
+				</div>				
 				
 			</div>
 		
 		</div>		
 	</div>
-
-	<script>
-		// загрузка img  с компьютера
-		$('#load_substrate_1').change(readURL_1);
-		function readURL_1(e) 
-		{
-			if (this.files[0]) 
-			{		
-				if (this.files[0].type == "image/png" || this.files[0].type == "image/jpeg")
-				{
-					var reader = new FileReader();
-					reader.onload = function (e) 
-					{												
-						setImgCompSubstrate({image: e.target.result});					
-					}				
-
-					reader.readAsDataURL(this.files[0]);  					
-				}				
-			}
-		}	 
-		// 
-
-		// загрузка img  с компьютера
-		$('#load_normal_1').change(readURL_2);
-		function readURL_2(e) 
-		{
-			if (this.files[0]) 
-			{		
-				if (this.files[0].type == "image/png" || this.files[0].type == "image/jpeg")
-				{
-					var reader = new FileReader();
-					reader.onload = function (e) 
-					{												
-						setNormalMap({image: e.target.result});					
-					}				
-
-					reader.readAsDataURL(this.files[0]);  					
-				}				
-			}
-		}	 
-		//
-
-		// загрузка img  с компьютера
-		$('#load_bump_1').change(readURL_3);
-		function readURL_3(e) 
-		{
-			if (this.files[0]) 
-			{		
-				if (this.files[0].type == "image/png" || this.files[0].type == "image/jpeg")
-				{
-					var reader = new FileReader();
-					reader.onload = function (e) 
-					{												
-						setBumpMap({image: e.target.result});					
-					}				
-
-					reader.readAsDataURL(this.files[0]);  					
-				}				
-			}
-		}	 
-		//   		
-	</script>
+	
 	
 	<script src="<?=$path?>mouseClick.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>changeCamera.js?<?=$vrs?>"></script>
@@ -307,7 +146,6 @@
 	<script src="<?=$path?>eventClick.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>loadFbxGlb.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>hideWall.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>setButton.js?<?=$vrs?>"></script>
     <script src="<?=$path?>script.js?<?=$vrs?>"></script>    		 
 		
 		

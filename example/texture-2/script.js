@@ -9,10 +9,14 @@ var renderer = new THREE.WebGLRenderer( { canvas: canvas, context: context, pres
 
 
 //renderer.toneMapping = THREE.ReinhardToneMapping;
-//renderer.toneMappingExposure = 1;
+renderer.toneMappingExposure = 1;
 //renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.gammaFactor = 2;
 
+renderer.gammaFactor = 2.2;
+//renderer.gammaInput = true;
+//renderer.gammaOutput = true;
+
+console.log(renderer.outputEncoding);
 //renderer.localClippingEnabled = true;
 //renderer.shadowMap.enabled = true;
 //renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
@@ -691,6 +695,8 @@ async function EXRLoader_1(cdm)
 
 
 var objF = null;
+var lightMap_1 = new THREE.TextureLoader().load('img/lightMap_1.png');
+var texture1 = new THREE.TextureLoader().load('img/01_Gradient_8bit_0-255.png');
 
 var docReady = false;
 
@@ -698,130 +704,27 @@ $(document).ready(function ()
 { 
 	docReady = true; 	
 		 	
-	//loadStartScene();		
 
-	if(1==2)
-	{
-		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( 'Flat/Lightmap-0_comp_light.exr', function ( texture, textureData ) 
-		{	
-			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: 'Lightmap-0_comp_light', texture: texture};		
-		});
-		
-		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( 'Flat/Lightmap-1_comp_light.exr', function ( texture, textureData ) 
-		{	
-			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: 'Lightmap-1_comp_light', texture: texture};
-		});		
-		
-	}
 	
-	loadStartSceneJson();
+	objF = createPlane_1();
 	
 });
 
 
-
-function loadStartSceneJson()
+function createPlane_1()
 {
-	var loader = new THREE.ObjectLoader();
-	loader.load( 'https://files.planoplan.com/upload/userdata/1/2/projects/2001214/poplight/Falt_json.json', function ( obj ) 						
-	{ 
-		//var obj = obj.scene.children[0];
-		scene.add( obj );
-		
-		changeCamera(camera3D);
-		
-		objF = obj;
-		
-		obj.position.set(-92, 0, -43);
-		
-		obj.updateMatrixWorld( true );
-		
-		//getBoundObject_1({obj: obj});
-		
-		obj.traverse(function(child) 
-		{
-			if(child.type == 'Group')
-			{
-				if(new RegExp( 'HiddenObject' ,'i').test( child.name ))
-				{
-					
-					wallVisible[wallVisible.length] = child;
-					
-					child.userData.wall = {};
-					child.userData.wall.show = true;
-					
-					//child.geometry.computeBoundingBox();
-					//obj3D.rotation.set(rot.x, -rot.y, rot.z);
-					//getBoundObject_1({obj: child});
-					
-					var dir = child.getWorldDirection(new THREE.Vector3());
-					
-					//scene.add( new THREE.BoxHelper( child, 0xff0000 ) );
-					//console.log(child.name, dir, child.geometry.boundingBox);
-					
-					var dir = new THREE.Vector3(-child.userData.direction.x, child.userData.direction.y, -child.userData.direction.z); 
-					
-					child.userData.direction = dir; 
-					
-					if(1==2)
-					{
-						var pos = obj.localToWorld( child.position.clone() );
-						pos.y = 1;
-						var arrowHelper = new THREE.ArrowHelper( dir, pos, 1, 0xff0000 );
-						scene.add( arrowHelper );											
-					}
-				}
-				
-			}
-			
-			if(child.isMesh) 
-			{ 
-		
-				if(child.material)
-				{
-					var userData = {};
-					
-					if(child.material.map)
-					{
-						userData.map = child.material.map;
-						userData.mapAct = true;
-					}
-					if(child.material.lightMap)
-					{
-						userData.lightMap = 'jpg';
-						userData.jpg = child.material.lightMap;
-						userData.lightmapName = child.material.lightMap.name;
-					}
-
-					userData.opacity = child.material.opacity;
-					
-					child.material.transparent = true;
-					
-					child.material.userData = userData;
-					
-					//child.material.opacity = 0.2;
-					//child.material.transparent = true;
-				}							
-			}
-		});		
-		
-		wallAfterRender_3();
-		
-		setStartSphereGeometry();
-		
-		renderCamera();
-		
-		$('[nameId="butt_camera_3D"]').hide(); 
-		$('[nameId="butt_camera_2D"]').show();
-		$('[nameId="butt_cam_walk"]').show();				
-	});
-
-
+	var geometry = new THREE.PlaneGeometry( 5, 5 );
+	//var geometry = new THREE.PlaneGeometry( 10, 10 );
+	var material = new THREE.MeshLambertMaterial( {color: 0xffffff, lightMap: lightMap_1, map: texture1 } );
+	//var material = new THREE.MeshLambertMaterial( {color: 0xff0000, lightMap: lightMap_1 } );
 	
+	var planeMath = new THREE.Mesh( geometry, material );
+	planeMath.rotation.set(-Math.PI/2, 0, 0);
+	planeMath.userData.tag = 'planeMath';	
+	scene.add( planeMath );	
+	renderCamera();
+	return planeMath;
 }
-
-
-
 
 
 
@@ -1050,34 +953,6 @@ THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars
 );
 
 
-
-setElemButtonRightPanel(); 
-
-function setStartSphereGeometry()
-{
-	var texture_1 = new THREE.TextureLoader().load('img/texture/1.jpg');
-	var normalMap_1 = new THREE.TextureLoader().load('img/texture/golfball.jpg');
-	var bumpMap_1 = new THREE.TextureLoader().load('img/texture/Infinite-Level_02_Disp_NoSmoothUV-4096.jpg');
-	
-	var geom = new THREE.SphereGeometry( 1, 32, 32 );
-	var mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, map: texture_1, normalMap: normalMap_1, bumpMap: bumpMap_1, lightMap: lightMap_1, transparent: true });
-
-	mat.metalness = 1;
-	mat.roughness = 0;
-	mat.transmission = 0;
-	mat.reflectivity = 0;
-	console.log(99999, mat);
-	
-	var obj = new THREE.Mesh(geom, mat);
-	scene.add( obj );
-
-	obj.position.set(0, 1, -1);
-
-	clickO.rayhit = {};
-	clickO.rayhit.object = obj;
-
-	createCubeCam();	
-}
 
 
 

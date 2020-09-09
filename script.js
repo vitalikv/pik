@@ -23,6 +23,9 @@ renderer.setSize( containerF.clientWidth, containerF.clientHeight );
 //renderer.setClearColor (0x9c9c9c, 1);
 containerF.appendChild( renderer.domElement );
 
+var stats = new Stats();
+containerF.appendChild( stats.dom );
+
 var scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xffffff );
 //scene.fog = new THREE.Fog('lightblue', 100, 200);
@@ -77,6 +80,8 @@ function animate()
 	cameraZoomTopLoop();	
 	
 	updateKeyDown();
+	
+	stats.update();
 }
 
 
@@ -1055,18 +1060,24 @@ setElemButtonRightPanel();
 
 function setStartSphereGeometry()
 {
-	var texture_1 = new THREE.TextureLoader().load('img/texture/1.jpg');
-	var normalMap_1 = new THREE.TextureLoader().load('img/texture/golfball.jpg');
-	var bumpMap_1 = new THREE.TextureLoader().load('img/texture/Infinite-Level_02_Disp_NoSmoothUV-4096.jpg');
+	//var texture_1 = new THREE.TextureLoader().load('img/texture/1.jpg');
+	//var normalMap_1 = new THREE.TextureLoader().load('img/texture/golfball.jpg');
+	//var bumpMap_1 = new THREE.TextureLoader().load('img/texture/bump.jpg');	
+	//var lightMap_2 = new THREE.TextureLoader().load('img/texture/01_Gradient_8bit_0-255.png');
 	
 	var geom = new THREE.SphereGeometry( 1, 32, 32 );
-	var mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, map: texture_1, normalMap: normalMap_1, bumpMap: bumpMap_1, lightMap: lightMap_1, transparent: true });
+	//var mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, map: texture_1, normalMap: normalMap_1, bumpMap: bumpMap_1, lightMap: lightMap_1, transparent: true });
+	
+	geom.faceVertexUvs[1] = geom.faceVertexUvs[0];
+	
+	var mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true });
 
-	mat.metalness = 1;
-	mat.roughness = 0;
-	mat.transmission = 0;
-	mat.reflectivity = 0;
-	console.log(99999, mat);
+	mat.metalness = 0;
+	mat.roughness = 1;
+	//mat.refractionRatio = 0;
+	//mat.transmission = 0;
+	//mat.reflectivity = 1;
+	console.log(99999, 2, geom);
 	
 	var obj = new THREE.Mesh(geom, mat);
 	scene.add( obj );
@@ -1076,7 +1087,23 @@ function setStartSphereGeometry()
 	clickO.rayhit = {};
 	clickO.rayhit.object = obj;
 
-	createCubeCam();	
+	setImgCompSubstrate({image: 'img/texture/01_Gradient_8bit_0-255.png'});
+	setLightMap({image: 'img/texture/01_Gradient_8bit_0-255.png'});
+	deleteNormalMap();
+	delBumpMap();
+	
+	inputMetalness({value: 0});
+	inputRoughness({value: 1});
+	inputRefraction({value: mat.refractionRatio});
+	
+	//createCubeCam();
+	delCubeCam();
+}
+
+
+function addSphere()
+{
+	
 }
 
 

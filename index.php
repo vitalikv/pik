@@ -1,4 +1,4 @@
-<?php $vrs = '=45' ?>
+<?php $vrs = '=46' ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,6 +21,7 @@
 			
 	
     <script src="<?=$path?>js/three.min.js?<?=$vrs?>"></script>
+	<script src="<?=$path?>js/stats.min.js?<?=$vrs?>"></script>
     <script src="<?=$path?>js/jquery.js"></script>        
 	
 	<script src="<?=$path?>js/dp/EffectComposer.js?<?=$vrs?>"></script>
@@ -138,6 +139,43 @@
 		<div nameId="textSphere" style="margin: 5px; font:18px Arial, Helvetica, sans-serif; color: #737373; text-align:center;">
 			объект
 		</div>
+
+		<input name="file" type="file" accept="image/x-png,image/jpeg" id="load_substrate_1" class="input_load_substrate">
+		<label nameId="loadMap" for="load_substrate_1" class="button1 button_gradient_1" style="display: none;">		
+			загрузить текстуру
+		</label>
+		
+		<label nameId="delMap" class="button1 button_gradient_1" style="display: block;">		
+			удалить текстуру
+		</label>
+		
+		<div class="flex_1">
+			<div style="margin: auto; font:12px Arial, Helvetica, sans-serif; color: #737373; text-align:center;">
+				color
+			</div>
+			<div>
+				<input nameId="colorPick" type="color" style="margin: auto;">
+			</div>
+		</div>		
+		
+		<div class="flex_1">
+			<div style="margin: auto; font:12px Arial, Helvetica, sans-serif; color: #737373; text-align:center;">
+				emissive
+			</div>
+			<div>
+				<input nameId="colorEmissive" type="color" style="margin: auto;">
+			</div>
+		</div>
+		
+		<input name="file" type="file" accept="image/x-png,image/jpeg" id="load_lightMap_1" class="input_load_substrate">
+		<label nameId="loadLightMap" for="load_lightMap_1" class="button1 button_gradient_1" style="display: none;">		
+			загрузить lightMap
+		</label>
+		
+		<label nameId="delLightMap" class="button1 button_gradient_1" style="display: block;">		
+			удалить lightMap
+		</label>		
+
 		
 
 		<div class="button1-wrap-1" nameId="setCubeCamera" style="display: none; margin: 5px 0 15px 0;">
@@ -152,16 +190,35 @@
 			</div>
 		</div>			
 		
-		<input name="file" type="file" accept="image/x-png,image/jpeg" id="load_substrate_1" class="input_load_substrate">
-		<label nameId="loadMap" for="load_substrate_1" class="button1 button_gradient_1" style="display: none;">		
-			загрузить текстуру
-		</label>
 		
-		<label nameId="delMap" class="button1 button_gradient_1" style="display: block;">		
-			удалить текстуру
-		</label>		
+		<div style="margin-top: 15px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
+			<div nameId="txt_envMapIntensity" style="text-align:center;">
+				envMapIntensity 1
+			</div>
+			<input type="range" nameId="input_envMapIntensity" min="0" max="1" value="1" step="0.01">
+		</div>
+		
+		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
+			<div nameId="txt_metalness" style="text-align:center;">
+				metalness 1
+			</div>
+			<input type="range" nameId="input_metalness" min="0" max="1" value="1" step="0.01">
+		</div>
+		
+		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
+			<div nameId="txt_roughness" style="text-align:center;">
+				roughness 0
+			</div>
+			<input type="range" nameId="input_roughness" min="0" max="1" value="0" step="0.01">
+		</div>		
 
-
+		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
+			<div nameId="txt_reflectivity" style="text-align:center;">
+				reflectivity 0.5
+			</div>
+			<input type="range" nameId="input_reflectivity" min="0" max="1" value="0.5" step="0.01">
+		</div>	
+		
 		<input name="file" type="file" accept="image/x-png,image/jpeg" id="load_normal_1" class="input_load_substrate">
 		<label nameId="loadNormalMap" for="load_normal_1" class="button1 button_gradient_1" style="display: none;">		
 			загрузить normal
@@ -184,12 +241,7 @@
 			<img src="#" id="upload-img" alt=""/>
 		</div>		
 		
-		<div style="margin-top: 15px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
-			<div nameId="txt_envMapIntensity" style="text-align:center;">
-				envMapIntensity 1
-			</div>
-			<input type="range" nameId="input_envMapIntensity" min="0" max="1" value="1" step="0.01">
-		</div>
+
 		
 		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
 			<div nameId="txt_opacity" style="text-align:center;">
@@ -217,21 +269,16 @@
 				clearcoatRoughness 0
 			</div>
 			<input type="range" nameId="input_clearcoatRoughness" min="0" max="1" value="0" step="0.01">
-		</div>		
+		</div>
+	
 		
 		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
-			<div nameId="txt_metalness" style="text-align:center;">
-				metalness 1
+			<div nameId="txt_refraction" style="text-align:center;">
+				refraction 0.5
 			</div>
-			<input type="range" nameId="input_metalness" min="0" max="1" value="1" step="0.01">
+			<input type="range" nameId="input_refraction" min="0" max="1" value="0.5" step="0.01">
 		</div>
 		
-		<div style="margin-top: 0px; font:12px Arial, Helvetica, sans-serif; color: #737373;">
-			<div nameId="txt_roughness" style="text-align:center;">
-				roughness 1
-			</div>
-			<input type="range" nameId="input_roughness" min="0" max="1" value="0" step="0.01">
-		</div>		
 	</div>				
 				
 			</div>
@@ -298,7 +345,27 @@
 				}				
 			}
 		}	 
-		//   		
+		//
+
+		// загрузка img  с компьютера
+		$('#load_lightMap_1').change(readURL_4);
+		function readURL_4(e) 
+		{
+			if (this.files[0]) 
+			{		
+				if (this.files[0].type == "image/png" || this.files[0].type == "image/jpeg")
+				{
+					var reader = new FileReader();
+					reader.onload = function (e) 
+					{												
+						setLightMap({image: e.target.result});					
+					}				
+
+					reader.readAsDataURL(this.files[0]);  					
+				}				
+			}
+		}	 
+		//     		
 	</script>
 	
 	<script src="<?=$path?>mouseClick.js?<?=$vrs?>"></script>

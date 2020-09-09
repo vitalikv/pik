@@ -9,6 +9,14 @@
 
 function setElemButtonRightPanel()
 {
+    let colorPick = document.querySelector('[nameId="colorPick"]');	
+	colorPick.value = '#ffffff';
+	colorPick.addEventListener('change', function() { changeColorTexture({ value: this.value }); });
+
+    let colorEmissive = document.querySelector('[nameId="colorEmissive"]');	
+	colorEmissive.value = '#000000';
+	colorEmissive.addEventListener('change', function() { changeColorEmissive({ value: this.value }); });	
+	
 	let elem = document.querySelector('[nameId="rightBlock"]');
 	elem.onmousedown = function(e) { e.stopPropagation(); }
 	elem.ontouchstart = function(e) { e.stopPropagation(); }
@@ -43,7 +51,15 @@ function setElemButtonRightPanel()
 
 	let input7 = document.querySelector('[nameId="input_clearcoatRoughness"]');
 	input7.onmousemove = function(e) { inputClearcoatRoughness({value: input7.value}); }	
-	input7.ontouchmove = function(e){ inputClearcoatRoughness({value: input7.value});  }	
+	input7.ontouchmove = function(e){ inputClearcoatRoughness({value: input7.value});  }
+
+	let input8 = document.querySelector('[nameId="input_reflectivity"]');
+	input8.onmousemove = function(e) { inputReflectivity({value: input8.value}); }	
+	input8.ontouchmove = function(e){ inputReflectivity({value: input8.value});  }
+
+	let input9 = document.querySelector('[nameId="input_refraction"]');
+	input9.onmousemove = function(e) { inputRefraction({value: input9.value}); }	
+	input9.ontouchmove = function(e){ inputRefraction({value: input9.value});  }	
 	
 	let elem1 = document.querySelector('[nameId="setCubeCamera"]');
 	elem1.onmousedown = function(e) { createCubeCam(); }
@@ -58,7 +74,10 @@ function setElemButtonRightPanel()
 	elem3.onmousedown = function(e) { deleteMap(); }
 
 	let elem5 = document.querySelector('[nameId="delBumpMap"]');
-	elem5.onmousedown = function(e) { delBumpMap(); }	
+	elem5.onmousedown = function(e) { delBumpMap(); }
+
+	let elem6 = document.querySelector('[nameId="delLightMap"]');
+	elem6.onmousedown = function(e) { delLightMap(); }		
 }
 
 
@@ -113,6 +132,45 @@ function inputClearcoatRoughness(cdm)
 }
 
 
+
+function inputReflectivity(cdm)
+{
+	if(!clickO.rayhit) return;
+	
+	let obj = clickO.rayhit.object;
+	let value = cdm.value;						
+	
+	let elem = document.querySelector('[nameId="txt_reflectivity"]');
+	elem.innerText = 'reflectivity '+ value;
+	
+	obj.material.reflectivity = value;
+	obj.material.needsUpdate = true;
+	
+	renderCamera();	
+}
+
+
+function inputRefraction(cdm)
+{
+	if(!clickO.rayhit) return;
+	
+	let obj = clickO.rayhit.object;
+	let value = cdm.value;						
+
+	let input = document.querySelector('[nameId="input_refraction"]');
+	input.value = value;
+	
+	let elem = document.querySelector('[nameId="txt_refraction"]');
+	elem.innerText = 'refraction '+ value;
+	
+	obj.material.refractionRatio = value;
+	obj.material.needsUpdate = true;
+	
+	renderCamera();	
+}
+
+
+
 function inputOpacity(cdm)
 {
 	if(!clickO.rayhit) return;
@@ -153,6 +211,9 @@ function inputMetalness(cdm)
 	
 	let obj = clickO.rayhit.object;
 	let value = cdm.value;						
+
+	let input = document.querySelector('[nameId="input_metalness"]');
+	input.value = value;
 	
 	let elem = document.querySelector('[nameId="txt_metalness"]');
 	elem.innerText = 'metalness '+ value;
@@ -171,9 +232,12 @@ function inputRoughness(cdm)
 	let obj = clickO.rayhit.object;
 	let value = cdm.value;						
 	
+	let input = document.querySelector('[nameId="input_roughness"]');
+	input.value = value;
+	
 	let elem = document.querySelector('[nameId="txt_roughness"]');
 	elem.innerText = 'roughness '+ value;
-	console.log(obj.material.roughness);
+	
 	obj.material.roughness = value;
 	obj.material.needsUpdate = true;
 	
@@ -363,12 +427,74 @@ function setBumpMap(cdm)
 
 
 
+function delLightMap()
+{
+	var obj = clickO.rayhit.object;	
+	if(!obj) return;
+
+	var material = obj.material;
+	
+	var elem1 = document.querySelector('[nameId="delLightMap"]');
+	var elem2 = document.querySelector('[nameId="loadLightMap"]');
+	
+	elem1.style.display = "none";
+	elem2.style.display = "block";
+	
+	if(material.lightMap)
+	{
+		material.lightMap = null;  
+		material.needsUpdate = true;
+		
+		renderCamera();
+	}	
+}
+
+
+function setLightMap(cdm)
+{
+	//if(!cdm.img) return;
+	
+	var image = new Image();
+	image.src = cdm.image;
+	
+	//var obj = cdm.obj;
+	var obj = clickO.rayhit.object;	
+	if(!obj) return;
+ 
+	image.onload = function() 
+	{
+		var material = obj.material;
+		var texture = new THREE.Texture();
+		texture.image = image;
+					
+		texture.wrapS = THREE.MirroredRepeat;
+		texture.wrapT = THREE.MirroredRepeat;
+		texture.anisotropy = renderer.capabilities.getMaxAnisotropy();		
+
+		texture.needsUpdate = true;
+		material.lightMap = texture; 
+		material.needsUpdate = true; 
+
+		var elem1 = document.querySelector('[nameId="delLightMap"]');
+		var elem2 = document.querySelector('[nameId="loadLightMap"]');	
+
+		elem1.style.display = "block";
+		elem2.style.display = "none";		
+		
+		renderCamera();
+	};
+		
+}
+
+
+
+
 
 function createCubeCam(cdm)
 {
 	var obj = clickO.rayhit.object;
 		
-	let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 1024 );
+	let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 1024, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
 	
 	let cubeCam = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);					
 	scene.add(cubeCam); 
@@ -415,6 +541,12 @@ function delCubeCam()
 {
 	var obj = clickO.rayhit.object;
 
+	let elem1 = document.querySelector('[nameId="setCubeCamera"]');
+	let elem2 = document.querySelector('[nameId="delCubeCamera"]');	
+	
+	elem1.style.display = "block";
+	elem2.style.display = "none";
+	
 	if(!obj.material.envMap) return false;
 	
 	obj.userData.cubeCam = null;
@@ -424,13 +556,38 @@ function delCubeCam()
 	obj.material.needsUpdate = true;
 	
 	renderCamera();
-	
-	let elem1 = document.querySelector('[nameId="setCubeCamera"]');
-	let elem2 = document.querySelector('[nameId="delCubeCamera"]');	
-	
-	elem1.style.display = "block";
-	elem2.style.display = "none";
 }
+
+
+
+function changeColorTexture(cdm)
+{
+	var obj = clickO.rayhit.object;
+
+	if(!obj) return;
+	
+	obj.material.color = new THREE.Color( cdm.value );
+
+	obj.material.needsUpdate = true;
+	
+	renderCamera();
+}
+
+
+function changeColorEmissive(cdm)
+{
+	var obj = clickO.rayhit.object;
+
+	if(!obj) return;
+	
+	obj.material.emissive = new THREE.Color( cdm.value );
+
+	obj.material.needsUpdate = true;
+	
+	renderCamera();
+
+}
+
 
 
 

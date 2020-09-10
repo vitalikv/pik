@@ -77,7 +77,10 @@ function setElemButtonRightPanel()
 	elem5.onmousedown = function(e) { delBumpMap(); }
 
 	let elem6 = document.querySelector('[nameId="delLightMap"]');
-	elem6.onmousedown = function(e) { delLightMap(); }		
+	elem6.onmousedown = function(e) { delLightMap(); }	
+
+	let elem7 = document.querySelector('[nameId="saveMat"]');
+	elem7.onmousedown = function(e) { saveFile(); }		
 }
 
 
@@ -87,6 +90,9 @@ function inputEnvMapIntensity(cdm)
 	
 	let obj = clickO.rayhit.object;
 	let value = cdm.value;						
+	
+	let input = document.querySelector('[nameId="input_envMapIntensity"]');
+	input.value = value;
 	
 	let elem = document.querySelector('[nameId="txt_envMapIntensity"]');
 	elem.innerText = 'envMapIntensity '+ value;
@@ -105,6 +111,9 @@ function inputClearcoat(cdm)
 	let obj = clickO.rayhit.object;
 	let value = cdm.value;						
 	
+	let input = document.querySelector('[nameId="input_clearcoat"]');
+	input.value = value;
+	
 	let elem = document.querySelector('[nameId="txt_clearcoat"]');
 	elem.innerText = 'clearcoat '+ value;
 	
@@ -120,7 +129,10 @@ function inputClearcoatRoughness(cdm)
 	if(!clickO.rayhit) return;
 	
 	let obj = clickO.rayhit.object;
-	let value = cdm.value;						
+	let value = cdm.value;
+
+	let input = document.querySelector('[nameId="input_clearcoatRoughness"]');
+	input.value = value;	
 	
 	let elem = document.querySelector('[nameId="txt_clearcoatRoughness"]');
 	elem.innerText = 'clearcoatRoughness '+ value;
@@ -139,6 +151,9 @@ function inputReflectivity(cdm)
 	
 	let obj = clickO.rayhit.object;
 	let value = cdm.value;						
+
+	let input = document.querySelector('[nameId="input_reflectivity"]');
+	input.value = value;
 	
 	let elem = document.querySelector('[nameId="txt_reflectivity"]');
 	elem.innerText = 'reflectivity '+ value;
@@ -176,7 +191,10 @@ function inputOpacity(cdm)
 	if(!clickO.rayhit) return;
 	
 	let obj = clickO.rayhit.object;
-	let value = cdm.value;						
+	let value = cdm.value;	
+
+	let input = document.querySelector('[nameId="input_opacity"]');
+	input.value = value;	
 	
 	let elem = document.querySelector('[nameId="txt_opacity"]');
 	elem.innerText = 'прозрачность '+ value;
@@ -193,7 +211,10 @@ function inputTransmission(cdm)
 	if(!clickO.rayhit) return;
 	
 	let obj = clickO.rayhit.object;
-	let value = cdm.value;						
+	let value = cdm.value;	
+
+	let input = document.querySelector('[nameId="input_transmission"]');
+	input.value = value;	
 	
 	let elem = document.querySelector('[nameId="txt_transmission"]');
 	elem.innerText = 'transmission '+ value;
@@ -566,6 +587,9 @@ function changeColorTexture(cdm)
 
 	if(!obj) return;
 	
+    let colorPick = document.querySelector('[nameId="colorPick"]');	
+	colorPick.value = cdm.value;
+	
 	obj.material.color = new THREE.Color( cdm.value );
 
 	obj.material.needsUpdate = true;
@@ -579,6 +603,9 @@ function changeColorEmissive(cdm)
 	var obj = clickO.rayhit.object;
 
 	if(!obj) return;
+	
+    let colorEmissive = document.querySelector('[nameId="colorEmissive"]');	
+	colorEmissive.value = cdm.value;
 	
 	obj.material.emissive = new THREE.Color( cdm.value );
 

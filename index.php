@@ -43,6 +43,7 @@
 	<script src="<?=$path?>js/loader/EXRLoader.js?<?=$vrs?>"></script>
 	
 	
+	
 	<div id="canvasFrame" style="position: fixed; width: 100%; height: 100%; top: 0; right: 0; overflow: hidden;">
 		<div class="frame block_select_text" style="touch-action: none;">
 				
@@ -140,6 +141,22 @@
 			объект
 		</div>
 
+<select nameId="list_material" style="width: 100%; margin: 15px 0">
+	<option value="matt">matt</option>
+	<option value="semimatt">semimatt</option>
+	<option value="semiglossy">semiglossy</option>
+	<option value="glossy">glossy</option>
+	<option value="reflective">reflective</option>
+	<option value="brushed">brushed</option>
+	<option value="polished">polished</option>
+	<option value="chrome">chrome</option>
+	<option value="mirror">mirror</option>
+	<option value="glass">glass</option>
+	<option value="frostedglass">frostedglass</option>
+	<option value="tulle">tulle</option>
+</select>
+		
+		
 		<input name="file" type="file" accept="image/x-png,image/jpeg" id="load_substrate_1" class="input_load_substrate">
 		<label nameId="loadMap" for="load_substrate_1" class="button1 button_gradient_1" style="display: none;">		
 			загрузить текстуру
@@ -278,6 +295,12 @@
 			</div>
 			<input type="range" nameId="input_refraction" min="0" max="1" value="0.5" step="0.01">
 		</div>
+		
+		<div class="button1-wrap-1" nameId="saveMat" style="margin: 25px 0 15px 0;">
+			<div class="button1 button_gradient_1" nameId="txt_saveMat" style="width: 100%; padding: 6px 0 6px 0;">
+				сохранить 
+			</div>
+		</div>		
 		
 	</div>				
 				

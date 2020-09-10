@@ -86,9 +86,9 @@ function setElemButtonRightPanel()
 
 function inputEnvMapIntensity(cdm)
 {
-	if(!clickO.rayhit) return;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
+	if(!obj) return;
 	
-	let obj = clickO.rayhit.object;
 	let value = cdm.value;						
 	
 	let input = document.querySelector('[nameId="input_envMapIntensity"]');
@@ -106,9 +106,9 @@ function inputEnvMapIntensity(cdm)
 
 function inputClearcoat(cdm)
 {
-	if(!clickO.rayhit) return;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
+	if(!obj) return;
 	
-	let obj = clickO.rayhit.object;
 	let value = cdm.value;						
 	
 	let input = document.querySelector('[nameId="input_clearcoat"]');
@@ -126,9 +126,9 @@ function inputClearcoat(cdm)
 
 function inputClearcoatRoughness(cdm)
 {
-	if(!clickO.rayhit) return;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
+	if(!obj) return;
 	
-	let obj = clickO.rayhit.object;
 	let value = cdm.value;
 
 	let input = document.querySelector('[nameId="input_clearcoatRoughness"]');
@@ -147,9 +147,9 @@ function inputClearcoatRoughness(cdm)
 
 function inputReflectivity(cdm)
 {
-	if(!clickO.rayhit) return;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
+	if(!obj) return;
 	
-	let obj = clickO.rayhit.object;
 	let value = cdm.value;						
 
 	let input = document.querySelector('[nameId="input_reflectivity"]');
@@ -167,9 +167,9 @@ function inputReflectivity(cdm)
 
 function inputRefraction(cdm)
 {
-	if(!clickO.rayhit) return;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
+	if(!obj) return;
 	
-	let obj = clickO.rayhit.object;
 	let value = cdm.value;						
 
 	let input = document.querySelector('[nameId="input_refraction"]');
@@ -188,9 +188,9 @@ function inputRefraction(cdm)
 
 function inputOpacity(cdm)
 {
-	if(!clickO.rayhit) return;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
+	if(!obj) return;
 	
-	let obj = clickO.rayhit.object;
 	let value = cdm.value;	
 
 	let input = document.querySelector('[nameId="input_opacity"]');
@@ -208,9 +208,9 @@ function inputOpacity(cdm)
 
 function inputTransmission(cdm)
 {
-	if(!clickO.rayhit) return;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
+	if(!obj) return;
 	
-	let obj = clickO.rayhit.object;
 	let value = cdm.value;	
 
 	let input = document.querySelector('[nameId="input_transmission"]');
@@ -228,9 +228,9 @@ function inputTransmission(cdm)
 
 function inputMetalness(cdm)
 {
-	if(!clickO.rayhit) return;
-	
-	let obj = clickO.rayhit.object;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
+	if(!obj) return;
+
 	let value = cdm.value;						
 
 	let input = document.querySelector('[nameId="input_metalness"]');
@@ -248,9 +248,9 @@ function inputMetalness(cdm)
 
 function inputRoughness(cdm)
 {
-	if(!clickO.rayhit) return;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
+	if(!obj) return;
 	
-	let obj = clickO.rayhit.object;
 	let value = cdm.value;						
 	
 	let input = document.querySelector('[nameId="input_roughness"]');
@@ -513,9 +513,10 @@ function setLightMap(cdm)
 
 function createCubeCam(cdm)
 {
-	var obj = clickO.rayhit.object;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
+	if(!obj) return;
 		
-	let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 1024, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+	let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 64, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
 	
 	let cubeCam = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);					
 	scene.add(cubeCam); 
@@ -552,6 +553,8 @@ function updateCubeCam(cdm)
 	obj.visible = true;
 	
 	obj.material.needsUpdate = true;
+	
+	disposeNode(obj);
 	
 	renderCamera();
 }

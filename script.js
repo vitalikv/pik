@@ -609,7 +609,8 @@ document.addEventListener("keydown", function (e)
 	}	
 
 
-	if(e.keyCode == 66) { switchCamera3D(); } 	// b
+	//if(e.keyCode == 66) { switchCamera3D(); } 	// b
+	if(e.keyCode == 66) { addSphere(); } 	// b
 } );
 
 document.addEventListener("keydown", function (e) 
@@ -1114,37 +1115,79 @@ function setStartSphereGeometry()
 	}
 	
 	let name = document.querySelector('[nameId="list_material"]').value;
-	//setMatSetting_1({type: name})
+	setMatSetting_1({type: name})
 	
 
-	addSphere();
+	
 }
 
 
 function addSphere()
 {
-	return;
-	var geom = new THREE.SphereGeometry( 1, 32, 32 );	
+	var geom = new THREE.SphereGeometry( 0.4, 32, 32 );	
 	geom.faceVertexUvs[1] = geom.faceVertexUvs[0];
-	
-	var mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true });
-	
-	// instantiate a loader
-	var loader = new THREE.MaterialLoader();
 
-	// load a resource
-	loader.load('t/fileJson.json', function ( material ) 
-	{		
-		var obj = new THREE.Mesh(geom, material);
-		scene.add( obj );
-console.log(111, material);
-		obj.position.set(0, 1, -3);	
+	var arr = [];
+	arr[arr.length] = 'matt';
+	arr[arr.length] = 'semimatt';
+	arr[arr.length] = 'semiglossy';
+	arr[arr.length] = 'glossy';
+	arr[arr.length] = 'reflective';
+	arr[arr.length] = 'brushed';
+	arr[arr.length] = 'polished';
+	arr[arr.length] = 'chrome';
+	arr[arr.length] = 'mirror';
+	arr[arr.length] = 'glass';
+	arr[arr.length] = 'frostedglass';
+	arr[arr.length] = 'tulle';
+	
+	
+	for ( var i = 0; i < arr.length; i++ )
+	{
+		for ( var i2 = 0; i2 < 100; i2++ )
+		{
+			var mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true });
+			var obj = new THREE.Mesh(geom, mat);
+			scene.add( obj );
+			obj.position.set(i, 1, i2);
 
-		renderCamera();	
-	});	
+			setMatSetting_1({type: arr[i], obj: obj})
+		}
+	}
+
+	
+	renderCamera();	
+	
+	
 	
 }
 
+function disposeNode(node) 
+{
+	if (node instanceof THREE.Mesh) 
+	{
+		if (node.geometry) { node.geometry.dispose(); }
+		
+		if (node.material) 
+		{
+			var materialArray = [];
+			
+			if(node.material instanceof Array) { materialArray = node.material; }
+			else { materialArray = [node.material]; }
+			
+			materialArray.forEach(function (mtrl, idx) 
+			{
+				if (mtrl.map) mtrl.map.dispose();
+				if (mtrl.lightMap) mtrl.lightMap.dispose();
+				if (mtrl.bumpMap) mtrl.bumpMap.dispose();
+				if (mtrl.normalMap) mtrl.normalMap.dispose();
+				if (mtrl.specularMap) mtrl.specularMap.dispose();
+				if (mtrl.envMap) mtrl.envMap.dispose();
+				mtrl.dispose();
+			});
+		}
+	}
+}
 
 
 
@@ -1204,115 +1247,36 @@ async function setMatSetting_1(cdm)
 {
 	let name = cdm.type;
 	
-	var obj = clickO.rayhit.object;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
 	
 	if(!obj) return;
 	
 	let opacity, metalness, roughness;
 	let cubeCam = false;
 		
-	//var response = await fetch('t/'+name+'.json', { method: 'GET' });
-	//var json = await response.json();	
-	//console.log(json);
-	
-	if(/semimatt/i.test( name ))
-	{
-		metalness = 0.1;
-		roughness = 0.96;
-		opacity	= 1;
-		cubeCam = true;				
-	}
-	else if(/matt/i.test( name ))
-	{
-		metalness = 0.0;
-		roughness = 1;
-		opacity	= 1;		
-	}	
-	else if(/semiglossy/i.test( name ))
-	{
-		metalness = 0.2;
-		roughness = 0.8;
-		opacity	= 1;
-		cubeCam = true;				
-	}
-	else if(/glossy/i.test( name ))
-	{
-		metalness = 0.3;
-		roughness = 0.6;
-		opacity	= 1;
-		cubeCam = true;				
-	}
-	else if(/reflective/i.test( name ))
-	{
-		metalness = 0.8;
-		roughness = 0.1;
-		opacity	= 1;
-		cubeCam = true;					
-	}
-	else if(/brushed/i.test( name ))
-	{
-		metalness = 0.1;
-		roughness = 0.9;
-		opacity	= 1;
-		cubeCam = true;				
-	}
-	else if(/polished/i.test( name ))
-	{
-		metalness = 0.3;
-		roughness = 0.5;
-		opacity	= 1;
-		cubeCam = true;				
-	}
-	else if(/chrome/i.test( name ))
-	{
-		metalness = 0.8;
-		roughness = 0.1;
-		opacity	= 1;
-		cubeCam = true;					
-	}
-	else if(/mirror/i.test( name ))
-	{
-		metalness = 1;
-		roughness = 0;
-		opacity	= 1;		
-		cubeCam = true;					
-	}
-	else if(/glass/i.test( name ))
-	{
-		opacity = 0.3;
-		metalness = 0.5;
-		roughness = 0.5;				
-	}
-	else if(/frostedglass/i.test( name ))
-	{
-		opacity = 0.5;
-		metalness = 0.3;
-		roughness = 0.9;				
-	}
-	else if(/tulle/i.test( name ))
-	{
-		opacity = 0.8;
-		metalness = 0.0;
-		roughness = 1;					
-	}			
+	var response = await fetch('t/'+name+'.json', { method: 'GET' });
+	var params = await response.json();	
+					
 
-	inputEnvMapIntensity({value: 1});
-	inputMetalness({value: metalness});
-	inputRoughness({value: roughness});
-	inputReflectivity({value: 1});
+	inputEnvMapIntensity({obj: obj, value: params.envMapIntensity});
+	inputMetalness({obj: obj, value: params.metalness});
+	inputRoughness({obj: obj, value: params.roughness});
+	inputReflectivity({obj: obj, value: params.reflectivity});
 	
-	inputOpacity({value: opacity});
-	inputTransmission({value: 0});
-	inputClearcoat({value: 0});
-	inputClearcoatRoughness({value: 0});
-	inputRefraction({value: obj.material.refractionRatio});
+	inputOpacity({obj: obj, value: params.opacity});
+	inputTransmission({obj: obj, value: params.transmission});
+	inputClearcoat({obj: obj, value: params.clearcoat});
+	inputClearcoatRoughness({obj: obj, value: params.clearcoatRoughness});
+	inputRefraction({obj: obj, value: params.refractionRatio});
 	
-	changeColorTexture({value: '#ffffff'});
+	changeColorTexture({obj: obj, value: params.color});
+	changeColorEmissive({ obj: obj, value: params.emissive });
 	
-	if(cubeCam) { createCubeCam(); }
-	else { delCubeCam(); }
+	if(params.envMap) { createCubeCam({obj: obj}); }
+	else { delCubeCam(); disposeNode(obj); }
 	
-	console.log(cubeCam, metalness, roughness);
+	
+	//console.log(params);
 	
 	obj.material.needsUpdate = true;
 	renderCamera();	

@@ -561,9 +561,9 @@ function updateCubeCam(cdm)
 
 
 
-function delCubeCam()
+function delCubeCam(cdm)
 {
-	var obj = clickO.rayhit.object;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
 
 	let elem1 = document.querySelector('[nameId="setCubeCamera"]');
 	let elem2 = document.querySelector('[nameId="delCubeCamera"]');	
@@ -586,7 +586,7 @@ function delCubeCam()
 
 function changeColorTexture(cdm)
 {
-	var obj = clickO.rayhit.object;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
 
 	if(!obj) return;
 	
@@ -603,7 +603,7 @@ function changeColorTexture(cdm)
 
 function changeColorEmissive(cdm)
 {
-	var obj = clickO.rayhit.object;
+	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
 
 	if(!obj) return;
 	

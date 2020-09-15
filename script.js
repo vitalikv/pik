@@ -739,6 +739,7 @@ $(document).ready(function ()
 	//var url = 'https://files.planoplan.com/upload/userdata/1/31/projects/2044431/poplight/flat.json';
 	//var url = 'https://files.planoplan.com/upload/userdata/1/352450/projects/896886/poplight/flat.json';
 	//var url = 'https://files.planoplan.com/upload/userdata/1/2/projects/1986339/poplight/flat.json';
+	var url = 'https://files.planoplan.com/upload/userdata/1/352450/projects/1928943/poplight/flat.json';
 	
 	if(url_2) url = url_2+'?v='+new Date().getTime();
 	
@@ -838,7 +839,19 @@ function loadStartSceneJson(cdm)
 					//child.material.transparent = true;
 				}							
 			}
-		});		
+		});
+
+
+		obj.traverse(function(child) 
+		{
+			if(child.isMesh) 
+			{ 		
+				if(child.material)
+				{
+					setMatSetting_1({obj: child})
+				}							
+			}
+		});			
 		
 		wallAfterRender_3();
 		
@@ -1171,9 +1184,10 @@ function addSphere()
 	
 	for ( var i = 0; i < arr.length; i++ )
 	{
-		for ( var i2 = 0; i2 < 100; i2++ )
+		for ( var i2 = 0; i2 < 1; i2++ )
 		{
 			var mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true });
+			mat.name = arr[i];
 			var obj = new THREE.Mesh(geom, mat);
 			scene.add( obj );
 			obj.position.set(i, 1, i2);
@@ -1272,41 +1286,73 @@ function saveFile()
 
 async function setMatSetting_1(cdm)
 {
-	let name = cdm.type;
+	//let name = cdm.type;
 	
 	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
 	
 	if(!obj) return;
 	
-	let opacity, metalness, roughness;
-	let cubeCam = false;
-		
-	var response = await fetch('t/'+name+'.json', { method: 'GET' });
-	var params = await response.json();	
-					
+	var arr = [];
+	arr[arr.length] = 'semimatt';
+	arr[arr.length] = 'matt';	
+	arr[arr.length] = 'semiglossy';
+	arr[arr.length] = 'glossy';
+	arr[arr.length] = 'reflective';
+	arr[arr.length] = 'brushed';
+	arr[arr.length] = 'polished';
+	arr[arr.length] = 'chrome';
+	arr[arr.length] = 'mirror';
+	arr[arr.length] = 'glass';
+	arr[arr.length] = 'frostedglass';
+	arr[arr.length] = 'tulle';	
+	
+	for ( var i = 0; i < arr.length; i++ )
+	{		
+		if(new RegExp( arr[i] ,'i').test( obj.material.name ))
+		{	
+			let color = obj.material.color;
+			let lightMap = obj.material.lightMap;
+			let userData = obj.material.userData;
+			
+			obj.material = new THREE.MeshPhysicalMaterial({ color: color, transparent: true, lightMap: lightMap });
+			
+			obj.material.userData = userData;
+			
+			let name = arr[i];
 
-	inputEnvMapIntensity({obj: obj, value: params.envMapIntensity});
-	inputMetalness({obj: obj, value: params.metalness});
-	inputRoughness({obj: obj, value: params.roughness});
-	inputReflectivity({obj: obj, value: params.reflectivity});
+			let opacity, metalness, roughness;
+			let cubeCam = false;
+				
+			var response = await fetch('t/'+name+'.json', { method: 'GET' });
+			var params = await response.json();	
+							
+
+			inputEnvMapIntensity({obj: obj, value: params.envMapIntensity});
+			inputMetalness({obj: obj, value: params.metalness});
+			inputRoughness({obj: obj, value: params.roughness});
+			inputReflectivity({obj: obj, value: params.reflectivity});
+			
+			inputOpacity({obj: obj, value: params.opacity});
+			inputTransmission({obj: obj, value: params.transmission});
+			inputClearcoat({obj: obj, value: params.clearcoat});
+			inputClearcoatRoughness({obj: obj, value: params.clearcoatRoughness});
+			inputRefraction({obj: obj, value: params.refractionRatio});
+			
+			//changeColorTexture({obj: obj, value: params.color});
+			//changeColorEmissive({ obj: obj, value: params.emissive });
+			
+			if(params.envMap) { createCubeCam({obj: obj}); }
+			else { delCubeCam({obj: obj}); disposeNode(obj); }
+			
+			
+			//console.log(params);
+			
+			obj.material.needsUpdate = true;
+			renderCamera();	
+			
+		}
+	}	
 	
-	inputOpacity({obj: obj, value: params.opacity});
-	inputTransmission({obj: obj, value: params.transmission});
-	inputClearcoat({obj: obj, value: params.clearcoat});
-	inputClearcoatRoughness({obj: obj, value: params.clearcoatRoughness});
-	inputRefraction({obj: obj, value: params.refractionRatio});
-	
-	changeColorTexture({obj: obj, value: params.color});
-	changeColorEmissive({ obj: obj, value: params.emissive });
-	
-	if(params.envMap) { createCubeCam({obj: obj}); }
-	else { delCubeCam(); disposeNode(obj); }
-	
-	
-	//console.log(params);
-	
-	obj.material.needsUpdate = true;
-	renderCamera();	
 }
 
 

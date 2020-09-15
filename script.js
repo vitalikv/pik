@@ -713,7 +713,13 @@ $(document).ready(function ()
 { 
 	docReady = true; 	
 		 	
-	//loadStartScene();		
+	//loadStartScene();	
+
+	var paramsString = document.location.search; // ?page=4&limit=10&sortby=desc  
+	var searchParams = new URLSearchParams(paramsString);
+	
+	var url_2 = searchParams.get("flat");
+	console.log(555555, searchParams.get("flat")); // 4
 
 	if(1==2)
 	{
@@ -729,9 +735,12 @@ $(document).ready(function ()
 		
 	}
 	
-	//var url = 'https://files.planoplan.com/upload/userdata/1/2/projects/2001214/poplight/Falt_json.json';
-	var url = 'https://files.planoplan.com/upload/userdata/1/31/projects/2044431/poplight/flat.json';
+	var url = 'https://files.planoplan.com/upload/userdata/1/2/projects/2001214/poplight/Falt_json.json';
+	//var url = 'https://files.planoplan.com/upload/userdata/1/31/projects/2044431/poplight/flat.json';
 	//var url = 'https://files.planoplan.com/upload/userdata/1/352450/projects/896886/poplight/flat.json';
+	//var url = 'https://files.planoplan.com/upload/userdata/1/2/projects/1986339/poplight/flat.json';
+	
+	if(url_2) url = url_2+'?v='+new Date().getTime();
 	
 	loadStartSceneJson({url: url});
 	
@@ -757,11 +766,12 @@ function loadStartSceneJson(cdm)
 		objF = obj;
 		
 		infProject.scene.obj = [objF];
+		
+		
+		
 		//obj.position.set(-92, 0, -43);
 		
-		obj.updateMatrixWorld( true );
-		
-		//getBoundObject_1({obj: obj});
+		getBoundObject_1({obj: obj});
 		
 		obj.traverse(function(child) 
 		{
@@ -1297,6 +1307,67 @@ async function setMatSetting_1(cdm)
 	
 	obj.material.needsUpdate = true;
 	renderCamera();	
+}
+
+
+
+function getBoundObject_1(cdm)
+{
+	var obj = cdm.obj;
+	
+	if(!obj) return;
+	
+	var arr = [];
+	
+	obj.updateMatrixWorld(true);
+	
+	obj.traverse(function(child) 
+	{
+		if (child instanceof THREE.Mesh)
+		{
+			if(child.geometry) { arr[arr.length] = child; }
+		}
+	});	
+
+	//scene.updateMatrixWorld();
+	
+	var v = [];
+	
+	for ( var i = 0; i < arr.length; i++ )
+	{		
+		arr[i].geometry.computeBoundingBox();	
+		arr[i].geometry.computeBoundingSphere();
+
+		var bound = arr[i].geometry.boundingBox;
+		
+		//console.log(111111, arr[i], bound);
+
+		v[v.length] = new THREE.Vector3(bound.min.x, bound.min.y, bound.max.z).applyMatrix4( arr[i].matrixWorld );
+		v[v.length] = new THREE.Vector3(bound.max.x, bound.min.y, bound.max.z).applyMatrix4( arr[i].matrixWorld );
+		v[v.length] = new THREE.Vector3(bound.min.x, bound.min.y, bound.min.z).applyMatrix4( arr[i].matrixWorld );
+		v[v.length] = new THREE.Vector3(bound.max.x, bound.min.y, bound.min.z).applyMatrix4( arr[i].matrixWorld );
+
+		v[v.length] = new THREE.Vector3(bound.min.x, bound.max.y, bound.max.z).applyMatrix4( arr[i].matrixWorld );
+		v[v.length] = new THREE.Vector3(bound.max.x, bound.max.y, bound.max.z).applyMatrix4( arr[i].matrixWorld );
+		v[v.length] = new THREE.Vector3(bound.min.x, bound.max.y, bound.min.z).applyMatrix4( arr[i].matrixWorld );
+		v[v.length] = new THREE.Vector3(bound.max.x, bound.max.y, bound.min.z).applyMatrix4( arr[i].matrixWorld );		
+	}
+	
+	var bound = { min : { x : 999999, y : 999999, z : 999999 }, max : { x : -999999, y : -999999, z : -999999 } };
+	
+	for(var i = 0; i < v.length; i++)
+	{
+		if(v[i].x < bound.min.x) { bound.min.x = v[i].x; }
+		if(v[i].x > bound.max.x) { bound.max.x = v[i].x; }
+		if(v[i].y < bound.min.y) { bound.min.y = v[i].y; }
+		if(v[i].y > bound.max.y) { bound.max.y = v[i].y; }			
+		if(v[i].z < bound.min.z) { bound.min.z = v[i].z; }
+		if(v[i].z > bound.max.z) { bound.max.z = v[i].z; }		
+	}
+
+	
+	obj.position.set(-((bound.max.x - bound.min.x)/2 + bound.min.x), 0, -((bound.max.z - bound.min.z)/2 + bound.min.z));
+	console.log(9999999999, obj.position, bound);
 }
 
 

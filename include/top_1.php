@@ -11,7 +11,7 @@
 			</div>	
 		</div>	
 
-		<div class="button1-wrap-1" nameId='butt_del_obj'>
+		<div class="button1-wrap-1" nameId='butt_del_obj' style="display: none;">
 			<div class="button1 button_gradient_1"> 
 				<img src="img/waste.png">
 			</div>	
@@ -53,12 +53,15 @@
 
 
 
-<div class="window_main_load_obj" nameId="window_main_load_obj" ui_1="" style="display: none;">
+<div class="window_main_load_obj" nameId="window_main_load_obj" ui_1="" style="display: none; width: 420px; height: 100px;">
 	<div class="modal_window_close" nameId="button_close_main_load_obj">
 		+
 	</div>
-	<div style="width: 180px; height: 160px; margin: auto; padding-top: 30px;">
+	<div style="width: 380px; height: 100px; margin: auto; padding-top: 50px;">
 
+		<input type="text" nameid="input_link_obj_1" value="">
+		
+		<!--
 		<input name="file" type="file" id="load_obj_glb" class="input_load_substrate">
 		<label for="load_obj_glb" class="button1 button_gradient_1" style="margin: auto;">
 			загрузить glb
@@ -68,6 +71,7 @@
 		<label for="load_obj_fbx" class="button1 button_gradient_1" style="margin: 30px auto auto auto;">
 			загрузить fbx
 		</label>
+		-->
 	</div>			
 </div>	
 

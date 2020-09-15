@@ -606,7 +606,16 @@ document.addEventListener("keydown", function (e)
 	if(clickO.keys[18] && e.keyCode == 90) 	// alt + z
 	{ 
 		setToneMapping();
-	}	
+	}
+
+
+	if(e.keyCode == 13) 	// alt + z
+	{ 
+		var url = $('[nameId="input_link_obj_1"]').val(); 
+		var url = url.trim();
+
+		loadStartSceneJson({url: url});
+	}		
 
 
 	//if(e.keyCode == 66) { switchCamera3D(); } 	// b
@@ -720,7 +729,11 @@ $(document).ready(function ()
 		
 	}
 	
-	loadStartSceneJson();
+	//var url = 'https://files.planoplan.com/upload/userdata/1/2/projects/2001214/poplight/Falt_json.json';
+	var url = 'https://files.planoplan.com/upload/userdata/1/31/projects/2044431/poplight/flat.json';
+	//var url = 'https://files.planoplan.com/upload/userdata/1/352450/projects/896886/poplight/flat.json';
+	
+	loadStartSceneJson({url: url});
 	
 	$('[nameId="list_material"]').change(function() { setMatSetting_1({type: $( this ).val()}); });
 	
@@ -728,19 +741,23 @@ $(document).ready(function ()
 
 
 
-function loadStartSceneJson()
+function loadStartSceneJson(cdm)
 {
 	var loader = new THREE.ObjectLoader();
-	loader.load( 'https://files.planoplan.com/upload/userdata/1/2/projects/2001214/poplight/Falt_json.json', function ( obj ) 						
+	
+	deleteObj();
+	
+	loader.load( cdm.url, function ( obj ) 						
 	{ 
 		//var obj = obj.scene.children[0];
 		scene.add( obj );
-		
+		console.log(obj);
 		changeCamera(camera3D);
 		
 		objF = obj;
 		
-		obj.position.set(-92, 0, -43);
+		infProject.scene.obj = [objF];
+		//obj.position.set(-92, 0, -43);
 		
 		obj.updateMatrixWorld( true );
 		
@@ -815,7 +832,7 @@ function loadStartSceneJson()
 		
 		wallAfterRender_3();
 		
-		setStartSphereGeometry();
+		//setStartSphereGeometry();
 		
 		renderCamera();
 		

@@ -136,7 +136,7 @@
 					</div>					
 				</div>	
 
-	<div nameId="rightBlock" style="display: block; position: absolute; right: 50px; bottom: 80px; border:solid 1px #b3b3b3; background: #f5f5f5;">
+	<div nameId="rightBlock" style="display: none; position: absolute; right: 50px; bottom: 80px; border:solid 1px #b3b3b3; background: #f5f5f5;">
 		<div nameId="textSphere" style="margin: 5px; font:18px Arial, Helvetica, sans-serif; color: #737373; text-align:center;">
 			объект
 		</div>

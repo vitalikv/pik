@@ -141,6 +141,11 @@ infProject.settings = {};
 infProject.settings.lightMap = {type: 'jpg', act: true};
 //createPointGrid(100);
 
+
+var typeCamMove = 1;	// перемещение как в планоплане
+//var typeCamMove = 2;	// перемещение камеры по плоскости
+
+
 var zoomLoop = '';
 var clickO = {keys:[]};
 	

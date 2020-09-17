@@ -176,12 +176,15 @@ function clickSetCamera3D( event, click )
 	{
 		
 		planeMath.position.copy( infProject.camera.d3.targetO.position );
-		//planeMath.rotation.copy( camera.rotation );
-		planeMath.rotation.set(-Math.PI/2, 0, 0);
+		planeMath.rotation.copy( camera.rotation );
+		//planeMath.rotation.set(-Math.PI/2, 0, 0);
 		planeMath.updateMatrixWorld();
 
 		var intersects = rayIntersect( event, planeMath, 'one' );	
-		camera3D.userData.camera.click.pos = intersects[0].point;  
+		camera3D.userData.camera.click.pos = intersects[0].point; 
+
+		clickInf.st.clientX = event.clientX;
+		clickInf.st.clientY = event.clientY;		
 	}
 }
 
@@ -249,16 +252,58 @@ function cameraMove3D( event )
 				}								
 			}
 			
-			if(1==1)
-			{
-			var intersects = rayIntersect( event, planeMath, 'one' );
-			var offset = new THREE.Vector3().subVectors( camera3D.userData.camera.click.pos, intersects[0].point );
-			camera.position.add( offset );
-			infProject.camera.d3.targetO.position.add( offset );
+		if ( vk_click == 'right' )    
+		{ //console.log(3, vk_click);
+			newCameraPosition = null;
 			
-			//wallAfterRender_2();
-			wallAfterRender_3();
+			if(event.targetTouches)
+			{
+				if(event.targetTouches.length == 2)	
+				{
+					
+					let ratio2 = new THREE.Vector2(event.targetTouches[0].clientX, event.targetTouches[0].clientY).distanceTo(new THREE.Vector2(event.targetTouches[1].clientX, event.targetTouches[1].clientY));
+					
+					touchCameraZoom3D( clickInf.ratio1/ratio2 );
+					
+					event.clientX = (event.targetTouches[1].clientX - clickInf.th2.clientX) + event.targetTouches[0].clientX;
+					event.clientY = (event.targetTouches[1].clientY - clickInf.th2.clientY) + event.targetTouches[0].clientY;
+				}								
 			}
+			
+			if(typeCamMove == 1)
+			{
+				let intersects = rayIntersect( event, planeMath, 'one' );
+				if(!intersects[0]) return;
+				let offset = new THREE.Vector3().subVectors( camera3D.userData.camera.click.pos, intersects[0].point );
+				//offset.y = 0;
+				camera.position.add( offset );
+				infProject.camera.d3.targetO.position.add( offset );							
+			}
+			else
+			{
+				let mX = event.clientX - clickInf.st.clientX;
+				let mY = event.clientY - clickInf.st.clientY;
+				
+				let x = Math.sin( camera.rotation.y );
+				let z = Math.cos( camera.rotation.y );
+				let dir = new THREE.Vector3( -x, 0, -z );
+				dir = new THREE.Vector3().addScaledVector( dir, mY * 0.01 );
+				camera.position.add( dir );
+				infProject.camera.d3.targetO.position.add( dir );
+
+				x = Math.sin( camera.rotation.y - 1.5707963267948966 );
+				z = Math.cos( camera.rotation.y - 1.5707963267948966 );
+				dir = new THREE.Vector3( x, 0, z );
+				dir = new THREE.Vector3().addScaledVector( dir, mX * 0.01 );
+				camera.position.add( dir );
+				infProject.camera.d3.targetO.position.add( dir );
+			}
+			
+			clickInf.st.clientX = event.clientX;
+			clickInf.st.clientY = event.clientY;
+		
+			wallAfterRender_3();
+		}
 		}
 		
 	}

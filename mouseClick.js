@@ -2,6 +2,7 @@
 
 var dblclickPos = null;
 var clickInf = {event: null, th1: {clientX:0, clientY:0}, th2: {clientX:0, clientY:0}, ratio1: 0, camDist: 0 };
+clickInf.st = {clientX:0, clientY:0};
 
 var onMouseDownPosition = new THREE.Vector2();
 var long_click = false;
@@ -60,6 +61,9 @@ console.log(event);
 		
 		event.clientX = event.targetTouches[0].clientX;
 		event.clientY = event.targetTouches[0].clientY;
+		
+		clickInf.st.clientX = event.clientX;
+		clickInf.st.clientY = event.clientY;		
 		
 		if(event.targetTouches.length == 1)
 		{

@@ -1,4 +1,4 @@
-<?php $vrs = '=47' ?>
+<?php $vrs = '='.time() ?>
 
 <!DOCTYPE html>
 <html lang="en">

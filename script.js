@@ -786,24 +786,19 @@ function loadStartSceneJson(cdm)
 					child.userData.wall = {};
 					child.userData.wall.show = true;
 					
-					//child.geometry.computeBoundingBox();
-					//obj3D.rotation.set(rot.x, -rot.y, rot.z);
-					//getBoundObject_1({obj: child});
-					
-					var dir = child.getWorldDirection(new THREE.Vector3());
 					
 					//scene.add( new THREE.BoxHelper( child, 0xff0000 ) );
 					//console.log(child.name, dir, child.geometry.boundingBox);
 					
-					var dir = new THREE.Vector3(-child.userData.direction.x, child.userData.direction.y, -child.userData.direction.z); 
+					let dir = new THREE.Vector3(child.userData.direction.x, child.userData.direction.y, child.userData.direction.z); 
 					
 					child.userData.direction = dir; 
 					
-					if(1==2)
+					if(child.name=='HiddenObject_2' && 1==2)
 					{
-						var pos = obj.localToWorld( child.position.clone() );
+						let pos = obj.localToWorld( child.position.clone() );
 						pos.y = 1;
-						var arrowHelper = new THREE.ArrowHelper( dir, pos, 1, 0xff0000 );
+						let arrowHelper = new THREE.ArrowHelper( dir, pos, 1, 0xff0000 );
 						scene.add( arrowHelper );											
 					}
 				}
@@ -848,7 +843,7 @@ function loadStartSceneJson(cdm)
 			{ 		
 				if(child.material)
 				{
-					setMatSetting_1({obj: child})
+					//setMatSetting_1({obj: child})
 				}							
 			}
 		});			

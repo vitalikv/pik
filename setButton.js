@@ -62,25 +62,25 @@ function setElemButtonRightPanel()
 	input9.ontouchmove = function(e){ inputRefraction({value: input9.value});  }	
 	
 	let elem1 = document.querySelector('[nameId="setCubeCamera"]');
-	elem1.onmousedown = function(e) { createCubeCam(); }
+	elem1.onmousedown = function(e) { createCubeCam({}); }
 
 	let elem4 = document.querySelector('[nameId="delCubeCamera"]');
-	elem4.onmousedown = function(e) { delCubeCam(); }		
+	elem4.onmousedown = function(e) { delCubeCam({}); }		
 
 	let elem2 = document.querySelector('[nameId="delNormalMap"]');
-	elem2.onmousedown = function(e) { deleteNormalMap(); }	
+	elem2.onmousedown = function(e) { deleteNormalMap({}); }	
 
 	let elem3 = document.querySelector('[nameId="delMap"]');
-	elem3.onmousedown = function(e) { deleteMap(); }
+	elem3.onmousedown = function(e) { deleteMap({}); }
 
 	let elem5 = document.querySelector('[nameId="delBumpMap"]');
-	elem5.onmousedown = function(e) { delBumpMap(); }
+	elem5.onmousedown = function(e) { delBumpMap({}); }
 
 	let elem6 = document.querySelector('[nameId="delLightMap"]');
-	elem6.onmousedown = function(e) { delLightMap(); }	
+	elem6.onmousedown = function(e) { delLightMap({}); }	
 
 	let elem7 = document.querySelector('[nameId="saveMat"]');
-	elem7.onmousedown = function(e) { saveFile(); }		
+	elem7.onmousedown = function(e) { saveFile({}); }		
 }
 
 

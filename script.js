@@ -760,6 +760,9 @@ function loadStartSceneJson(cdm)
 {
 	var loader = new THREE.ObjectLoader();
 	
+	let divLoad = document.querySelector('[nameId="loader"]');
+	let elemLoad = document.querySelector('[nameId="progress_load"]');	
+	
 	deleteObj();
 	
 	loader.load( cdm.url, function ( obj ) 						
@@ -813,31 +816,6 @@ function loadStartSceneJson(cdm)
 			if(child.isMesh) 
 			{ 
 		
-				if(child.material)
-				{
-					var userData = {};
-					
-					if(child.material.map)
-					{
-						userData.map = child.material.map;
-						userData.mapAct = true;
-					}
-					if(child.material.lightMap)
-					{
-						userData.lightMap = 'jpg';
-						userData.jpg = child.material.lightMap;
-						userData.lightmapName = child.material.lightMap.name;
-					}
-
-					userData.opacity = child.material.opacity;
-					
-					child.material.transparent = true;
-					
-					child.material.userData = userData;
-					
-					//child.material.opacity = 0.2;
-					//child.material.transparent = true;
-				}							
 			}
 		});
 
@@ -847,12 +825,47 @@ function loadStartSceneJson(cdm)
 			if(child.isMesh) 
 			{ 		
 				if(child.material)
-				{
-					//setMatSetting_1({obj: child})
+				{					
+					setMatSetting_1({obj: child})
 				}							
 			}
+			
+			if(child.material)
+			{
+				var userData = {};
+				
+				if(child.material.map)
+				{
+					userData.map = child.material.map;
+					userData.mapAct = true;
+				}
+				if(child.material.lightMap)
+				{
+					userData.lightMap = 'jpg';
+					userData.jpg = child.material.lightMap;
+					userData.lightmapName = child.material.lightMap.name;
+				}
+
+				userData.opacity = child.material.opacity;					
+				child.material.transparent = true;					
+				child.material.userData = userData;
+				
+				if(/illum/i.test( child.material.name ) && 1==1) 
+				{
+					let m1 = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0, roughness: 1 });
+					m1.userData = userData;
+					m1.map = child.material.map;
+					m1.lightMap = (child.material.lightMap) ? child.material.lightMap : lightMap_1;
+					m1.opacity = child.material.opacity;
+					
+					child.material = m1;
+					child.material.needsUpdate = true;
+				}
+			}							
+			
 		});			
 		
+		divLoad.style.display = "none";
 		wallAfterRender_3();
 		
 		//setStartSphereGeometry();
@@ -862,7 +875,27 @@ function loadStartSceneJson(cdm)
 		$('[nameId="butt_camera_3D"]').hide(); 
 		$('[nameId="butt_camera_2D"]').show();
 		$('[nameId="butt_cam_walk"]').show();				
-	});
+	},
+	function ( xhr ) 
+	{
+		var val = 0;
+		
+		if(xhr.lengthComputable)
+		{ 
+			val = Math.round( xhr.loaded / xhr.total * 100 ) + '%';
+		}
+		else
+		{
+			//console.log(xhr.target.getResponseHeader("Content-Type"));
+			let total = parseInt(xhr.target.getResponseHeader('content-length'), 10);
+			val = Math.round( xhr.loaded / total * 10 ) + '%';
+		}
+		 
+		 //console.log(val);
+		 elemLoad.innerText = 'загрузка ' + val;		
+
+	});	
+
 
 
 	
@@ -1135,22 +1168,22 @@ function setStartSphereGeometry()
 	deleteNormalMap();
 	delBumpMap();
 	
-	if(1==2)
+	if(1==1)
 	{
-		inputEnvMapIntensity({value: 1});
-		inputMetalness({value: 0});
-		inputRoughness({value: 1});
-		inputReflectivity({value: 1});
+		inputEnvMapIntensity({obj: obj, value: 1});
+		inputMetalness({obj: obj, value: 0});
+		inputRoughness({obj: obj, value: 1});
+		inputReflectivity({obj: obj, value: 1});
 		
-		inputOpacity({value: 1});
-		inputTransmission({value: 0});
-		inputClearcoat({value: 0});
-		inputClearcoatRoughness({value: 0});
-		inputRefraction({value: mat.refractionRatio});
+		inputOpacity({obj: obj, value: 1});
+		inputTransmission({obj: obj, value: 0});
+		inputClearcoat({obj: obj, value: 0});
+		inputClearcoatRoughness({obj: obj, value: 0});
+		inputRefraction({obj: obj, value: mat.refractionRatio});
 		
-		changeColorTexture({value: '#000000'});
+		changeColorTexture({obj: obj, value: '#000000'});
 		//createCubeCam();
-		delCubeCam();
+		delCubeCam({obj: obj});
 		
 	}
 	
@@ -1164,6 +1197,13 @@ function setStartSphereGeometry()
 
 function addSphere()
 {
+	setStartSphereGeometry();
+	
+	let elem1 = document.querySelector('[nameId="rightBlock"]');
+	elem1.style.display = "block";
+	
+	return;
+	
 	var geom = new THREE.SphereGeometry( 0.4, 32, 32 );	
 	geom.faceVertexUvs[1] = geom.faceVertexUvs[0];
 
@@ -1286,44 +1326,49 @@ function saveFile()
 
 async function setMatSetting_1(cdm)
 {
-	//let name = cdm.type;
 	
 	let obj = (cdm.obj) ? cdm.obj : clickO.rayhit.object;
+	let name = (cdm.type) ? cdm.type : obj.material.name;
 	
 	if(!obj) return;
+
+	let list = [];
 	
-	var arr = [];
-	arr[arr.length] = 'semimatt';
-	arr[arr.length] = 'matt';	
-	arr[arr.length] = 'semiglossy';
-	arr[arr.length] = 'glossy';
-	arr[arr.length] = 'reflective';
-	arr[arr.length] = 'brushed';
-	arr[arr.length] = 'polished';
-	arr[arr.length] = 'chrome';
-	arr[arr.length] = 'mirror';
-	arr[arr.length] = 'glass';
-	arr[arr.length] = 'frostedglass';
-	arr[arr.length] = 'tulle';	
+	list[list.length] = {old: 'mattet', new: 'tulle'};
+	list[list.length] = {old: 'matte', new: 'matt'};
+	list[list.length] = {old: 'satin', new: 'semimatt'};
+	list[list.length] = {old: 'semigloss', new: 'semiglossy'};
+	list[list.length] = {old: 'glossy', new: 'glossy'};
+	list[list.length] = {old: 'reflective', new: 'reflective'};
+	list[list.length] = {old: 'brushed', new: 'brushed'};
+	list[list.length] = {old: 'polished', new: 'polished'};
+	list[list.length] = {old: 'chrome', new: 'chrome'};
+	list[list.length] = {old: 'mirror', new: 'mirror'};
+	list[list.length] = {old: 'glass', new: 'glass'};
+	list[list.length] = {old: 'steklo_blur', new: 'frostedglass'};
 	
-	for ( var i = 0; i < arr.length; i++ )
+	
+	for ( var i = 0; i < list.length; i++ )
 	{		
-		if(new RegExp( arr[i] ,'i').test( obj.material.name ))
-		{	
+		if(new RegExp( list[i].old ,'i').test( name ))
+		{	 
+			//console.log(list[i], name);
+			
 			let color = obj.material.color;
+			let map = obj.material.map;
 			let lightMap = obj.material.lightMap;
 			let userData = obj.material.userData;
 			
-			obj.material = new THREE.MeshPhysicalMaterial({ color: color, transparent: true, lightMap: lightMap });
+			obj.material = new THREE.MeshPhysicalMaterial({ color: color, transparent: true, map: map, lightMap: lightMap });
 			
 			obj.material.userData = userData;
 			
-			let name = arr[i];
+			let name2 = list[i].new;
 
 			let opacity, metalness, roughness;
 			let cubeCam = false;
 				
-			var response = await fetch('t/'+name+'.json', { method: 'GET' });
+			var response = await fetch('t/'+name2+'.json', { method: 'GET' });
 			var params = await response.json();	
 							
 
@@ -1350,6 +1395,7 @@ async function setMatSetting_1(cdm)
 			obj.material.needsUpdate = true;
 			renderCamera();	
 			
+			break;
 		}
 	}	
 	

@@ -24,27 +24,23 @@
 	<script src="<?=$path?>js/stats.min.js?<?=$vrs?>"></script>
     <script src="<?=$path?>js/jquery.js"></script>        
 	
-	<script src="<?=$path?>js/dp/EffectComposer.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/dp/CopyShader.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/dp/RenderPass.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/dp/ShaderPass.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/dp/OutlinePass.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/dp/FXAAShader.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/dp/SAOPass.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/dp/SAOShader.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/dp/DepthLimitedBlurShader.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/dp/UnpackDepthRGBAShader.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/dp/GammaCorrectionShader.js?<?=$vrs?>"></script>	
 
-	<script src="<?=$path?>js/loader/inflate.min.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/loader/FBXLoader.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/loader/STLExporter.js?<?=$vrs?>"></script>
-	<script src="<?=$path?>js/loader/GLTFLoader.js?<?=$vrs?>"></script>	
-	<script src="<?=$path?>js/loader/EXRLoader.js?<?=$vrs?>"></script>
+
 	
 	
 	
 	<div id="canvasFrame" style="position: fixed; width: 100%; height: 100%; top: 0; right: 0; overflow: hidden;">
+	
+<div nameid="loader" style="width: 100%; height: 100%; z-index: 2; /*! display: none; */">		
+	<div style="position: absolute; top: 1%; bottom: 1%; left:1%; right: 1%;">			
+		<img nameid="preview" src="img/WebGL_Preloader.jpg" style="display: block; position: relative; top: 50%; width: 100%; transform: translateY(-50%);">			
+		<div style="position: absolute; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%); width: auto; padding: 20px; opacity: 0.6; border:solid 1px #b3b3b3; border-radius: 9px; background: #fff;">				
+			<div nameid="progress_load" style="font:32px Arial, Helvetica, sans-serif; text-align: center; color: #222;">загрузка</div>			
+		</div>		
+	</div>	
+</div>	
+	
+	
 		<div class="frame block_select_text" style="touch-action: none;">
 				
 			<div class="flex_1 height100">
@@ -141,10 +137,12 @@
 			объект
 		</div>
 
+
+	
 <select nameId="list_material" style="width: 100%; margin: 15px 0">
-	<option value="matt">matt</option>
-	<option value="semimatt">semimatt</option>
-	<option value="semiglossy">semiglossy</option>
+	<option value="matte">matt</option>
+	<option value="satin">semimatt</option>
+	<option value="semigloss">semiglossy</option>
 	<option value="glossy">glossy</option>
 	<option value="reflective">reflective</option>
 	<option value="brushed">brushed</option>
@@ -152,8 +150,8 @@
 	<option value="chrome">chrome</option>
 	<option value="mirror">mirror</option>
 	<option value="glass">glass</option>
-	<option value="frostedglass">frostedglass</option>
-	<option value="tulle">tulle</option>
+	<option value="steklo_blur">frostedglass</option>
+	<option value="mattet">tulle</option>
 </select>
 		
 		

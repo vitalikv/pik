@@ -1141,6 +1141,9 @@ function setStartSphereGeometry()
 	//var bumpMap_1 = new THREE.TextureLoader().load('img/texture/bump.jpg');	
 	//var lightMap_2 = new THREE.TextureLoader().load('img/texture/01_Gradient_8bit_0-255.png');
 	
+	let elem1 = document.querySelector('[nameId="rightBlock"]');
+	elem1.style.display = "block";	
+	
 	var geom = new THREE.SphereGeometry( 1, 32, 32 );
 	//var mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, map: texture_1, normalMap: normalMap_1, bumpMap: bumpMap_1, lightMap: lightMap_1, transparent: true });
 	
@@ -1282,6 +1285,32 @@ function saveFile()
 	
 	let name = document.querySelector('[nameId="list_material"]').value;
 	
+	
+	let list = [];
+	
+	list[list.length] = {old: 'mattet', new: 'tulle'};
+	list[list.length] = {old: 'matte', new: 'matt'};
+	list[list.length] = {old: 'satin', new: 'semimatt'};
+	list[list.length] = {old: 'semigloss', new: 'semiglossy'};
+	list[list.length] = {old: 'glossy', new: 'glossy'};
+	list[list.length] = {old: 'reflective', new: 'reflective'};
+	list[list.length] = {old: 'brushed', new: 'brushed'};
+	list[list.length] = {old: 'polished', new: 'polished'};
+	list[list.length] = {old: 'chrome', new: 'chrome'};
+	list[list.length] = {old: 'mirror', new: 'mirror'};
+	list[list.length] = {old: 'glass', new: 'glass'};
+	list[list.length] = {old: 'steklo_blur', new: 'frostedglass'};
+
+	
+	for ( var i = 0; i < list.length; i++ )
+	{
+		if(list[i].old == name) 
+		{
+			name = list[i].new;
+			break;
+		}
+	}
+	
 	let params = {};
 	params.envMapIntensity = obj.material.envMapIntensity;
 	params.metalness = obj.material.metalness;
@@ -1358,6 +1387,8 @@ async function setMatSetting_1(cdm)
 			let map = obj.material.map;
 			let lightMap = obj.material.lightMap;
 			let userData = obj.material.userData;
+			
+			disposeNode(obj);
 			
 			obj.material = new THREE.MeshPhysicalMaterial({ color: color, transparent: true, map: map, lightMap: lightMap });
 			

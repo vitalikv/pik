@@ -508,7 +508,16 @@ function setLightMap(cdm)
 }
 
 
-
+function createOneCubeCam()
+{
+	let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 64, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+	
+	let cubeCam = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);					
+	cubeCam.position.y = 1;
+	cubeCam.update( renderer, scene );
+	
+	return cubeCam;
+}
 
 
 function createCubeCam(cdm)
@@ -519,8 +528,8 @@ function createCubeCam(cdm)
 	let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 64, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
 	
 	let cubeCam = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);					
-	scene.add(cubeCam); 
-
+	//scene.add(cubeCam); 
+	
 	obj.userData.cubeCam = cubeCam;		
 	
 	obj.material.envMap = cubeCam.renderTarget.texture;

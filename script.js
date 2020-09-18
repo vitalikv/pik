@@ -145,6 +145,7 @@ infProject.settings.lightMap = {type: 'jpg', act: true};
 var typeCamMove = 1;	// перемещение как в планоплане
 //var typeCamMove = 2;	// перемещение камеры по плоскости
 
+var gCubeCam = null;
 
 var zoomLoop = '';
 var clickO = {keys:[]};
@@ -744,7 +745,7 @@ $(document).ready(function ()
 	//var url = 'https://files.planoplan.com/upload/userdata/1/31/projects/2044431/poplight/flat.json';
 	//var url = 'https://files.planoplan.com/upload/userdata/1/352450/projects/896886/poplight/flat.json';
 	//var url = 'https://files.planoplan.com/upload/userdata/1/2/projects/1986339/poplight/flat.json';
-	var url = 'https://files.planoplan.com/upload/userdata/1/352450/projects/1928943/poplight/flat.json';
+	//var url = 'https://files.planoplan.com/upload/userdata/1/352450/projects/1928943/poplight/flat.json';
 	
 	if(url_2) url = url_2+'?v='+new Date().getTime();
 	
@@ -819,11 +820,14 @@ function loadStartSceneJson(cdm)
 			}
 		});
 
-
+		gCubeCam = createOneCubeCam();
+		
+		var countMesh = 0;
 		obj.traverse(function(child) 
 		{
 			if(child.isMesh) 
 			{ 		
+				countMesh += 1;
 				if(child.material)
 				{					
 					setMatSetting_1({obj: child})
@@ -867,7 +871,19 @@ function loadStartSceneJson(cdm)
 		
 		divLoad.style.display = "none";
 		wallAfterRender_3();
+		let divTriangles = document.querySelector('[nameId="div_triangles_1"]');
+		divTriangles.innerText = 'triangles: ' +renderer.info.render.triangles;
 		
+		let divCountMesh = document.querySelector('[nameId="div_countMesh_1"]');
+		divCountMesh.innerText = 'mesh: ' +renderer.info.memory.geometries;
+
+		let divCountTexture = document.querySelector('[nameId="div_countTexture_1"]');
+		divCountTexture.innerText = 'textures: ' +renderer.info.memory.textures;
+		
+		
+	console.log(renderer.info.programs);
+	console.log(renderer.info.render);
+	console.log(renderer.info.memory);
 		//setStartSphereGeometry();
 		
 		renderCamera();
@@ -1289,7 +1305,7 @@ function saveFile()
 	let list = [];
 	
 	list[list.length] = {old: 'mattet', new: 'tulle'};
-	list[list.length] = {old: 'matte', new: 'matt'};
+	list[list.length] = {old: 'matte', new: 'matt' };
 	list[list.length] = {old: 'satin', new: 'semimatt'};
 	list[list.length] = {old: 'semigloss', new: 'semiglossy'};
 	list[list.length] = {old: 'glossy', new: 'glossy'};
@@ -1363,18 +1379,18 @@ async function setMatSetting_1(cdm)
 
 	let list = [];
 	
-	list[list.length] = {old: 'mattet', new: 'tulle'};
-	list[list.length] = {old: 'matte', new: 'matt'};
-	list[list.length] = {old: 'satin', new: 'semimatt'};
-	list[list.length] = {old: 'semigloss', new: 'semiglossy'};
-	list[list.length] = {old: 'glossy', new: 'glossy'};
-	list[list.length] = {old: 'reflective', new: 'reflective'};
-	list[list.length] = {old: 'brushed', new: 'brushed'};
-	list[list.length] = {old: 'polished', new: 'polished'};
-	list[list.length] = {old: 'chrome', new: 'chrome'};
-	list[list.length] = {old: 'mirror', new: 'mirror'};
-	list[list.length] = {old: 'glass', new: 'glass'};
-	list[list.length] = {old: 'steklo_blur', new: 'frostedglass'};
+	list[list.length] = {old: 'mattet', new: 'tulle', metalness: 0, roughness: 1, opacity: 1, transmission: 0.69, envMap: true};
+	list[list.length] = {old: 'matte', new: 'matt', metalness: 0, roughness: 1, opacity: 1, transmission: 0 };
+	list[list.length] = {old: 'satin', new: 'semimatt', metalness: 0.19, roughness: 0.29, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'semigloss', new: 'semiglossy', metalness: 0.34, roughness: 0.29, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'glossy', new: 'glossy', metalness: 0.51, roughness: 0.39, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'reflective', new: 'reflective', metalness: 1, roughness: 0.07, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'brushed', new: 'brushed', metalness: 0.33, roughness: 0.23, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'polished', new: 'polished', metalness: 0.55, roughness: 0.23, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'chrome', new: 'chrome', metalness: 0.8, roughness: 0, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'mirror', new: 'mirror', metalness: 1, roughness: 0, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'glass', new: 'glass', metalness: 1, roughness: 0, opacity: 0.84, transmission: 1, envMap: true};
+	list[list.length] = {old: 'steklo_blur', new: 'frostedglass', metalness: 0.45, roughness: 0.26, opacity: 1, transmission: 1, envMap: true};
 	
 	
 	for ( var i = 0; i < list.length; i++ )
@@ -1399,25 +1415,31 @@ async function setMatSetting_1(cdm)
 			let opacity, metalness, roughness;
 			let cubeCam = false;
 				
-			var response = await fetch('t/'+name2+'.json', { method: 'GET' });
-			var params = await response.json();	
-							
+			//var response = await fetch('t/'+name2+'.json', { method: 'GET' });
+			//var params = await response.json();	
+			let params = list[i];			
 
-			inputEnvMapIntensity({obj: obj, value: params.envMapIntensity});
+			//inputEnvMapIntensity({obj: obj, value: params.envMapIntensity});
 			inputMetalness({obj: obj, value: params.metalness});
 			inputRoughness({obj: obj, value: params.roughness});
-			inputReflectivity({obj: obj, value: params.reflectivity});
+			//inputReflectivity({obj: obj, value: params.reflectivity});
 			
 			inputOpacity({obj: obj, value: params.opacity});
 			inputTransmission({obj: obj, value: params.transmission});
-			inputClearcoat({obj: obj, value: params.clearcoat});
-			inputClearcoatRoughness({obj: obj, value: params.clearcoatRoughness});
-			inputRefraction({obj: obj, value: params.refractionRatio});
+			//inputClearcoat({obj: obj, value: params.clearcoat});
+			//inputClearcoatRoughness({obj: obj, value: params.clearcoatRoughness});
+			//inputRefraction({obj: obj, value: params.refractionRatio});
 			
 			//changeColorTexture({obj: obj, value: params.color});
 			//changeColorEmissive({ obj: obj, value: params.emissive });
 			
-			if(params.envMap) { createCubeCam({obj: obj}); }
+			if(params.envMap) 
+			{ 
+				//createCubeCam({obj: obj});
+
+				obj.material.envMap = gCubeCam.renderTarget.texture;
+				obj.material.needsUpdate = true;
+			}
 			else { delCubeCam({obj: obj}); disposeNode(obj); }
 			
 			

@@ -678,7 +678,7 @@ async function EXRLoader_1(cdm)
 	{
 		if(infProject.scene.lightMap[i].name == name) { exist = infProject.scene.lightMap[i].texture; break; }  
 	}	
-	
+	console.log('EXRLoader_1', infProject.scene.lightMap.length, infProject.scene.lightMap);
 	if(exist)
 	{
 		obj.material.lightMap = exist;
@@ -697,7 +697,7 @@ async function EXRLoader_1(cdm)
 			//texture.generateMipmaps = false;
 			//texture.minFilter = LinearFilter;
 			//texture.magFilter = LinearFilter;
-			console.log(44444);
+			console.log(44444, texture);
 			obj.material.lightMap = texture;
 			
 			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
@@ -755,16 +755,76 @@ $(document).ready(function ()
 
 
 
+async function getExr(cdm)
+{
+	let response = await fetch(cdm.url, { method: 'GET' });	
+	let exr = await response.arrayBuffer();
+	
+	let exr2 = new THREE.EXRLoader().setDataType( THREE.FloatType ).parse( exr );
+
+	//console.log(exr2);
+}
+
+
+async function getExr_2(cdm)
+{
+	var url = 'https://files.planoplan.com/upload/userdata/1/2/projects/2051948/poplight/'+cdm.url;
+	var name = cdm.url.split( '.' )[0];
+	
+	new THREE.EXRLoader().setDataType( THREE.FloatType ).load( url, function ( texture, textureData ) 
+	{		
+		infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
+		
+		console.log('getExr_2', infProject.scene.lightMap.length);
+		
+		if(jsonG.images.length == infProject.scene.lightMap.length)
+		{
+			loadStartSceneJson_2();
+		}
+	});		
+	
+}
+
+let jsonG = null;
+
 async function loadStartSceneJson(cdm)
 {
-	var loader = new THREE.ObjectLoader();
+
+	deleteObj();
 	
+	
+	
+	let response = await fetch(cdm.url, { method: 'GET' });	
+	let json = await response.json();
+	
+	jsonG = json;
+	
+	for(let i = 0; i < json.images.length; i++)
+	{
+		let url = json.images[i].url;
+		
+		if(url)
+		{
+			//json.images[i].url = 'https://files.planoplan.com/upload/userdata/1/2/projects/2051948/poplight/'+url;
+			
+			//json.images[i].url = await getExr({url: 'https://files.planoplan.com/upload/userdata/1/2/projects/2051948/poplight/'+url});			
+
+			await getExr_2({url: url});
+		}
+	}	
+	
+
+	
+}
+
+async function loadStartSceneJson_2()
+{
 	let divLoad = document.querySelector('[nameId="loader"]');
 	let elemLoad = document.querySelector('[nameId="progress_load"]');	
 	
-	deleteObj();
+	let obj = new THREE.ObjectLoader().parse( jsonG );
 	
-	loader.load( cdm.url, function ( obj ) 						
+							
 	{ 
 		//var obj = obj.scene.children[0];
 		scene.add( obj );
@@ -845,8 +905,9 @@ async function loadStartSceneJson(cdm)
 				}
 				if(child.material.lightMap)
 				{
-					//EXRLoader_1({obj: child, name: child.material.lightMap.name});
-					console.log(child.material.lightMap.name, child.material.lightMap.uuid);
+					EXRLoader_1({obj: child, name: child.material.lightMap.name});
+					//console.log(child.material.lightMap.name, child.material.lightMap);
+					//child.material.lightMap = new THREE.EXRLoader().parse(child.material.lightMap);
 					userData.lightMap = 'jpg';
 					userData.jpg = child.material.lightMap;
 					userData.lightmapName = child.material.lightMap.name;
@@ -893,33 +954,8 @@ async function loadStartSceneJson(cdm)
 		$('[nameId="butt_camera_3D"]').hide(); 
 		$('[nameId="butt_camera_2D"]').show();
 		$('[nameId="butt_cam_walk"]').show();				
-	},
-	function ( xhr ) 
-	{
-		var val = 0;
-		
-		if(xhr.lengthComputable)
-		{ 
-			val = Math.round( xhr.loaded / xhr.total * 100 ) + '%';
-		}
-		else
-		{
-			//console.log(xhr.target.getResponseHeader("Content-Type"));
-			let total = parseInt(xhr.target.getResponseHeader('content-length'), 10);
-			val = Math.round( xhr.loaded / total * 10 ) + '%';
-		}
-		 
-		 //console.log(val);
-		 elemLoad.innerText = 'загрузка ' + val;		
-
-	});	
-
-
-
-	
+	}	
 }
-
-
 
 
 

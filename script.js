@@ -10,8 +10,8 @@ var renderer = new THREE.WebGLRenderer( { canvas: canvas, context: context, pres
 
 //renderer.toneMapping = THREE.ReinhardToneMapping;
 //renderer.toneMappingExposure = 1;
-//renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.gammaFactor = 2;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.gammaFactor = 2.2;
 
 //renderer.localClippingEnabled = true;
 //renderer.shadowMap.enabled = true;
@@ -672,8 +672,6 @@ async function EXRLoader_1(cdm)
 	var obj = cdm.obj;
 	var name = cdm.name;
 	
-	if(name == 'Lightmap-0_comp_light_LM') { name = 'Lightmap-0_comp_light'; }
-	if(name == 'Lightmap-1_comp_light_LM') { name = 'Lightmap-1_comp_light'; }
 	
 	var exist = null;
 	for ( var i = 0; i < infProject.scene.lightMap.length; i++ )
@@ -689,7 +687,7 @@ async function EXRLoader_1(cdm)
 	}
 	else
 	{
-		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( 'Flat/'+name+'.exr', function ( texture, textureData ) 
+		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( 'https://files.planoplan.com/upload/userdata/1/2/projects/2051948/poplight/'+name+'.exr', function ( texture, textureData ) 
 		{
 			// memorial.exr is NPOT
 
@@ -699,7 +697,7 @@ async function EXRLoader_1(cdm)
 			//texture.generateMipmaps = false;
 			//texture.minFilter = LinearFilter;
 			//texture.magFilter = LinearFilter;
-			
+			console.log(44444);
 			obj.material.lightMap = texture;
 			
 			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
@@ -757,7 +755,7 @@ $(document).ready(function ()
 
 
 
-function loadStartSceneJson(cdm)
+async function loadStartSceneJson(cdm)
 {
 	var loader = new THREE.ObjectLoader();
 	
@@ -830,7 +828,7 @@ function loadStartSceneJson(cdm)
 				countMesh += 1;
 				if(child.material)
 				{					
-					setMatSetting_1({obj: child})
+					//setMatSetting_1({obj: child})
 				}							
 			}
 			
@@ -840,11 +838,15 @@ function loadStartSceneJson(cdm)
 				
 				if(child.material.map)
 				{
+					child.material.map.encoding = THREE.sRGBEncoding;
+					child.material.map.needsUpdate = true;
 					userData.map = child.material.map;
 					userData.mapAct = true;
 				}
 				if(child.material.lightMap)
 				{
+					//EXRLoader_1({obj: child, name: child.material.lightMap.name});
+					console.log(child.material.lightMap.name, child.material.lightMap.uuid);
 					userData.lightMap = 'jpg';
 					userData.jpg = child.material.lightMap;
 					userData.lightmapName = child.material.lightMap.name;

@@ -25,7 +25,7 @@
     <script src="<?=$path?>js/jquery.js"></script>        
 	
 
-
+	<script src="<?=$path?>js/loader/EXRLoader.js?<?=$vrs?>"></script>
 	
 	
 	

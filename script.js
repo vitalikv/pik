@@ -687,7 +687,7 @@ async function EXRLoader_1(cdm)
 	}
 	else
 	{
-		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( 'https://files.planoplan.com/upload/userdata/1/2/projects/2051948/poplight/'+name+'.exr', function ( texture, textureData ) 
+		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( pathname+name+'.exr', function ( texture, textureData ) 
 		{
 			// memorial.exr is NPOT
 
@@ -697,7 +697,7 @@ async function EXRLoader_1(cdm)
 			//texture.generateMipmaps = false;
 			//texture.minFilter = LinearFilter;
 			//texture.magFilter = LinearFilter;
-			console.log(44444, texture);
+			//console.log(44444, texture);
 			obj.material.lightMap = texture;
 			
 			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
@@ -710,6 +710,7 @@ async function EXRLoader_1(cdm)
 
 
 var objF = null;
+var pathname = '';
 
 var docReady = false;
 
@@ -723,7 +724,15 @@ $(document).ready(function ()
 	var searchParams = new URLSearchParams(paramsString);
 	
 	var url_2 = searchParams.get("flat");
-	console.log(555555, searchParams.get("flat")); // 4
+	console.log(555555, url_2); // 4
+	
+	var arr = url_2.split( '/' );
+	
+	var fname = arr[arr.length - 1];
+	
+	pathname = url_2.replace(fname, '');
+	
+	console.log(pathname, fname);
 
 	if(1==2)
 	{
@@ -768,10 +777,10 @@ async function getExr(cdm)
 
 async function getExr_2(cdm)
 {
-	var url = 'https://files.planoplan.com/upload/userdata/1/2/projects/2051948/poplight/'+cdm.url;
+	var url = pathname+cdm.url;
 	var name = cdm.url.split( '.' )[0];
 	
-	new THREE.EXRLoader().setDataType( THREE.FloatType ).load( url, function ( texture, textureData ) 
+	new THREE.EXRLoader().setDataType( THREE.FloatType ).load( url, function ( texture ) 
 	{		
 		infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
 		
@@ -798,7 +807,8 @@ async function loadStartSceneJson(cdm)
 	let json = await response.json();
 	
 	jsonG = json;
-	
+	//loadStartSceneJson_2();
+	//return;
 	for(let i = 0; i < json.images.length; i++)
 	{
 		let url = json.images[i].url;

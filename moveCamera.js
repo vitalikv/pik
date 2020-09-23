@@ -60,23 +60,45 @@ function updateKeyDown()
 		}
 		if ( keys[ 65 ] || keys[ 37 ] ) 
 		{
-			var x = Math.sin( camera.rotation.y - 1.5707963267948966 );
-			var z = Math.cos( camera.rotation.y - 1.5707963267948966 );
-			var dir = new THREE.Vector3( x, 0, z );
-			dir = new THREE.Vector3().addScaledVector( dir, kof );
-			dir.addScalar( 0.0001 );
-			camera.position.add( dir );
+			var rot = false;
+			if(camera == camera3D) { if(camera3D.userData.camera.type == 'first') { rot = true; } }
+			
+			if(rot && keys[ 37 ])
+			{
+				camera.rotation.y += 0.025;
+				var dir = new THREE.Vector3( 0, 0, 0 );
+			}
+			else
+			{
+				var x = Math.sin( camera.rotation.y - 1.5707963267948966 );
+				var z = Math.cos( camera.rotation.y - 1.5707963267948966 );
+				var dir = new THREE.Vector3( x, 0, z );
+				dir = new THREE.Vector3().addScaledVector( dir, kof );
+				dir.addScalar( 0.0001 );
+				camera.position.add( dir );				
+			}
 			
 			flag = true;
 		}
 		else if ( keys[ 68 ] || keys[ 39 ] ) 
 		{
-			var x = Math.sin( camera.rotation.y + 1.5707963267948966 );
-			var z = Math.cos( camera.rotation.y + 1.5707963267948966 );
-			var dir = new THREE.Vector3( x, 0, z );
-			dir = new THREE.Vector3().addScaledVector( dir, kof );
-			dir.addScalar( 0.0001 );
-			camera.position.add( dir );
+			var rot = false;
+			if(camera == camera3D) { if(camera3D.userData.camera.type == 'first') { rot = true; } }
+			
+			if(rot && keys[ 39 ])
+			{
+				camera.rotation.y -= 0.025;
+				var dir = new THREE.Vector3( 0, 0, 0 );
+			}
+			else
+			{
+				var x = Math.sin( camera.rotation.y + 1.5707963267948966 );
+				var z = Math.cos( camera.rotation.y + 1.5707963267948966 );
+				var dir = new THREE.Vector3( x, 0, z );
+				dir = new THREE.Vector3().addScaledVector( dir, kof );
+				dir.addScalar( 0.0001 );
+				camera.position.add( dir );			
+			}						
 			
 			flag = true;
 		}

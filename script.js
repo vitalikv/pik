@@ -816,7 +816,7 @@ async function getExr_2(cdm)
 				val = Math.round( xhr.loaded / total * 10 ) + '%';
 			}
 			 
-			//elemLoad.innerText = 'EXR ' + val;			
+			elemLoad.innerText = 'EXR ' + val;			
 		});		
 	}
 	else
@@ -913,7 +913,7 @@ async function loadStartSceneJson(cdm)
 			//val = Math.round( event.loaded / total * 10 ) + '%';
 		}
 		 
-		elemLoad.innerText = 'Mesh ' + val;		
+		elemLoad.innerText = 'Json ' + val;		
 	};	
 	xhr.send();	
 }

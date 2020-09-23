@@ -678,14 +678,15 @@ async function EXRLoader_1(cdm)
 	{
 		if(infProject.scene.lightMap[i].name == name) { exist = infProject.scene.lightMap[i].texture; break; }  
 	}	
-	console.log('EXRLoader_1', infProject.scene.lightMap.length, infProject.scene.lightMap);
+	//console.log('EXRLoader_1', infProject.scene.lightMap.length, infProject.scene.lightMap);
 	if(exist)
 	{
 		obj.material.lightMap = exist;
 		
 		renderCamera();
 	}
-	else
+	
+	if(1==2)
 	{
 		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( pathname+name+'.exr', function ( texture, textureData ) 
 		{
@@ -709,6 +710,30 @@ async function EXRLoader_1(cdm)
 }
 
 
+
+async function IMGLoader_1(cdm)
+{
+	var obj = cdm.obj;
+	var name = cdm.name;
+	
+	
+	var texture = null;
+	for ( var i = 0; i < infProject.scene.lightMap.length; i++ )
+	{
+		if(infProject.scene.lightMap[i].name == name) { texture = infProject.scene.lightMap[i].texture; break; }  
+	}	
+	
+	if(texture)
+	{
+		texture.wrapS = THREE.RepeatWrapping;
+		texture.wrapT = THREE.RepeatWrapping;		
+		obj.material.map = texture;
+		//console.log('IMGLoader_1', name);
+		renderCamera();
+	}
+}
+
+
 var objF = null;
 var pathname = '';
 
@@ -724,35 +749,19 @@ $(document).ready(function ()
 	var searchParams = new URLSearchParams(paramsString);
 	
 	var url_2 = searchParams.get("flat");
-	console.log(555555, url_2); // 4
 	
-	var arr = url_2.split( '/' );
-	
-	var fname = arr[arr.length - 1];
-	
-	pathname = url_2.replace(fname, '');
-	
-	console.log(pathname, fname);
-
-	if(1==2)
+	if(url_2)
 	{
-		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( 'Flat/Lightmap-0_comp_light.exr', function ( texture, textureData ) 
-		{	
-			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: 'Lightmap-0_comp_light', texture: texture};		
-		});
+		var arr = url_2.split( '/' );
 		
-		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( 'Flat/Lightmap-1_comp_light.exr', function ( texture, textureData ) 
-		{	
-			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: 'Lightmap-1_comp_light', texture: texture};
-		});		
+		var fname = arr[arr.length - 1];
 		
+		pathname = url_2.replace(fname, '');		
 	}
+
 	
-	var url = 'https://files.planoplan.com/upload/userdata/1/2/projects/2001214/poplight/Falt_json.json';
-	//var url = 'https://files.planoplan.com/upload/userdata/1/31/projects/2044431/poplight/flat.json';
-	//var url = 'https://files.planoplan.com/upload/userdata/1/352450/projects/896886/poplight/flat.json';
-	//var url = 'https://files.planoplan.com/upload/userdata/1/2/projects/1986339/poplight/flat.json';
-	//var url = 'https://files.planoplan.com/upload/userdata/1/352450/projects/1928943/poplight/flat.json';
+	var url = 'https://files.planoplan.com/upload/userdata/1/31/projects/2053843/poplight/flat.json';
+	//var url = 'https://files.planoplan.com/upload/userdata/1/31/projects/2051669/poplight/flat.json';
 	
 	if(url_2) url = url_2+'?v='+new Date().getTime();
 	
@@ -764,15 +773,7 @@ $(document).ready(function ()
 
 
 
-async function getExr(cdm)
-{
-	let response = await fetch(cdm.url, { method: 'GET' });	
-	let exr = await response.arrayBuffer();
-	
-	let exr2 = new THREE.EXRLoader().setDataType( THREE.FloatType ).parse( exr );
 
-	//console.log(exr2);
-}
 
 
 async function getExr_2(cdm)
@@ -780,17 +781,95 @@ async function getExr_2(cdm)
 	var url = pathname+cdm.url;
 	var name = cdm.url.split( '.' )[0];
 	
-	new THREE.EXRLoader().setDataType( THREE.FloatType ).load( url, function ( texture ) 
-	{		
-		infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
+	var type = cdm.url.split( '.' );
+	type = type[type.length - 1];
+	
+	let elemLoad = document.querySelector('[nameId="progress_load"]');
+	
+	
+	if(new RegExp( 'exr' ,'i').test(type))
+	{
+		//console.log('exr ->', type);
 		
-		console.log('getExr_2', infProject.scene.lightMap.length);
-		
-		if(jsonG.images.length == infProject.scene.lightMap.length)
+		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( url, function ( texture ) 
+		{		
+			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
+			
+			//console.log('getExr_2', infProject.scene.lightMap.length);
+			
+			if(jsonG.images.length == infProject.scene.lightMap.length)
+			{
+				loadStartSceneJson_2();
+			}
+		},		
+		function ( xhr ) 
 		{
-			loadStartSceneJson_2();
+			let val = 0;
+			
+			if(xhr.lengthComputable)
+			{
+				val = Math.round( xhr.loaded / xhr.total * 100 ) + '%';
+			}
+			else
+			{
+				let total = parseInt(xhr.target.getResponseHeader('content-length'), 10);
+				val = Math.round( xhr.loaded / total * 10 ) + '%';
+			}
+			 
+			//elemLoad.innerText = 'EXR ' + val;			
+		});		
+	}
+	else
+	{
+		//console.log('img ->', type);
+		
+		let xhr = new XMLHttpRequest();
+		xhr.responseType =	"blob";
+		xhr.open('GET', url, true);
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.onreadystatechange = function() 
+		{		
+			if(xhr.readyState == 4 && xhr.status == 200) 
+			{	
+				var image = new Image();
+				image.src = window.URL.createObjectURL(xhr.response);
+				
+				image.onload = function()
+				{
+					var texture = new THREE.Texture();
+					texture.image = image;
+					texture.wrapS = THREE.RepeatWrapping;
+					texture.wrapT = THREE.RepeatWrapping;
+					texture.needsUpdate = true;				
+					
+					infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
+					
+					if(jsonG.images.length == infProject.scene.lightMap.length)
+					{
+						loadStartSceneJson_2();
+					}									
+				}
+			}
 		}
-	});		
+		xhr.onprogress = function(event) 
+		{
+			let val = 0;
+			
+			if(event.lengthComputable)
+			{
+				val = Math.round( event.loaded / event.total * 100 ) + '%';
+			}
+			else
+			{
+				//let total = parseInt(xhr.getResponseHeader('content-length'), 10);
+				//val = Math.round( event.loaded / total * 10 ) + '%';
+			}
+			 
+			elemLoad.innerText = 'IMG ' + val;		
+		}		
+		xhr.send();		
+	}
+	
 	
 }
 
@@ -801,31 +880,62 @@ async function loadStartSceneJson(cdm)
 
 	deleteObj();
 	
+	setToneMapping({toneMapping: 'CustomToneMapping'});
+	inputTransparencySubstrate({value: 0.2});
 	
+	let elemLoad = document.querySelector('[nameId="progress_load"]');
 	
-	let response = await fetch(cdm.url, { method: 'GET' });	
-	let json = await response.json();
+	let xhr = new XMLHttpRequest();
+	xhr.responseType =	"json";
+	xhr.open('GET', cdm.url, true);
+	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	xhr.onreadystatechange = function() 
+	{		
+		if(xhr.readyState == 4 && xhr.status == 200) 
+		{				
 	
-	jsonG = json;
-	//loadStartSceneJson_2();
-	//return;
+			console.log(xhr.response);
+			jsonG = xhr.response;
+			sdfshnjr4(xhr.response);			
+		}
+	};
+	xhr.onprogress = function(event) 
+	{
+		let val = 0;
+		
+		if(event.lengthComputable)
+		{
+			val = Math.round( event.loaded / event.total * 100 ) + '%';
+		}
+		else
+		{
+			//let total = parseInt(xhr.getResponseHeader('content-length'), 10);
+			//val = Math.round( event.loaded / total * 10 ) + '%';
+		}
+		 
+		elemLoad.innerText = 'Mesh ' + val;		
+	};	
+	xhr.send();	
+}
+
+
+
+async function sdfshnjr4(json)
+{
 	for(let i = 0; i < json.images.length; i++)
 	{
 		let url = json.images[i].url;
 		
 		if(url)
-		{
-			//json.images[i].url = 'https://files.planoplan.com/upload/userdata/1/2/projects/2051948/poplight/'+url;
-			
-			//json.images[i].url = await getExr({url: 'https://files.planoplan.com/upload/userdata/1/2/projects/2051948/poplight/'+url});			
-
+		{			
+			json.images[i].url = '';
 			await getExr_2({url: url});
 		}
-	}	
-	
-
-	
+	}						
 }
+
+
+
 
 async function loadStartSceneJson_2()
 {
@@ -908,6 +1018,7 @@ async function loadStartSceneJson_2()
 				
 				if(child.material.map)
 				{
+					IMGLoader_1({obj: child, name: child.material.map.name});
 					child.material.map.encoding = THREE.sRGBEncoding;
 					child.material.map.needsUpdate = true;
 					userData.map = child.material.map;
@@ -1129,6 +1240,8 @@ function setToneMapping(cdm)
 	{
 		return;
 	}
+	
+	if(!objF) return;
 	
 	var obj = objF;
 	

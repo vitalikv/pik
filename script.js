@@ -795,7 +795,13 @@ async function getExr_2(cdm)
 		{		
 			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
 			
-			//console.log('getExr_2', infProject.scene.lightMap.length);
+			numEXR++;
+			console.log('numEXR', numEXR);
+			
+			if(countEXR == numEXR)
+			{				
+				show_loadExr_1();
+			}
 			
 			if(jsonG.images.length == infProject.scene.lightMap.length)
 			{
@@ -844,6 +850,14 @@ async function getExr_2(cdm)
 					
 					infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
 					
+					numImg++;
+					console.log('numImg', numImg);
+					
+					if(countImg == numImg)
+					{						
+						show_loadImg_1();
+					}
+					
 					if(jsonG.images.length == infProject.scene.lightMap.length)
 					{
 						loadStartSceneJson_2();
@@ -877,7 +891,8 @@ let jsonG = null;
 
 async function loadStartSceneJson(cdm)
 {
-
+	var time = new Date().getTime();
+	
 	deleteObj();
 	
 	setToneMapping({toneMapping: 'CustomToneMapping'});
@@ -894,8 +909,13 @@ async function loadStartSceneJson(cdm)
 		if(xhr.readyState == 4 && xhr.status == 200) 
 		{				
 	
-			console.log(xhr.response);
+			time = new Date().getTime() - time;
+			time = Math.round(time/10)/100;
 			jsonG = xhr.response;
+			
+			let divLoadJson = document.querySelector('[nameId="div_loadJson_1"]');
+			divLoadJson.innerText = 'загрузки json: ' +time+'c';
+		
 			sdfshnjr4(xhr.response);			
 		}
 	};
@@ -918,23 +938,72 @@ async function loadStartSceneJson(cdm)
 	xhr.send();	
 }
 
-
+var timeImg = 0;
+var timeEXR = 0;
+var countImg = 0;
+var countEXR = 0;
+var numImg = 0;
+var numEXR = 0;
 
 async function sdfshnjr4(json)
 {
+	timeImg = new Date().getTime();
+	timeEXR = new Date().getTime();
+	
+	for(let i = 0; i < json.images.length; i++)
+	{
+		var type = json.images[i].url.split( '.' );
+		type = type[type.length - 1];
+
+		
+		if(new RegExp( 'exr' ,'i').test(type))
+		{
+			countImg++;
+		}
+		else
+		{
+			countEXR++;
+		}
+	}	
+	
+	console.log('countImg', countImg);
+	console.log('countEXR', countEXR);
+	
 	for(let i = 0; i < json.images.length; i++)
 	{
 		let url = json.images[i].url;
+		
+		json.images[i].url = '';
 		
 		if(url)
 		{			
 			json.images[i].url = '';
 			await getExr_2({url: url});
 		}
-	}						
+	}
+
+
 }
 
 
+function show_loadImg_1()
+{
+	var time = new Date().getTime() - timeImg;
+	time = Math.round(time/10)/100;
+
+	let divLoadImg = document.querySelector('[nameId="div_loadImg_1"]');
+	divLoadImg.innerText = 'загрузки Img: ' +time+'c';	
+}
+
+
+function show_loadExr_1()
+{
+	var time = new Date().getTime() - timeEXR;
+	time = Math.round(time/10)/100;
+
+	let divLoadExr = document.querySelector('[nameId="div_loadExr_1"]');
+	divLoadExr.innerText = 'загрузки Exr: ' +time+'c';	
+}
 
 
 async function loadStartSceneJson_2()
@@ -944,7 +1013,10 @@ async function loadStartSceneJson_2()
 	
 	let obj = new THREE.ObjectLoader().parse( jsonG );
 	
-							
+	
+	
+	var countMaterial = 0;
+	
 	{ 
 		//var obj = obj.scene.children[0];
 		scene.add( obj );
@@ -992,29 +1064,10 @@ async function loadStartSceneJson_2()
 				
 			}
 			
-			if(child.isMesh) 
-			{ 
-		
-			}
-		});
-
-		gCubeCam = createOneCubeCam();
-		
-		var countMesh = 0;
-		obj.traverse(function(child) 
-		{
-			if(child.isMesh) 
-			{ 		
-				countMesh += 1;
-				if(child.material)
-				{					
-					//setMatSetting_1({obj: child})
-				}							
-			}
-			
 			if(child.material)
 			{
 				var userData = {};
+				countMaterial += 1;
 				
 				if(child.material.map)
 				{
@@ -1049,8 +1102,20 @@ async function loadStartSceneJson_2()
 					child.material = m1;
 					child.material.needsUpdate = true;
 				}
-			}							
-			
+			}
+		});
+
+		gCubeCam = createOneCubeCam();
+		
+		obj.traverse(function(child) 
+		{
+			if(child.isMesh) 
+			{ 		
+				if(child.material)
+				{					
+					setMatSetting_2({obj: child})
+				}							
+			}
 		});			
 		
 		divLoad.style.display = "none";
@@ -1060,9 +1125,12 @@ async function loadStartSceneJson_2()
 		
 		let divCountMesh = document.querySelector('[nameId="div_countMesh_1"]');
 		divCountMesh.innerText = 'mesh: ' +renderer.info.memory.geometries;
-
+		
 		let divCountTexture = document.querySelector('[nameId="div_countTexture_1"]');
-		divCountTexture.innerText = 'textures: ' +renderer.info.memory.textures;
+		divCountTexture.innerText = 'textures: ' +jsonG.images.length;		
+
+		let divCountMaterial = document.querySelector('[nameId="div_countMaterial_1"]');
+		divCountMaterial.innerText = 'material: ' +jsonG.materials.length;
 		
 		
 	console.log(renderer.info.programs);
@@ -1680,6 +1748,66 @@ function getBoundObject_1(cdm)
 
 
 
+function setMatSetting_2(cdm)
+{
+	
+	let obj = cdm.obj;
+	let name = obj.material.name;
+	
+	if(!obj) return;
 
+	let list = [];
+	
+	list[list.length] = {old: 'mattet', new: 'tulle', metalness: 0, roughness: 1, opacity: 1, transmission: 0.69, envMap: true};
+	list[list.length] = {old: 'matte', new: 'matt', metalness: 0, roughness: 1, opacity: 1, transmission: 0 };
+	list[list.length] = {old: 'satin', new: 'semimatt', metalness: 0.19, roughness: 0.29, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'semigloss', new: 'semiglossy', metalness: 0.34, roughness: 0.29, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'glossy', new: 'glossy', metalness: 0.51, roughness: 0.39, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'reflective', new: 'reflective', metalness: 1, roughness: 0.07, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'brushed', new: 'brushed', metalness: 0.33, roughness: 0.23, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'polished', new: 'polished', metalness: 0.55, roughness: 0.23, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'chrome', new: 'chrome', metalness: 0.8, roughness: 0, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'mirror', new: 'mirror', metalness: 1, roughness: 0, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'glass', new: 'glass', metalness: 1, roughness: 0, opacity: 0.84, transmission: 1, envMap: true};
+	list[list.length] = {old: 'steklo_blur', new: 'frostedglass', metalness: 0.45, roughness: 0.26, opacity: 1, transmission: 1, envMap: true};
+	
+	
+	for ( var i = 0; i < list.length; i++ )
+	{		
+		if(new RegExp( list[i].old ,'i').test( name ))
+		{	 
+			//console.log(list[i], name);
+			
+			let color = obj.material.color;
+			let map = obj.material.map;
+			let lightMap = obj.material.lightMap;
+			let userData = obj.material.userData;
+			
+			disposeNode(obj);
+			
+			obj.material = new THREE.MeshPhysicalMaterial({ color: color, transparent: true, map: map, lightMap: lightMap });
+			
+			obj.material.userData = userData;
+
+			obj.material.metalness = list[i].metalness;
+			obj.material.roughness = list[i].roughness;
+			obj.material.opacity = list[i].opacity;
+			obj.material.transmission = list[i].transmission;
+			
+			if(list[i].envMap) 
+			{ 
+				//createCubeCam({obj: obj});
+
+				obj.material.envMap = gCubeCam.renderTarget.texture;
+			}
+			
+			obj.material.needsUpdate = true;
+			renderCamera();	
+			
+			break;
+		}
+	}	
+	
+}
 
 

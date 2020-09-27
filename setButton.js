@@ -510,7 +510,7 @@ function setLightMap(cdm)
 
 function createOneCubeCam()
 {
-	let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 64, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+	let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 128, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
 	
 	let cubeCam = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);					
 	cubeCam.position.y = 1;

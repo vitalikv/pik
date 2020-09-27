@@ -52,6 +52,18 @@
 				
 				<div style="position: absolute; left: 50px; bottom: 80px;"  data-action ='top_panel_1'>
 
+					<div nameId='div_loadJson_1' style="width: 160px; border:solid 1px #b3b3b3; background: #fff; text-align:center; font-family: arial,sans-serif; font-size: 15px; color: #666;">
+						загрузки json:						
+					</div>
+
+					<div nameId='div_loadImg_1' style="width: 160px; border:solid 1px #b3b3b3; background: #fff; text-align:center; font-family: arial,sans-serif; font-size: 15px; color: #666;">
+						загрузки Img:						
+					</div>
+					
+					<div nameId='div_loadExr_1' style="width: 160px; border:solid 1px #b3b3b3; background: #fff; text-align:center; font-family: arial,sans-serif; font-size: 15px; color: #666;">
+						загрузки Exr:						
+					</div>					
+					
 					<div nameId='div_triangles_1' style="width: 160px; border:solid 1px #b3b3b3; background: #fff; text-align:center; font-family: arial,sans-serif; font-size: 15px; color: #666;">
 						triangles:						
 					</div>
@@ -62,7 +74,11 @@
 					
 					<div nameId='div_countTexture_1' style="width: 160px; border:solid 1px #b3b3b3; background: #fff; text-align:center; font-family: arial,sans-serif; font-size: 15px; color: #666;">
 						textures:						
-					</div>					
+					</div>
+
+					<div nameId='div_countMaterial_1' style="width: 160px; border:solid 1px #b3b3b3; background: #fff; text-align:center; font-family: arial,sans-serif; font-size: 15px; color: #666;">
+						material:						
+					</div>						
 					
 					<!--<div class="button1-wrap-1" nameId='texture_1' style="display: none;">
 						<div class="button1 button_gradient_1" style="width: 130px;"> 

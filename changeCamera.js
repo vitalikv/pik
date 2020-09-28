@@ -126,8 +126,20 @@ function moveCameraToNewPosition()
 	if ( !newCameraPosition ) return;
 	
 	
-	
-	if ( camera == camera3D && newCameraPosition.positionFirst || camera == camera3D && newCameraPosition.positionFly )
+	if ( camera == camera3D && newCameraPosition.moveFirst )
+	{
+		var pos = newCameraPosition.moveFirst;
+		var pos2 = camera.position.clone();
+		camera.position.lerp( pos, 0.1 );
+		
+		infProject.camera.d3.targetO.position.add(camera.position.clone().sub(pos2));
+		
+		if(comparePos(camera.position, pos)) 
+		{ 	
+			newCameraPosition = null; 
+		};		
+	}
+	else if ( camera == camera3D && newCameraPosition.positionFirst || camera == camera3D && newCameraPosition.positionFly )
 	{
 		var pos = (newCameraPosition.positionFirst) ? newCameraPosition.positionFirst : newCameraPosition.positionFly;
 		

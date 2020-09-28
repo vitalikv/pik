@@ -6,6 +6,7 @@ var newCameraPosition = null;
 function updateKeyDown() 
 {
 	var flag = false;
+	var rot = false;
 	
 	var keys = clickO.keys;  
 	if(keys.length == 0) return;
@@ -43,7 +44,7 @@ function updateKeyDown()
 			var z = Math.cos( camera.rotation.y );
 			var dir = new THREE.Vector3( -x, 0, -z );
 			dir = new THREE.Vector3().addScaledVector( dir, kof );
-			camera.position.add( dir );
+			//camera.position.add( dir );
 			
 			flag = true;
 		}
@@ -54,14 +55,13 @@ function updateKeyDown()
 			var dir = new THREE.Vector3( x, 0, z );
 			dir = new THREE.Vector3().addScaledVector( dir, kof );
 			dir.addScalar( 0.0001 );
-			camera.position.add( dir );
+			//camera.position.add( dir );
 			
 			flag = true;
 		}
 		if ( keys[ 65 ] || keys[ 37 ] ) 
 		{
-			var rot = false;
-			if(camera == camera3D) { if(camera3D.userData.camera.type == 'first') { rot = true; } }
+			if(camera == camera3D) { if(camera3D.userData.camera.type == 'first' && keys[ 37 ]) { rot = true; } }
 			
 			if(rot && keys[ 37 ])
 			{
@@ -75,15 +75,15 @@ function updateKeyDown()
 				var dir = new THREE.Vector3( x, 0, z );
 				dir = new THREE.Vector3().addScaledVector( dir, kof );
 				dir.addScalar( 0.0001 );
-				camera.position.add( dir );				
+				//camera.position.add( dir );				
 			}
 			
 			flag = true;
 		}
 		else if ( keys[ 68 ] || keys[ 39 ] ) 
 		{
-			var rot = false;
-			if(camera == camera3D) { if(camera3D.userData.camera.type == 'first') { rot = true; } }
+			
+			if(camera == camera3D) { if(camera3D.userData.camera.type == 'first' && keys[ 39 ]) { rot = true; } }
 			
 			if(rot && keys[ 39 ])
 			{
@@ -97,7 +97,7 @@ function updateKeyDown()
 				var dir = new THREE.Vector3( x, 0, z );
 				dir = new THREE.Vector3().addScaledVector( dir, kof );
 				dir.addScalar( 0.0001 );
-				camera.position.add( dir );			
+				//camera.position.add( dir );			
 			}						
 			
 			flag = true;
@@ -107,7 +107,7 @@ function updateKeyDown()
 			var dir = new THREE.Vector3( 0, 1, 0 );
 			dir = new THREE.Vector3().addScaledVector( dir, -kof );
 			dir.addScalar( 0.0001 );
-			camera.position.add( dir );
+			//camera.position.add( dir );
 			
 			flag = true;
 		}
@@ -116,7 +116,7 @@ function updateKeyDown()
 			var dir = new THREE.Vector3( 0, 1, 0 );
 			dir = new THREE.Vector3().addScaledVector( dir, kof );
 			dir.addScalar( 0.0001 );
-			camera.position.add( dir );
+			//camera.position.add( dir );
 			
 			flag = true;
 		}
@@ -124,12 +124,21 @@ function updateKeyDown()
 
 	if(flag) 
 	{ 
-		if(camera == camera3D) 
+		if(!rot && camera == camera3D) 
 		{ 
-			infProject.camera.d3.targetO.position.add( dir );
+			if(!newCameraPosition) newCameraPosition = {};
+			dir.x *= 5;
+			dir.z *= 5;
+			newCameraPosition.moveFirst = camera.position.clone().add( dir );
+			
 		}			
+		else
+		{
+			newCameraPosition = null;
+			camera.position.add( dir );
+			infProject.camera.d3.targetO.position.add( dir );
+		}
 		
-		newCameraPosition = null;
 		renderCamera(); 
 	}
 }

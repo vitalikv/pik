@@ -510,10 +510,43 @@ function setLightMap(cdm)
 
 function createOneCubeCam()
 {
-	let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 128, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+
 	
-	let cubeCam = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);					
-	cubeCam.position.y = 1;
+	if(1==1)
+	{
+		let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 512, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+		let cubeCam = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);
+		cubeCam.position.y = 0;
+		//var pos = new THREE.Vector3( (boundG.max.x - boundG.min.x)/2 + boundG.min.x, 0, (boundG.max.z - boundG.min.z)/2 + boundG.min.z );
+		//console.log(boundG);
+		//cubeCam.position.set(pos);
+		cubeCam.update( renderer, scene );
+
+		return cubeCam;
+	}
+	else
+	{
+		let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 512, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+		let cubeCam = new THREE.CubeCamera( 1, 1000, cubeRenderTarget );
+		cubeCam.renderTarget.texture.generateMipmaps = true;
+		cubeCam.renderTarget.texture.minFilter = THREE.LinearMipmapLinearFilter;
+		cubeCam.renderTarget.texture.mapping = THREE.CubeReflectionMapping;
+		cubeCam.position.y = 0;
+		cubeCam.update( renderer, scene );		
+	}
+	
+	return cubeCam;
+}
+
+
+function createOneCubeCam_2(cdm)
+{
+	let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 512, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+	let cubeCam = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);
+	cubeCam.position.y = 0;
+	//var pos = new THREE.Vector3( (boundG.max.x - boundG.min.x)/2 + boundG.min.x, 0, (boundG.max.z - boundG.min.z)/2 + boundG.min.z );
+	//console.log(cdm.pos);
+	cubeCam.position.copy(cdm.pos);
 	cubeCam.update( renderer, scene );
 	
 	return cubeCam;

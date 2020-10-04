@@ -667,7 +667,7 @@ document.addEventListener("keyup", function (e)
 
 		
 
-async function EXRLoader_1(cdm)
+function EXRLoader_1(cdm)
 {
 	var obj = cdm.obj;
 	var name = cdm.name;
@@ -711,7 +711,7 @@ async function EXRLoader_1(cdm)
 
 
 
-async function IMGLoader_1(cdm)
+function IMGLoader_1(cdm)
 {
 	var obj = cdm.obj;
 	var name = cdm.name;
@@ -916,7 +916,9 @@ async function loadStartSceneJson(cdm)
 			let divLoadJson = document.querySelector('[nameId="div_loadJson_1"]');
 			divLoadJson.innerText = 'загрузки json: ' +time+'c';
 		
-			sdfshnjr4(xhr.response);			
+		console.log(jsonG);
+		//loadStartSceneJson_2();
+			sdfshnjr4(jsonG);			
 		}
 	};
 	xhr.onprogress = function(event) 
@@ -929,8 +931,8 @@ async function loadStartSceneJson(cdm)
 		}
 		else
 		{
-			//let total = parseInt(xhr.getResponseHeader('content-length'), 10);
-			//val = Math.round( event.loaded / total * 10 ) + '%';
+			let total = parseInt(xhr.getResponseHeader('content-length'), 10);
+			val = Math.round( event.loaded / total * 10 ) + '%';
 		}
 		 
 		elemLoad.innerText = 'Json ' + val;		
@@ -945,40 +947,40 @@ var countEXR = 0;
 var numImg = 0;
 var numEXR = 0;
 
-async function sdfshnjr4(json)
+function sdfshnjr4(jsonG)
 {
 	timeImg = new Date().getTime();
 	timeEXR = new Date().getTime();
 	
-	for(let i = 0; i < json.images.length; i++)
+	
+	for(let i = 0; i < jsonG.images.length; i++)
 	{
-		var type = json.images[i].url.split( '.' );
+		var type = jsonG.images[i].url.split( '.' );
 		type = type[type.length - 1];
 
 		
 		if(new RegExp( 'exr' ,'i').test(type))
-		{
-			countImg++;
+		{			
+			countEXR++;
 		}
 		else
 		{
-			countEXR++;
+			countImg++;
 		}
 	}	
 	
 	console.log('countImg', countImg);
 	console.log('countEXR', countEXR);
 	
-	for(let i = 0; i < json.images.length; i++)
+	for(let i = 0; i < jsonG.images.length; i++)
 	{
-		let url = json.images[i].url;
+		let url = jsonG.images[i].url;
 		
-		json.images[i].url = '';
+		jsonG.images[i].url = '';
 		
 		if(url)
 		{			
-			json.images[i].url = '';
-			await getExr_2({url: url});
+			getExr_2({url: url});
 		}
 	}
 
@@ -1006,6 +1008,8 @@ function show_loadExr_1()
 }
 
 
+var loadS = false;
+
 async function loadStartSceneJson_2()
 {
 	let divLoad = document.querySelector('[nameId="loader"]');
@@ -1013,7 +1017,11 @@ async function loadStartSceneJson_2()
 	
 	let obj = new THREE.ObjectLoader().parse( jsonG );
 	
+	console.log(loadS);
 	
+	if(loadS) return;
+	
+	loadS = true;
 	
 	var countMaterial = 0;
 	
@@ -1053,6 +1061,11 @@ async function loadStartSceneJson_2()
 					
 					child.userData.direction = dir; 
 					
+					if(child.name=='HiddenObject_1')
+					{
+						//child.visible = false;
+					}
+					
 					if(child.name=='HiddenObject_2' && 1==2)
 					{
 						let pos = obj.localToWorld( child.position.clone() );
@@ -1069,7 +1082,7 @@ async function loadStartSceneJson_2()
 				var userData = {};
 				countMaterial += 1;
 				
-				if(child.material.map)
+				if(child.material.map && 1==1)
 				{
 					IMGLoader_1({obj: child, name: child.material.map.name});
 					child.material.map.encoding = THREE.sRGBEncoding;
@@ -1082,6 +1095,7 @@ async function loadStartSceneJson_2()
 					EXRLoader_1({obj: child, name: child.material.lightMap.name});
 					//console.log(child.material.lightMap.name, child.material.lightMap);
 					//child.material.lightMap = new THREE.EXRLoader().parse(child.material.lightMap);
+					//child.material.lightMap = lightMap_1;
 					userData.lightMap = 'jpg';
 					userData.jpg = child.material.lightMap;
 					userData.lightmapName = child.material.lightMap.name;
@@ -1116,7 +1130,37 @@ async function loadStartSceneJson_2()
 					setMatSetting_2({obj: child})
 				}							
 			}
-		});			
+		});
+	
+
+		for ( var i = 0; i < arrFloor.length; i++ )
+		{
+			//console.log(i, arrFloor[i].o.name);
+			await setMatSetting_3({obj: arrFloor[i].o, pos: arrFloor[i].pos})		
+		}		
+
+
+		if(1==2)
+		{
+			var geometry = new THREE.PlaneBufferGeometry( 10, 10 );
+			
+			var verticalMirror = new THREE.Reflector( geometry, {
+				clipBias: 0.003,
+				textureWidth: window.innerWidth * window.devicePixelRatio,
+				textureHeight: window.innerHeight * window.devicePixelRatio,
+				color: 0x889999
+			});		
+
+			//verticalMirror.position.copy(child.position);
+			verticalMirror.position.y = 0.2;
+			verticalMirror.rotateX( - Math.PI / 2 );
+			//verticalMirror.rotation.x = Math.PI;
+			//verticalMirror.rotation.copy(child.rotation);
+			
+			//child.visible = false;
+			scene.add( verticalMirror );
+			
+		}
 		
 		divLoad.style.display = "none";
 		wallAfterRender_3();
@@ -1684,6 +1728,7 @@ async function setMatSetting_1(cdm)
 }
 
 
+var arrFloor = [];
 
 function getBoundObject_1(cdm)
 {
@@ -1699,7 +1744,14 @@ function getBoundObject_1(cdm)
 	{
 		if (child instanceof THREE.Mesh)
 		{
-			if(child.geometry) { arr[arr.length] = child; }
+			if(child.geometry) 
+			{ 
+				if(new RegExp( 'floor' ,'i').test( child.name ))
+				{	
+					var n = arr.length;
+					arr[n] = child;
+				}					
+			}
 		}
 	});	
 
@@ -1724,10 +1776,16 @@ function getBoundObject_1(cdm)
 		v[v.length] = new THREE.Vector3(bound.min.x, bound.max.y, bound.max.z).applyMatrix4( arr[i].matrixWorld );
 		v[v.length] = new THREE.Vector3(bound.max.x, bound.max.y, bound.max.z).applyMatrix4( arr[i].matrixWorld );
 		v[v.length] = new THREE.Vector3(bound.min.x, bound.max.y, bound.min.z).applyMatrix4( arr[i].matrixWorld );
-		v[v.length] = new THREE.Vector3(bound.max.x, bound.max.y, bound.min.z).applyMatrix4( arr[i].matrixWorld );		
+		v[v.length] = new THREE.Vector3(bound.max.x, bound.max.y, bound.min.z).applyMatrix4( arr[i].matrixWorld );
+
+		
+		var pos = arr[i].geometry.boundingSphere.center.clone().applyMatrix4( arr[i].matrixWorld );
+		
+		arrFloor[arrFloor.length] = {o: arr[i], name: arr[i].name, pos: pos};
 	}
 	
 	var bound = { min : { x : 999999, y : 999999, z : 999999 }, max : { x : -999999, y : -999999, z : -999999 } };
+	boundG = bound;
 	
 	for(var i = 0; i < v.length; i++)
 	{
@@ -1738,13 +1796,24 @@ function getBoundObject_1(cdm)
 		if(v[i].z < bound.min.z) { bound.min.z = v[i].z; }
 		if(v[i].z > bound.max.z) { bound.max.z = v[i].z; }		
 	}
-
 	
-	obj.position.set(-((bound.max.x - bound.min.x)/2 + bound.min.x), 0, -((bound.max.z - bound.min.z)/2 + bound.min.z));
-	console.log(9999999999, obj.position, bound);
+	var offset = new THREE.Vector3(-((bound.max.x - bound.min.x)/2 + bound.min.x), 0, -((bound.max.z - bound.min.z)/2 + bound.min.z));
+	obj.position.copy(offset);
+	
+	for ( var i = 0; i < arrFloor.length; i++ )
+	{
+		arrFloor[i].pos.add(offset);
+		console.log(arrFloor[i]);
+		
+		var geometry = new THREE.BoxGeometry( 0.3, 1, 0.3 );
+		var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, lightMap: lightMap_1} );
+		var cube = new THREE.Mesh( geometry, material );
+		cube.position.copy(arrFloor[i].pos);
+		scene.add( cube );		
+	}
 }
 
-
+var boundG = null;
 
 
 
@@ -1755,13 +1824,15 @@ function setMatSetting_2(cdm)
 	let name = obj.material.name;
 	
 	if(!obj) return;
+	
+	//if(new RegExp( 'floor' ,'i').test( obj.name )) return;
 
 	let list = [];
 	
 	list[list.length] = {old: 'mattet', new: 'tulle', metalness: 0, roughness: 1, opacity: 1, transmission: 0.69, envMap: true};
 	list[list.length] = {old: 'matte', new: 'matt', metalness: 0, roughness: 1, opacity: 1, transmission: 0 };
 	list[list.length] = {old: 'satin', new: 'semimatt', metalness: 0.19, roughness: 0.29, opacity: 1, transmission: 0, envMap: true};
-	list[list.length] = {old: 'semigloss', new: 'semiglossy', metalness: 0.34, roughness: 0.29, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'semigloss', new: 'semiglossy', metalness: 0.99, roughness: 0.0, opacity: 1, transmission: 0, envMap: true};
 	list[list.length] = {old: 'glossy', new: 'glossy', metalness: 0.51, roughness: 0.39, opacity: 1, transmission: 0, envMap: true};
 	list[list.length] = {old: 'reflective', new: 'reflective', metalness: 1, roughness: 0.07, opacity: 1, transmission: 0, envMap: true};
 	list[list.length] = {old: 'brushed', new: 'brushed', metalness: 0.33, roughness: 0.23, opacity: 1, transmission: 0, envMap: true};
@@ -1776,7 +1847,8 @@ function setMatSetting_2(cdm)
 	{		
 		if(new RegExp( list[i].old ,'i').test( name ))
 		{	 
-			//console.log(list[i], name);
+
+			//console.log(list[i], obj.name);
 			
 			let color = obj.material.color;
 			let map = obj.material.map;
@@ -1786,6 +1858,7 @@ function setMatSetting_2(cdm)
 			disposeNode(obj);
 			
 			obj.material = new THREE.MeshPhysicalMaterial({ color: color, transparent: true, map: map, lightMap: lightMap });
+			//obj.material.name = list[i].new;
 			
 			obj.material.userData = userData;
 
@@ -1794,12 +1867,12 @@ function setMatSetting_2(cdm)
 			obj.material.opacity = list[i].opacity;
 			obj.material.transmission = list[i].transmission;
 			
+
 			if(list[i].envMap) 
 			{ 
-				//createCubeCam({obj: obj});
-
 				obj.material.envMap = gCubeCam.renderTarget.texture;
 			}
+
 			
 			obj.material.needsUpdate = true;
 			renderCamera();	
@@ -1810,4 +1883,258 @@ function setMatSetting_2(cdm)
 	
 }
 
+
+
+async function setMatSetting_3(cdm)
+{
+	
+	let obj = cdm.obj;
+	let name = obj.material.name;
+	
+	if(!obj) return;
+	
+	console.log('xz', obj.name);
+	let color = obj.material.color;
+	let map = obj.material.map;
+	let lightMap = obj.material.lightMap;
+	let userData = obj.material.userData;
+	
+	disposeNode(obj);
+	
+	obj.material = new THREE.MeshPhysicalMaterial({ color: color, transparent: true, map: map, lightMap: lightMap });
+	//obj.material.name = list[i].new;
+	
+	obj.material.userData = userData;
+
+	obj.material.metalness = 0.99;
+	obj.material.roughness = 0;	
+
+	var camCub_2 = createOneCubeCam_2({pos: cdm.pos});
+	
+	obj.material.envMap = camCub_2.renderTarget.texture;
+	
+	//console.log('boundingSphere', obj.geometry.boundingSphere);
+	obj.material.onBeforeCompile = function ( shader ) 
+	{
+		var bound = obj.geometry.boundingBox;  
+		//these parameters are for the cubeCamera texture
+		var x = Math.abs(Math.abs(boundG.max.x) - Math.abs(boundG.min.x));
+		var z = Math.abs(Math.abs(boundG.max.z) - Math.abs(boundG.min.z));
+		
+		shader.uniforms.cubeMapSize = { value: new THREE.Vector3( boundG.max.x - boundG.min.x, 18, boundG.max.z - boundG.min.z ) };
+		shader.uniforms.cubeMapPos = { value: cdm.pos };
+
+		//replace shader chunks with box projection chunks
+		shader.vertexShader = 'varying vec3 vWorldPosition;\n' + shader.vertexShader;
+
+		shader.vertexShader = shader.vertexShader.replace(
+			'#include <worldpos_vertex>',
+			worldposReplace
+		);
+
+		shader.fragmentShader = shader.fragmentShader.replace(
+			'#include <envmap_physical_pars_fragment>',
+			envmapPhysicalParsReplace
+		);
+	};							
+
+	
+	obj.material.needsUpdate = true;
+	renderCamera();	
+	
+	
+}
+
+
+			// shader injection for box projected cube environment mapping
+			var worldposReplace = `
+			#define BOX_PROJECTED_ENV_MAP
+
+			#if defined( USE_ENVMAP ) || defined( DISTANCE ) || defined ( USE_SHADOWMAP )
+
+				vec4 worldPosition = modelMatrix * vec4( transformed, 1.0 );
+
+				#ifdef BOX_PROJECTED_ENV_MAP
+
+					vWorldPosition = worldPosition.xyz;
+
+				#endif
+
+			#endif
+			`;
+
+			var envmapPhysicalParsReplace = `
+			#if defined( USE_ENVMAP )
+
+				#define BOX_PROJECTED_ENV_MAP
+
+				#ifdef BOX_PROJECTED_ENV_MAP
+
+					uniform vec3 cubeMapSize;
+					uniform vec3 cubeMapPos;
+					varying vec3 vWorldPosition;
+
+					vec3 parallaxCorrectNormal( vec3 v, vec3 cubeSize, vec3 cubePos ) {
+
+						vec3 nDir = normalize( v );
+						vec3 rbmax = ( .5 * cubeSize + cubePos - vWorldPosition ) / nDir;
+						vec3 rbmin = ( -.5 * cubeSize + cubePos - vWorldPosition ) / nDir;
+
+						vec3 rbminmax;
+						rbminmax.x = ( nDir.x > 0. ) ? rbmax.x : rbmin.x;
+						rbminmax.y = ( nDir.y > 0. ) ? rbmax.y : rbmin.y;
+						rbminmax.z = ( nDir.z > 0. ) ? rbmax.z : rbmin.z;
+
+						float correction = min( min( rbminmax.x, rbminmax.y ), rbminmax.z );
+						vec3 boxIntersection = vWorldPosition + nDir * correction;
+
+						return boxIntersection - cubePos;
+					}
+
+				#endif
+
+				#ifdef ENVMAP_MODE_REFRACTION
+					uniform float refractionRatio;
+				#endif
+
+				vec3 getLightProbeIndirectIrradiance( /*const in SpecularLightProbe specularLightProbe,*/ const in GeometricContext geometry, const in int maxMIPLevel ) {
+
+					vec3 worldNormal = inverseTransformDirection( geometry.normal, viewMatrix );
+
+					#ifdef ENVMAP_TYPE_CUBE
+
+						#ifdef BOX_PROJECTED_ENV_MAP
+
+							worldNormal = parallaxCorrectNormal( worldNormal, cubeMapSize, cubeMapPos );
+
+						#endif
+
+						vec3 queryVec = vec3( flipEnvMap * worldNormal.x, worldNormal.yz );
+
+						// TODO: replace with properly filtered cubemaps and access the irradiance LOD level, be it the last LOD level
+						// of a specular cubemap, or just the default level of a specially created irradiance cubemap.
+
+						#ifdef TEXTURE_LOD_EXT
+
+							vec4 envMapColor = textureCubeLodEXT( envMap, queryVec, float( maxMIPLevel ) );
+
+						#else
+
+							// force the bias high to get the last LOD level as it is the most blurred.
+							vec4 envMapColor = textureCube( envMap, queryVec, float( maxMIPLevel ) );
+
+						#endif
+
+						envMapColor.rgb = envMapTexelToLinear( envMapColor ).rgb;
+
+					#elif defined( ENVMAP_TYPE_CUBE_UV )
+
+						vec4 envMapColor = textureCubeUV( envMap, worldNormal, 1.0 );
+
+					#else
+
+						vec4 envMapColor = vec4( 0.0 );
+
+					#endif
+
+					return PI * envMapColor.rgb * envMapIntensity;
+
+				}
+
+				// Trowbridge-Reitz distribution to Mip level, following the logic of http://casual-effects.blogspot.ca/2011/08/plausible-environment-lighting-in-two.html
+				float getSpecularMIPLevel( const in float roughness, const in int maxMIPLevel ) {
+
+					float maxMIPLevelScalar = float( maxMIPLevel );
+
+					float sigma = PI * roughness * roughness / ( 1.0 + roughness );
+					float desiredMIPLevel = maxMIPLevelScalar + log2( sigma );
+
+					// clamp to allowable LOD ranges.
+					return clamp( desiredMIPLevel, 0.0, maxMIPLevelScalar );
+
+				}
+
+				vec3 getLightProbeIndirectRadiance( /*const in SpecularLightProbe specularLightProbe,*/ const in vec3 viewDir, const in vec3 normal, const in float roughness, const in int maxMIPLevel ) {
+
+					#ifdef ENVMAP_MODE_REFLECTION
+
+						vec3 reflectVec = reflect( -viewDir, normal );
+
+						// Mixing the reflection with the normal is more accurate and keeps rough objects from gathering light from behind their tangent plane.
+						reflectVec = normalize( mix( reflectVec, normal, roughness * roughness) );
+
+					#else
+
+						vec3 reflectVec = refract( -viewDir, normal, refractionRatio );
+
+					#endif
+
+					reflectVec = inverseTransformDirection( reflectVec, viewMatrix );
+
+					float specularMIPLevel = getSpecularMIPLevel( roughness, maxMIPLevel );
+
+					#ifdef ENVMAP_TYPE_CUBE
+
+						#ifdef BOX_PROJECTED_ENV_MAP
+							reflectVec = parallaxCorrectNormal( reflectVec, cubeMapSize, cubeMapPos );
+						#endif
+
+						vec3 queryReflectVec = vec3( flipEnvMap * reflectVec.x, reflectVec.yz );
+
+						#ifdef TEXTURE_LOD_EXT
+
+							vec4 envMapColor = textureCubeLodEXT( envMap, queryReflectVec, specularMIPLevel );
+
+						#else
+
+							vec4 envMapColor = textureCube( envMap, queryReflectVec, specularMIPLevel );
+
+						#endif
+
+						envMapColor.rgb = envMapTexelToLinear( envMapColor ).rgb;
+
+					#elif defined( ENVMAP_TYPE_CUBE_UV )
+
+						vec4 envMapColor = textureCubeUV( envMap, reflectVec, roughness );
+
+					#elif defined( ENVMAP_TYPE_EQUIREC )
+
+						vec2 sampleUV;
+						sampleUV.y = asin( clamp( reflectVec.y, - 1.0, 1.0 ) ) * RECIPROCAL_PI + 0.5;
+						sampleUV.x = atan( reflectVec.z, reflectVec.x ) * RECIPROCAL_PI2 + 0.5;
+
+						#ifdef TEXTURE_LOD_EXT
+
+							vec4 envMapColor = texture2DLodEXT( envMap, sampleUV, specularMIPLevel );
+
+						#else
+
+							vec4 envMapColor = texture2D( envMap, sampleUV, specularMIPLevel );
+
+						#endif
+
+						envMapColor.rgb = envMapTexelToLinear( envMapColor ).rgb;
+
+					#elif defined( ENVMAP_TYPE_SPHERE )
+
+						vec3 reflectView = normalize( ( viewMatrix * vec4( reflectVec, 0.0 ) ).xyz + vec3( 0.0,0.0,1.0 ) );
+
+						#ifdef TEXTURE_LOD_EXT
+
+							vec4 envMapColor = texture2DLodEXT( envMap, reflectView.xy * 0.5 + 0.5, specularMIPLevel );
+
+						#else
+
+							vec4 envMapColor = texture2D( envMap, reflectView.xy * 0.5 + 0.5, specularMIPLevel );
+
+						#endif
+
+						envMapColor.rgb = envMapTexelToLinear( envMapColor ).rgb;
+
+					#endif
+
+					return envMapColor.rgb * envMapIntensity;
+				}
+			#endif
+			`;
 

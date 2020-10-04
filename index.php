@@ -26,7 +26,7 @@
 	
 
 	<script src="<?=$path?>js/loader/EXRLoader.js?<?=$vrs?>"></script>
-	
+	<script src="<?=$path?>js/dp/Reflector.js?<?=$vrs?>"></script>
 	
 	
 	<div id="canvasFrame" style="position: fixed; width: 100%; height: 100%; top: 0; right: 0; overflow: hidden;">

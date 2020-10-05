@@ -1764,7 +1764,7 @@ function getBoundObject_1(cdm)
 		arr[i].geometry.computeBoundingBox();	
 		arr[i].geometry.computeBoundingSphere();
 
-		var bound = arr[i].geometry.boundingBox;
+		let bound = arr[i].geometry.boundingBox;
 		
 		//console.log(111111, arr[i], bound);
 
@@ -1805,11 +1805,33 @@ function getBoundObject_1(cdm)
 		arrFloor[i].pos.add(offset);
 		console.log(arrFloor[i]);
 		
-		var geometry = new THREE.BoxGeometry( 0.3, 1, 0.3 );
-		var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, lightMap: lightMap_1} );
-		var cube = new THREE.Mesh( geometry, material );
-		cube.position.copy(arrFloor[i].pos);
-		scene.add( cube );		
+		if(1==2)
+		{
+			var bound = arrFloor[i].o.geometry.boundingBox;
+			
+			var x = (bound.max.x - bound.min.x);
+			var y = (bound.max.y - bound.min.y);
+			var z = (bound.max.z - bound.min.z);	
+			 
+
+			var geometry = createGeometryCube(x, y+0.1, z);	
+			
+			//var v = geometry.vertices;
+			//v[0].x = v[1].x = v[6].x = v[7].x = bound.min.x;
+			//v[3].x = v[2].x = v[5].x = v[4].x = bound.max.x;
+
+			//v[0].y = v[3].y = v[4].y = v[7].y = bound.min.y;
+			//v[1].y = v[2].y = v[5].y = v[6].y = bound.max.y;
+			
+			//v[0].z = v[1].z = v[2].z = v[3].z = bound.max.z;
+			//v[4].z = v[5].z = v[6].z = v[7].z = bound.min.z;		
+			
+			//var geometry = new THREE.BoxGeometry( 0.3, 1, 0.3 );
+			var material = new THREE.MeshLambertMaterial( {color: 0x00ff00, lightMap: lightMap_1, transparent: true, opacity: 0.5} );
+			var cube = new THREE.Mesh( geometry, material );
+			cube.position.copy(arrFloor[i].pos);
+			scene.add( cube );					
+		}
 	}
 }
 
@@ -1832,7 +1854,7 @@ function setMatSetting_2(cdm)
 	list[list.length] = {old: 'mattet', new: 'tulle', metalness: 0, roughness: 1, opacity: 1, transmission: 0.69, envMap: true};
 	list[list.length] = {old: 'matte', new: 'matt', metalness: 0, roughness: 1, opacity: 1, transmission: 0 };
 	list[list.length] = {old: 'satin', new: 'semimatt', metalness: 0.19, roughness: 0.29, opacity: 1, transmission: 0, envMap: true};
-	list[list.length] = {old: 'semigloss', new: 'semiglossy', metalness: 0.99, roughness: 0.0, opacity: 1, transmission: 0, envMap: true};
+	list[list.length] = {old: 'semigloss', new: 'semiglossy', metalness: 0.19, roughness: 0.2, opacity: 1, transmission: 0, envMap: true};
 	list[list.length] = {old: 'glossy', new: 'glossy', metalness: 0.51, roughness: 0.39, opacity: 1, transmission: 0, envMap: true};
 	list[list.length] = {old: 'reflective', new: 'reflective', metalness: 1, roughness: 0.07, opacity: 1, transmission: 0, envMap: true};
 	list[list.length] = {old: 'brushed', new: 'brushed', metalness: 0.33, roughness: 0.23, opacity: 1, transmission: 0, envMap: true};
@@ -1921,7 +1943,7 @@ async function setMatSetting_3(cdm)
 		var x = Math.abs(Math.abs(boundG.max.x) - Math.abs(boundG.min.x));
 		var z = Math.abs(Math.abs(boundG.max.z) - Math.abs(boundG.min.z));
 		
-		shader.uniforms.cubeMapSize = { value: new THREE.Vector3( boundG.max.x - boundG.min.x, 18, boundG.max.z - boundG.min.z ) };
+		shader.uniforms.cubeMapSize = { value: new THREE.Vector3( bound.max.x - bound.min.x, 18, bound.max.z - bound.min.z ) };
 		shader.uniforms.cubeMapPos = { value: cdm.pos };
 
 		//replace shader chunks with box projection chunks

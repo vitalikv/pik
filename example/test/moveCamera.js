@@ -246,7 +246,7 @@ function cameraMove3D( event )
 	{
 		if ( vk_click == 'left' ) 
 		{  //console.log(2, vk_click);
-			//newCameraPosition = null;
+			newCameraPosition = null;
 			var radious = infProject.camera.d3.targetO.position.distanceTo( camera.position );
 			
 			var theta = - ( ( event.clientX - onMouseDownPosition.x ) * 0.5 ) + infProject.camera.d3.theta;
@@ -268,7 +268,7 @@ function cameraMove3D( event )
 		}
 		if ( vk_click == 'right' )    
 		{ //console.log(3, vk_click);
-			//newCameraPosition = null;
+			newCameraPosition = null;
 			
 			if(event.targetTouches)
 			{

@@ -169,7 +169,7 @@ function showHideObjCeil()
 		}
 	}
 
-	let k = Math.abs(value - 1);
+	let k = Math.abs(value + 1.9);
 	if(k < 0) k = 0;
 		
 	for(let i = 0; i < objCeilVisible.length; i++)

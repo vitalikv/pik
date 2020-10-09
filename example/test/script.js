@@ -875,21 +875,48 @@ async function loadStartSceneJson_2()
 			gCubeCam = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);
 			gCubeCam.position.y = 1;
 			//cubeRenderTarget.format = THREE.RGBFormat;
-			
+			gCubeCam.update( renderer, scene );
 		}
-		gCubeCam.update( renderer, scene );
 		
-		obj.traverse(function(child) 
+		var ss = 0;
+		for ( var i = 0; i < arrObj.length; i++ )
 		{
-			if(child.isMesh) 
-			{ 		
-				if(child.material)
-				{				
-					if(child.material.userData.envMap) child.material.envMap = gCubeCam.renderTarget.texture;
-					child.material.needsUpdate = true;
-				}							
+			if(arrObj[i].o.material.userData.envMap)
+			{
+				
+				var size = 64;
+				var mirror = false;
+				if(new RegExp( 'mirror' ,'i').test( arrObj[i].o.material.name )){ mirror = true; size = 1024; }
+				
+				let cubeRenderTarget_2 = new THREE.WebGLCubeRenderTarget( size, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+				let gCubeCam_2 = new THREE.CubeCamera(0.1, 10, cubeRenderTarget_2);
+				gCubeCam_2.position.copy(arrObj[i].pos);
+				gCubeCam_2.update( renderer, scene );
+
+				arrObj[i].o.material.envMap = gCubeCam_2.renderTarget.texture;
+				arrObj[i].o.material.needsUpdate = true;
+				
+				if(mirror)
+				{
+									
+				}
 			}
-		});		
+		}
+		
+		if(1==2)
+		{
+			obj.traverse(function(child) 
+			{
+				if(child.isMesh) 
+				{ 		
+					if(child.material)
+					{
+						if(child.material.userData.envMap) child.material.envMap = gCubeCam_2.renderTarget.texture;
+						child.material.needsUpdate = true;
+					}							
+				}
+			});				
+		}
 		
 		if(1==2)
 		{
@@ -1065,6 +1092,7 @@ function disposeNode(node)
 
 
 var arrFloor = [];
+var arrObj = [];
 
 function getBoundObject_1(cdm)
 {
@@ -1082,8 +1110,9 @@ function getBoundObject_1(cdm)
 		{
 			if(child.geometry) 
 			{ 
-				if(new RegExp( 'floor' ,'i').test( child.name )){ arr[arr.length] = child; }
-				if(new RegExp( 'ceil' ,'i').test( child.name )){ arr[arr.length] = child; }					
+				//if(new RegExp( 'floor' ,'i').test( child.name )){ arr[arr.length] = child; }
+				//if(new RegExp( 'ceil' ,'i').test( child.name )){ arr[arr.length] = child; }
+				arr[arr.length] = child;
 			}
 		}
 	});	
@@ -1114,7 +1143,14 @@ function getBoundObject_1(cdm)
 		
 		var pos = arr[i].geometry.boundingSphere.center.clone().applyMatrix4( arr[i].matrixWorld );
 		
-		arrFloor[arrFloor.length] = {o: arr[i], name: arr[i].name, pos: pos};
+		if(new RegExp( 'floor' ,'i').test( arr[i].name ))
+		{
+			arrFloor[arrFloor.length] = {o: arr[i], name: arr[i].name, pos: pos};
+		}
+		else
+		{
+			arrObj[arrObj.length] = {o: arr[i], name: arr[i].name, pos: pos};
+		}
 	}
 	
 	var bound = { min : { x : 999999, y : 999999, z : 999999 }, max : { x : -999999, y : -999999, z : -999999 } };
@@ -1137,6 +1173,11 @@ function getBoundObject_1(cdm)
 	{
 		arrFloor[i].pos.add(offset);		
 	}
+	
+	for ( var i = 0; i < arrObj.length; i++ )
+	{
+		arrObj[i].pos.add(offset);		
+	}	
 	
 	boundG = bound;
 }
@@ -1205,7 +1246,7 @@ function setMatSetting_2(cdm)
 			disposeNode(obj);
 			
 			obj.material = new THREE.MeshPhysicalMaterial({ color: color, transparent: true, map: map, lightMap: lightMap });
-			//obj.material.name = list[i].new;
+			obj.material.name = list[i].old;
 			
 			obj.material.userData = userData;
 
@@ -1337,6 +1378,13 @@ async function setMatSetting_3(cdm)
 	
 	
 }
+
+
+
+
+
+
+
 
 
 			// shader injection for box projected cube environment mapping

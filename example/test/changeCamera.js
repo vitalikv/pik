@@ -25,6 +25,7 @@ function changeCamera(cam)
 	}
 	
 	showHidePlita();
+	showHideObjCeil();
 	renderCamera();
 }
 
@@ -78,7 +79,7 @@ function switchCamera3D(cdm)
 		camera3D.userData.camera.dist = posCenter.distanceTo(camera.position);
 		camera3D.userData.camera.type = 'first';		
 		
-		newCameraPosition = { positionFirst: new THREE.Vector3(posCenter.x, 1.5, posCenter.z) };
+		newCameraPosition = { positionFirst: new THREE.Vector3(posCenter.x, 1.5, posCenter.z), chekCeil: true };
 
 		// показываем стены, которые были спрятаны
 		//showAllWallRender();
@@ -101,7 +102,7 @@ function switchCamera3D(cdm)
 		pos.z = -radius * Math.sin(radH) * Math.sin(radXZ) + posCenter.z;
 		pos.y = radius * Math.cos(radH);					
 		
-		newCameraPosition = { positionFly: pos };
+		newCameraPosition = { positionFly: pos, chekCeil: true };
 
 		// прячем стены
 		//wallAfterRender_2();
@@ -109,11 +110,77 @@ function switchCamera3D(cdm)
 	}
 	
 	showHidePlita();
+	showHideObjCeil();
 	dblclickPos = null;
 }
 
 
+// скрываем плиты, если в 3D переходим в режим от первого лица, во всех остальных случаях показываем
+function showHidePlita()
+{
+	var visible = true;
+	
+	if(camera == cameraTop) { visible = true; }
+	
+	if(camera == camera3D) 
+	{
+		if(camera3D.userData.camera.type == 'first') { visible = false; }
+		else { visible = true; }
+	}
+	
+	for(let i = 0; i < plitaVisible.length; i++)
+	{
+		plitaVisible[i].visible = visible;
+		//console.log(plitaVisible[i].name, plitaVisible[i].visible);
+	}
+	
+	renderCamera();
+}
 
+
+
+// скрываем потолочные объекты
+function showHideObjCeil()
+{
+	if(!boundG) return;
+	
+	var value = 1;
+	
+	if(camera == cameraTop) { value = 0; }
+	
+	if(camera == camera3D) 
+	{
+		if(camera3D.userData.camera.type == 'first') { value = 1; }
+		else 
+		{ 
+			if(camera.position.y > boundG.max.y) { value = 0; }
+			else 
+			{
+				value = 0;
+				
+				if(boundG.max.y - camera.position.y > 0.1) 
+				{
+					value = (Math.round((boundG.max.y - camera.position.y) * 100)/100) * 3;
+					
+					if(value > 1) value = 1;
+				}
+				
+			}
+		}
+	}
+
+	let k = Math.abs(value - 1);
+	if(k < 0) k = 0;
+		
+	for(let i = 0; i < objCeilVisible.length; i++)
+	{
+		setTransparentMat_2({obj: objCeilVisible[i], value: value, renderOrder: k});
+		
+		//console.log(objCeilVisible[i].name);
+	}
+	
+	renderCamera();
+}
 
 
 
@@ -184,6 +251,11 @@ function moveCameraToNewPosition()
 	else
 	{
 		newCameraPosition = null;
+	}
+	
+	if(newCameraPosition) 
+	{
+		if(newCameraPosition.chekCeil) { showHideObjCeil(); }
 	}
 	
 	renderCamera();

@@ -264,6 +264,7 @@ function cameraMove3D( event )
 			
 			//wallAfterRender_2();
 			wallAfterRender_3();
+			showHideObjCeil();
 		}
 		if ( vk_click == 'right' )    
 		{ //console.log(3, vk_click);
@@ -334,6 +335,7 @@ function cameraMove3D( event )
 			clickInf.st.clientY = event.clientY;
 		
 			wallAfterRender_3();
+			showHideObjCeil();
 		}
 		}
 		

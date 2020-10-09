@@ -2,7 +2,7 @@
 
 var wallVisible = [];
 var plitaVisible = [];
-
+var objCeilVisible = [];
 
 
 

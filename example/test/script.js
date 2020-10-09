@@ -758,26 +758,7 @@ function show_loadExr_1()
 
 
 
-function showHidePlita()
-{
-	var visible = true;
-	
-	if(camera == cameraTop) { visible = true; }
-	
-	if(camera == camera3D) 
-	{
-		if(camera3D.userData.camera.type == 'first') { visible = false; }
-		else { visible = true; }
-	}
-	
-	for(let i = 0; i < plitaVisible.length; i++)
-	{
-		plitaVisible[i].visible = visible;
-		//console.log(plitaVisible[i].name, plitaVisible[i].visible);
-	}
-	
-	renderCamera();
-}
+
 
 
 
@@ -817,10 +798,27 @@ async function loadStartSceneJson_2()
 				
 			}
 			
-			if(child.userData.hideInWalk)
+			if(new RegExp( 'Plita' ,'i').test( child.name ))
 			{
 				plitaVisible[plitaVisible.length] = child;
 			}
+			else if(child.userData.hideInWalk)
+			{
+				plitaVisible[plitaVisible.length] = child;
+			}
+			
+			if(new RegExp( 'massive_nero' ,'i').test( child.name ))
+			{
+				objCeilVisible[objCeilVisible.length] = child;
+			}
+			else if(new RegExp( 'render_1533460906' ,'i').test( child.name ))
+			{
+				objCeilVisible[objCeilVisible.length] = child;
+			}				
+			else if(child.userData.snappedToCeil)
+			{
+				objCeilVisible[objCeilVisible.length] = child;
+			}			
 			
 			if(child.material)
 			{
@@ -930,12 +928,13 @@ async function loadStartSceneJson_2()
 		let divCountMaterial = document.querySelector('[nameId="div_countMaterial_1"]');
 		divCountMaterial.innerText = 'material: ' +jsonG.materials.length;
 		
-		
+		showHideObjCeil();
 		renderCamera();
 		
 		$('[nameId="butt_camera_3D"]').hide(); 
 		$('[nameId="butt_camera_2D"]').show();
-		$('[nameId="butt_cam_walk"]').show();				
+		$('[nameId="butt_cam_walk"]').show();
+		
 	}	
 }
 
@@ -1083,11 +1082,8 @@ function getBoundObject_1(cdm)
 		{
 			if(child.geometry) 
 			{ 
-				if(new RegExp( 'floor' ,'i').test( child.name ))
-				{	
-					var n = arr.length;
-					arr[n] = child;
-				}					
+				if(new RegExp( 'floor' ,'i').test( child.name )){ arr[arr.length] = child; }
+				if(new RegExp( 'ceil' ,'i').test( child.name )){ arr[arr.length] = child; }					
 			}
 		}
 	});	
@@ -1122,7 +1118,7 @@ function getBoundObject_1(cdm)
 	}
 	
 	var bound = { min : { x : 999999, y : 999999, z : 999999 }, max : { x : -999999, y : -999999, z : -999999 } };
-	boundG = bound;
+	
 	
 	for(var i = 0; i < v.length; i++)
 	{
@@ -1141,6 +1137,8 @@ function getBoundObject_1(cdm)
 	{
 		arrFloor[i].pos.add(offset);		
 	}
+	
+	boundG = bound;
 }
 
 var boundG = null;
@@ -1307,8 +1305,6 @@ async function setMatSetting_3(cdm)
 			{
 				var bound = obj.geometry.boundingBox;  
 				//these parameters are for the cubeCamera texture
-				var x = Math.abs(Math.abs(boundG.max.x) - Math.abs(boundG.min.x));
-				var z = Math.abs(Math.abs(boundG.max.z) - Math.abs(boundG.min.z));
 				
 				shader.uniforms.cubeMapSize = { value: new THREE.Vector3( bound.max.x - bound.min.x, 18, bound.max.z - bound.min.z ) };
 				shader.uniforms.cubeMapPos = { value: cdm.pos };

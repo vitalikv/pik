@@ -637,6 +637,8 @@ let jsonG = null;
 let divProgressBar = document.querySelector('.pp-rotation__progress-container');
 let elemProgressBar = document.querySelector('.pp-rotation__progress__bar');
 
+
+
 function loadStartSceneJson(cdm)
 {
 	var time = new Date().getTime();
@@ -648,7 +650,6 @@ function loadStartSceneJson(cdm)
 	
 	let elemLoad = document.querySelector('[nameId="progress_load"]');
 	
-	
 	//return;
 	
 	let xhr = new XMLHttpRequest();
@@ -659,10 +660,12 @@ function loadStartSceneJson(cdm)
 	{		
 		if(xhr.readyState == 4 && xhr.status == 200) 
 		{				
-	
+			
 			time = new Date().getTime() - time;
 			time = Math.round(time/10)/100;
 			jsonG = xhr.response;
+			
+			console.log('загрузка json', time);
 			
 			let divLoadJson = document.querySelector('[nameId="div_loadJson_1"]');
 			divLoadJson.innerText = 'загрузки json: ' +time+'c';
@@ -697,12 +700,13 @@ var countImg = 0;
 var countEXR = 0;
 var numImg = 0;
 var numEXR = 0;
+var timeLoadTexture = 0;
 
 function sdfshnjr4(jsonG)
 {
 	timeImg = new Date().getTime();
 	timeEXR = new Date().getTime();
-	
+	timeLoadTexture = new Date().getTime();
 	
 	for(let i = 0; i < jsonG.images.length; i++)
 	{
@@ -770,8 +774,20 @@ async function loadStartSceneJson_2()
 	let divLoad = document.querySelector('[nameId="loader"]');
 	let elemLoad = document.querySelector('[nameId="progress_load"]');	
 	
+	
+	timeLoadTexture = new Date().getTime() - timeLoadTexture;
+	timeLoadTexture = Math.round(timeLoadTexture/10)/100;
+	console.log('загрузка текстур и lightMap', timeLoadTexture);	
+	
+	var timeJsonParse = new Date().getTime();
+	
 	let obj = new THREE.ObjectLoader().parse( jsonG );
 	
+	timeJsonParse = new Date().getTime() - timeJsonParse;
+	timeJsonParse = Math.round(timeJsonParse/10)/100;
+	console.log('parse json', timeJsonParse);
+			
+	var timeScene_1 = new Date().getTime();
 	
 	{ 
 		scene.add( obj );
@@ -853,6 +869,13 @@ async function loadStartSceneJson_2()
 			}
 		});
 		
+		timeScene_1 = new Date().getTime() - timeScene_1;
+		timeScene_1 = Math.round(timeScene_1/10)/100;
+		console.log('настройка сцены', timeScene_1);		
+		
+		
+		var timeMaterial = new Date().getTime();
+		
 		obj.traverse(function(child) 
 		{
 			if(child.isMesh) 
@@ -870,7 +893,12 @@ async function loadStartSceneJson_2()
 			//console.log(i, arrFloor[i].o.name);
 			//await 
 			setMatSetting_3({obj: arrFloor[i].o, pos: arrFloor[i].pos})		
-		}		
+		}	
+
+		
+		timeMaterial = new Date().getTime() - timeMaterial;
+		timeMaterial = Math.round(timeMaterial/10)/100;
+		console.log('назначение материалов', timeMaterial);		
 
 		if(1==1)
 		{
@@ -881,12 +909,14 @@ async function loadStartSceneJson_2()
 			gCubeCam.update( renderer, scene );
 		}
 		
+		var timeCubeCam = new Date().getTime();
+		
 		var ss = 0;
 		for ( var i = 0; i < arrObj.length; i++ )
 		{
 			if(arrObj[i].o.material.userData.envMap)
 			{
-				
+				//console.log(arrObj[i].o.material.name);
 				var size = 64;
 				var mirror = false;
 				if(new RegExp( 'mirror' ,'i').test( arrObj[i].o.material.name )){ mirror = true; size = 1024; }
@@ -905,6 +935,10 @@ async function loadStartSceneJson_2()
 				}
 			}
 		}
+		
+		timeCubeCam = new Date().getTime() - timeCubeCam;
+		timeCubeCam = Math.round(timeCubeCam/10)/100;
+		console.log('создание и назначение CubeCam', timeCubeCam);		
 		
 		if(1==2)
 		{

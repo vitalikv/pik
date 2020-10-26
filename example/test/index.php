@@ -26,6 +26,7 @@
 	
 
 	<script src="<?=$path?>js/loader/EXRLoader.js?<?=$vrs?>"></script>
+	<script src="<?=$path?>js/loader/inflate.min.js?<?=$vrs?>"></script>
 	<script src="<?=$path?>js/dp/Reflector.js?<?=$vrs?>"></script>
 	
 	

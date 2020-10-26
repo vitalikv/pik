@@ -527,12 +527,14 @@ async function getExr_2(cdm)
 	{
 		//console.log('exr ->', type);
 		
+		//if(name == 'Lightmap-4_comp_light_LM') { url = 'exr1/00.exr'; }
+		
 		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( url, function ( texture ) 
 		{		
 			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
 			
 			numEXR++;
-			console.log('numEXR', numEXR, (infProject.scene.lightMap.length/jsonG.images.length)*100);
+			console.log('numEXR', numEXR, name, (infProject.scene.lightMap.length/jsonG.images.length)*100);
 			
 			if(countEXR == numEXR)
 			{				
@@ -571,6 +573,7 @@ async function getExr_2(cdm)
 		let xhr = new XMLHttpRequest();
 		xhr.responseType =	"blob";
 		xhr.open('GET', url, true);
+		//xhr.open('GET', 'img1/'+name+'.jpg', true);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.onreadystatechange = function() 
 		{		
@@ -1293,7 +1296,7 @@ async function setMatSetting_3(cdm)
 	let list = [];
 	
 	list[list.length] = {old: 'mattet', new: 'tulle', metalness: 0, roughness: 1, opacity: 1, transmission: 0.69, envMap: true};
-	list[list.length] = {old: 'matte', new: 'matt', metalness: 0, roughness: 1, opacity: 1, transmission: 0 };
+	//list[list.length] = {old: 'matte', new: 'matt', metalness: 0, roughness: 1, opacity: 1, transmission: 0 };
 	list[list.length] = {old: 'satin', new: 'semimatt', metalness: 0.19, roughness: 0.2, opacity: 1, transmission: 0, envMap: true};
 	list[list.length] = {old: 'semigloss', new: 'semiglossy', metalness: 0.59, roughness: 0.15, opacity: 1, transmission: 0, envMap: true};
 	list[list.length] = {old: 'glossy', new: 'glossy', metalness: 0.6, roughness: 0.1, opacity: 1, transmission: 0, envMap: true};

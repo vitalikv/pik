@@ -141,7 +141,7 @@ function showHidePlita()
 
 // скрываем потолочные объекты
 function showHideObjCeil()
-{
+{ 
 	if(!boundG) return;
 	
 	var value = 1;
@@ -199,7 +199,7 @@ function moveCameraToNewPosition()
 		infProject.camera.d3.targetO.position.add(camera.position.clone().sub(pos2));
 		
 		if(comparePos(camera.position, pos)) 
-		{ 	
+		{ 				 
 			newCameraPosition = null; 
 		};		
 	}
@@ -210,6 +210,8 @@ function moveCameraToNewPosition()
 		var pos2 = camera.position.clone();  
 		
 		camera.position.lerp( pos, 0.1 );
+		
+		if(newCameraPosition.positionFly) objPanorama.visible = false;
 		
 		if(!newCameraPosition.stoDir)
 		{
@@ -245,6 +247,8 @@ function moveCameraToNewPosition()
 		
 		if(comparePos(camera.position, pos)) 
 		{ 	
+			if(newCameraPosition.positionFirst) objPanorama.visible = true;
+			
 			newCameraPosition = null; 
 		};		
 	}

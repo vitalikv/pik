@@ -531,7 +531,7 @@ async function getExr_2(cdm)
 		
 		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( url, function ( texture ) 
 		{		
-			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
+			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture, uuid: cdm.uuid};
 			
 			numEXR++;
 			console.log('numEXR', numEXR, name, (infProject.scene.lightMap.length/jsonG.images.length)*100);
@@ -591,7 +591,7 @@ async function getExr_2(cdm)
 					texture.encoding = THREE.sRGBEncoding;
 					texture.needsUpdate = true;				
 					
-					infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture};
+					infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture, uuid: cdm.uuid};
 					
 					numImg++;
 					console.log('numImg', numImg, (infProject.scene.lightMap.length/jsonG.images.length)*100);
@@ -735,7 +735,7 @@ function sdfshnjr4(jsonG)
 		
 		if(url)
 		{			
-			getExr_2({url: url});
+			getExr_2({url: url, uuid: jsonG.images[i].uuid});
 		}
 	}
 
@@ -765,8 +765,8 @@ function show_loadExr_1()
 
 
 
-
-
+var objPanorama = null;
+var reflectionProbe = [];
 
 
 async function loadStartSceneJson_2()
@@ -801,8 +801,58 @@ async function loadStartSceneJson_2()
 		
 		obj.traverse(function(child) 
 		{
+			if(new RegExp( 'VrayEnv_Panorama_unlit' ,'i').test( child.name ))
+			{
+				//child.visible = false;
+			
+				var color = child.material.color;
+				var map = child.material.map;
+				
+				map.encoding =  THREE.LinearEncoding;
+				map.needsUpdate = true;
+				disposeNode(child);
+				
+				objPanorama = child;
+				child.material = new THREE.MeshBasicMaterial({ color: color, map: map, lightMap: lightMap_1 });
+				child.material.toneMapped = false;
+				child.material.needsUpdate = true;
+				objPanorama.visible = false;
+				//console.log(child.material);
+			}
+			
 			if(child.type == 'Group')
 			{
+				if(new RegExp( 'ReflectionProbe' ,'i').test( child.name ))
+				{
+					var n = reflectionProbe.length;
+					reflectionProbe[n] = {};
+					
+				for ( var i2 = 0; i2 < infProject.scene.lightMap.length; i2++ )
+				{
+					if(child.userData.uuidImage == infProject.scene.lightMap[i2].uuid)
+					{
+						infProject.scene.lightMap[i2].texture.mapping = THREE.EquirectangularReflectionMapping;
+						infProject.scene.lightMap[i2].texture.needsUpdate = true;						
+						reflectionProbe[n].texture = infProject.scene.lightMap[i2].texture;
+						
+						break;
+					}
+				}					
+				
+if(1==2)
+{
+					console.log(reflectionProbe);
+var geometry = new THREE.SphereGeometry( 1, 32, 32 );
+var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, map: reflectionProbe[n].texture, lightMap: lightMap_1} );
+var sphere = new THREE.Mesh( geometry, material );
+sphere.position.set(n-1, 1, 0);
+scene.add( sphere );
+}	
+
+
+					
+				}
+				
 				if(new RegExp( 'HiddenObject' ,'i').test( child.name ))
 				{					
 					wallVisible[wallVisible.length] = child;
@@ -916,22 +966,31 @@ async function loadStartSceneJson_2()
 		{
 			if(arrObj[i].o.material.userData.envMap)
 			{
-				//console.log(arrObj[i].o.material.name);
-				var size = 64;
-				var mirror = false;
-				if(new RegExp( 'mirror' ,'i').test( arrObj[i].o.material.name )){ mirror = true; size = 1024; }
-				
-				let cubeRenderTarget_2 = new THREE.WebGLCubeRenderTarget( size, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
-				let gCubeCam_2 = new THREE.CubeCamera(0.1, 10, cubeRenderTarget_2);
-				gCubeCam_2.position.copy(arrObj[i].pos);
-				gCubeCam_2.update( renderer, scene );
 
-				arrObj[i].o.material.envMap = gCubeCam_2.renderTarget.texture;
-				arrObj[i].o.material.needsUpdate = true;
-				
-				if(mirror)
+				for ( var i2 = 0; i2 < infProject.scene.lightMap.length; i2++ )
 				{
-									
+					//if(child.userData == infProject.scene.lightMap[i2])
+				}
+			
+				if(1==2)
+				{
+					//console.log(arrObj[i].o.material.name);
+					var size = 64;
+					var mirror = false;
+					if(new RegExp( 'mirror' ,'i').test( arrObj[i].o.material.name )){ mirror = true; size = 1024; }
+					
+					let cubeRenderTarget_2 = new THREE.WebGLCubeRenderTarget( size, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+					let gCubeCam_2 = new THREE.CubeCamera(0.1, 10, cubeRenderTarget_2);
+					gCubeCam_2.position.copy(arrObj[i].pos);
+					gCubeCam_2.update( renderer, scene );
+
+					arrObj[i].o.material.envMap = gCubeCam_2.renderTarget.texture;
+					arrObj[i].o.material.needsUpdate = true;
+					
+					if(mirror)
+					{
+										
+					}					
 				}
 			}
 		}
@@ -991,6 +1050,7 @@ async function loadStartSceneJson_2()
 
 		let divCountMaterial = document.querySelector('[nameId="div_countMaterial_1"]');
 		divCountMaterial.innerText = 'material: ' +jsonG.materials.length;
+		
 		
 		showHideObjCeil();
 		renderCamera();
@@ -1149,7 +1209,9 @@ function getBoundObject_1(cdm)
 			{ 
 				//if(new RegExp( 'floor' ,'i').test( child.name )){ arr[arr.length] = child; }
 				//if(new RegExp( 'ceil' ,'i').test( child.name )){ arr[arr.length] = child; }
-				arr[arr.length] = child;
+				if(new RegExp( 'VrayEnv_Panorama_unlit' ,'i').test( child.name )){}
+				else { arr[arr.length] = child; }
+				
 			}
 		}
 	});	
@@ -1279,6 +1341,8 @@ function setMatSetting_2(cdm)
 			let map = obj.material.map;
 			let lightMap = obj.material.lightMap;
 			let userData = obj.material.userData;
+			
+			console.log(obj.material.envMap);
 			
 			disposeNode(obj);
 			

@@ -474,7 +474,8 @@ function IMGLoader_1(cdm)
 var objF = null;
 var pathname = '';
 
-
+				const pmremGenerator = new THREE.PMREMGenerator( renderer );
+				pmremGenerator.compileEquirectangularShader();
 
 $(document).ready(function () 
 { 
@@ -769,6 +770,116 @@ var objPanorama = null;
 var reflectionProbe = [];
 
 
+
+
+
+async function getReflectionProbeExr(cdm)
+{
+	
+	
+
+	
+    await Promise.all([
+      new Promise((resolve, reject) => new THREE.EXRLoader().setDataType( THREE.FloatType ).load(pathname + cdm.userData.frontSide, resolve, undefined, reject)),
+      new Promise((resolve, reject) => new THREE.EXRLoader().setDataType( THREE.FloatType ).load(pathname + cdm.userData.bottomSide, resolve, undefined, reject)),
+      new Promise((resolve, reject) => new THREE.EXRLoader().setDataType( THREE.FloatType ).load(pathname + cdm.userData.leftSide, resolve, undefined, reject)),
+      new Promise((resolve, reject) => new THREE.EXRLoader().setDataType( THREE.FloatType ).load(pathname + cdm.userData.backSide, resolve, undefined, reject)),
+      new Promise((resolve, reject) => new THREE.EXRLoader().setDataType( THREE.FloatType ).load(pathname + cdm.userData.topSide, resolve, undefined, reject)),
+      new Promise((resolve, reject) => new THREE.EXRLoader().setDataType( THREE.FloatType ).load(pathname + cdm.userData.rightSide, resolve, undefined, reject))
+    ]).then(([frontSide, bottomSide, leftSide, backSide, topSide, rightSide]) => 
+	{
+		
+		//const textureCube = new THREE.CubeTexture([posx.image, negx.image, posy.image, negy.image, posz.image, negz.image]);
+		//textureCube.encoding = THREE.sRGBEncoding;
+		//textureCube.needsUpdate = true;
+		
+		const textureCube = [leftSide, rightSide, topSide, bottomSide, backSide, frontSide];
+		const materials = [];
+		
+		for ( let i = 0; i < 6; i ++ ) {
+
+			textureCube[i].mapping = THREE.EquirectangularReflectionMapping;
+			
+			if(i == 2) 
+			{
+				textureCube[i].center = new THREE.Vector2(0.5, 0.5);
+				textureCube[i].rotation = Math.PI;
+				textureCube[i].needsUpdate = true;
+			}
+			if(i == 3) 
+			{
+				textureCube[i].center = new THREE.Vector2(0.5, 0.5);
+				textureCube[i].rotation = Math.PI;
+				textureCube[i].needsUpdate = true;
+			}			
+			materials.push( new THREE.MeshPhysicalMaterial( { color: 0xffffff, map: textureCube[i], lightMap: lightMap_1 } ) );
+
+		}		
+		
+		console.log(materials);
+
+		//var geometry = new THREE.SphereGeometry( 1, 32, 32 );
+		var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+		//var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, envMap: textureCube, lightMap: lightMap_1, metalness: 1, roughness: 0 } );
+		//var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, map: textureCube, lightMap: lightMap_1 } );
+		var sphere = new THREE.Mesh( geometry, materials );
+		sphere.position.set(cdm.n*2-1, 3, 0);
+		scene.add( sphere );
+
+		renderCamera();	  
+	
+	});
+	
+	
+
+
+	
+//frontSide	"ReflectionProbe-0_front.exr"
+//uuidImage	"31F3B5C4-31E3-4E38-9B16-4A632BB16F6D"
+//bottomSide	"ReflectionProbe-0_bottom.exr"
+//leftSide	"ReflectionProbe-0_left.exr"
+//backSide	"ReflectionProbe-0_back.exr"
+//direction	{…}
+//IsReflectionProbe	true
+//topSide	"ReflectionProbe-0_top.exr"
+//rightSide	"ReflectionProbe-0_right.exr"
+}
+
+
+function getTexturesFromAtlasFile( imageObj, tilesNum ) 
+{
+
+	const textures = [];
+
+	for ( let i = 0; i < tilesNum; i ++ ) {
+
+		textures[ i ] = new THREE.Texture();
+
+	}
+
+	
+	const tileWidth = imageObj.height;
+
+	for ( let i = 0; i < textures.length; i ++ ) 
+	{
+
+		var canv = document.createElement( 'canvas' );
+		var context = canv.getContext( '2d' );
+		canv.height = tileWidth;
+		canv.width = tileWidth;
+		context.drawImage( imageObj, tileWidth * i, 0, tileWidth, tileWidth, 0, 0, tileWidth, tileWidth );
+		textures[ i ].image = canv;
+		textures[ i ].needsUpdate = true;
+
+	}
+
+
+	return textures;
+
+}
+			
+
+
 async function loadStartSceneJson_2()
 {
 	let divLoad = document.querySelector('[nameId="loader"]');
@@ -832,23 +943,29 @@ async function loadStartSceneJson_2()
 					if(child.userData.uuidImage == infProject.scene.lightMap[i2].uuid)
 					{
 						infProject.scene.lightMap[i2].texture.mapping = THREE.EquirectangularReflectionMapping;
+						//infProject.scene.lightMap[i2].texture.mapping = THREE.CubeRefractionMapping;
 						infProject.scene.lightMap[i2].texture.needsUpdate = true;						
 						reflectionProbe[n].texture = infProject.scene.lightMap[i2].texture;
 						
 						break;
 					}
 				}					
-				
+	
+var cubeT = getReflectionProbeExr({userData: child.userData, n: n});
+	
 if(1==2)
 {
-					console.log(reflectionProbe);
+	//var cubeT = getReflectionProbeExr({userData: child.userData, n: n});
+	var textureCube = getTexturesFromAtlasFile( reflectionProbe[n].texture, 6 );
+	
 var geometry = new THREE.SphereGeometry( 1, 32, 32 );
-var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, map: reflectionProbe[n].texture, lightMap: lightMap_1} );
+//var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, envMap: textureCube, lightMap: lightMap_1, metalness: 1, roughness: 0 } );
+var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, map: textureCube, lightMap: lightMap_1 } );
 var sphere = new THREE.Mesh( geometry, material );
-sphere.position.set(n-1, 1, 0);
-scene.add( sphere );
-}	
+sphere.position.set(n*2-1, 3, 0);
+scene.add( sphere );						
 
+}	
 
 					
 				}
@@ -1342,7 +1459,7 @@ function setMatSetting_2(cdm)
 			let lightMap = obj.material.lightMap;
 			let userData = obj.material.userData;
 			
-			console.log(obj.material.envMap);
+			//console.log(obj.material.envMap);
 			
 			disposeNode(obj);
 			

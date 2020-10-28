@@ -211,7 +211,10 @@ function moveCameraToNewPosition()
 		
 		camera.position.lerp( pos, 0.1 );
 		
-		if(newCameraPosition.positionFly) objPanorama.visible = false;
+		if(newCameraPosition.positionFly) 
+		{
+			if(objPanorama) objPanorama.visible = false;
+		}
 		
 		if(!newCameraPosition.stoDir)
 		{
@@ -247,7 +250,10 @@ function moveCameraToNewPosition()
 		
 		if(comparePos(camera.position, pos)) 
 		{ 	
-			if(newCameraPosition.positionFirst) objPanorama.visible = true;
+			if(newCameraPosition.positionFirst) 
+			{
+				if(objPanorama) objPanorama.visible = true;
+			}
 			
 			newCameraPosition = null; 
 		};		

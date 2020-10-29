@@ -176,7 +176,9 @@ function showHideObjCeil()
 	{
 		setTransparentMat_2({obj: objCeilVisible[i], value: value, renderOrder: k});
 		
-		//console.log(objCeilVisible[i].name);
+		objCeilVisible[i].visible = (value <= 0) ? false : true;
+		
+		//if(i==0) { console.log(objCeilVisible[i].name, value, k); }
 	}
 	
 	renderCamera();

@@ -137,6 +137,8 @@ var offset = new THREE.Vector3();
 var lightMap_1 = new THREE.TextureLoader().load('img/lightMap_1.png'); 
 
 
+
+
 startPosCamera3D({radious: 15, theta: 90, phi: 65});		// стартовое положение 3D камеры
 
 //----------- start
@@ -389,6 +391,27 @@ document.addEventListener("keydown", function (e)
 		setToneMapping();
 	}
 
+	if(e.keyCode == 49)
+	{
+		objPanorama.material.map = objPanorama.userData.viewImg[0];
+		objPanorama.material.needsUpdate = true;
+		renderCamera();
+	}
+	
+	if(e.keyCode == 50)
+	{
+		objPanorama.material.map = objPanorama.userData.viewImg[1];
+		objPanorama.material.needsUpdate = true;
+		renderCamera();		
+	}
+
+	if(e.keyCode == 51)
+	{
+		objPanorama.material.map = objPanorama.userData.viewImg[2];
+		objPanorama.material.needsUpdate = true;
+		renderCamera();
+	}	
+		
 	//if(e.keyCode == 66) { switchCamera3D(); } 	// b
 } );
 
@@ -474,8 +497,6 @@ function IMGLoader_1(cdm)
 var objF = null;
 var pathname = '';
 
-				const pmremGenerator = new THREE.PMREMGenerator( renderer );
-				pmremGenerator.compileEquirectangularShader();
 
 $(document).ready(function () 
 { 
@@ -798,8 +819,8 @@ async function getReflectionProbeExr(cdm)
 		
 		for ( let i = 0; i < 6; i ++ ) {
 
-			textureCube[i].mapping = THREE.EquirectangularReflectionMapping;
-			
+			//textureCube[i].mapping = THREE.EquirectangularReflectionMapping;
+						
 			if(i == 2) 
 			{
 				textureCube[i].center = new THREE.Vector2(0.5, 0.5);
@@ -812,15 +833,21 @@ async function getReflectionProbeExr(cdm)
 				textureCube[i].rotation = Math.PI;
 				textureCube[i].needsUpdate = true;
 			}			
-			materials.push( new THREE.MeshPhysicalMaterial( { color: 0xffffff, map: textureCube[i], lightMap: lightMap_1 } ) );
-
-		}		
 		
+
+			materials.push( new THREE.MeshPhysicalMaterial( { color: 0xffffff, map: exrCubeRenderTarget.texture, lightMap: lightMap_1 } ) );
+			
+			textureCube[i].dispose();			
+
+		}
+
+		//const tCube = new THREE.CubeTexture(textureCube);		
+		//tCube.needsUpdate = true;		
 		console.log(materials);
 
 		//var geometry = new THREE.SphereGeometry( 1, 32, 32 );
 		var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-		//var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, envMap: textureCube, lightMap: lightMap_1, metalness: 1, roughness: 0 } );
+		//var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, map: tCube, lightMap: lightMap_1, metalness: 0.5, roughness: 0.5 } );
 		//var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, map: textureCube, lightMap: lightMap_1 } );
 		var sphere = new THREE.Mesh( geometry, materials );
 		sphere.position.set(cdm.n*2-1, 3, 0);
@@ -929,15 +956,27 @@ async function loadStartSceneJson_2()
 				child.material.needsUpdate = true;
 				objPanorama.visible = false;
 				//console.log(child.material);
+				
+				objPanorama.userData.viewImg = [];
+				
+				objPanorama.userData.viewImg[0] = new THREE.TextureLoader().load('panoram/view_01_6K_Light2.jpg');
+				objPanorama.userData.viewImg[1] = new THREE.TextureLoader().load('panoram/view_02_6K_Light2.jpg');
+				objPanorama.userData.viewImg[2] = new THREE.TextureLoader().load('panoram/view_03_6K_Light2.jpg');
 			}
 			
 			if(child.type == 'Group')
 			{
 				if(new RegExp( 'ReflectionProbe' ,'i').test( child.name ))
 				{
+					
+					console.log('ReflectionProbe', child);
+					
 					var n = reflectionProbe.length;
 					reflectionProbe[n] = {};
-					
+					reflectionProbe[n].pos = child.position.clone().add(glPos);
+					reflectionProbe[n].uuid = child.uuid;
+//console.log(99999, child.userData);
+	
 				for ( var i2 = 0; i2 < infProject.scene.lightMap.length; i2++ )
 				{
 					if(child.userData.uuidImage == infProject.scene.lightMap[i2].uuid)
@@ -951,18 +990,22 @@ async function loadStartSceneJson_2()
 					}
 				}					
 	
-var cubeT = getReflectionProbeExr({userData: child.userData, n: n});
+//var cubeT = getReflectionProbeExr({userData: child.userData, n: n});
 	
 if(1==2)
 {
 	//var cubeT = getReflectionProbeExr({userData: child.userData, n: n});
-	var textureCube = getTexturesFromAtlasFile( reflectionProbe[n].texture, 6 );
-	
+	//var textureCube = getTexturesFromAtlasFile( reflectionProbe[n].texture, 6 );
+	console.log(333333);
 var geometry = new THREE.SphereGeometry( 1, 32, 32 );
 //var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, envMap: textureCube, lightMap: lightMap_1, metalness: 1, roughness: 0 } );
-var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, map: textureCube, lightMap: lightMap_1 } );
+var material = new THREE.MeshPhysicalMaterial( {color: 0xffffff, map: reflectionProbe[n].texture, lightMap: lightMap_1 } );
 var sphere = new THREE.Mesh( geometry, material );
-sphere.position.set(n*2-1, 3, 0);
+//sphere.position.set(n*2-1, 3, 0);
+
+sphere.position.copy(reflectionProbe[n].pos);
+
+
 scene.add( sphere );						
 
 }	
@@ -1067,7 +1110,7 @@ scene.add( sphere );
 		timeMaterial = Math.round(timeMaterial/10)/100;
 		console.log('назначение материалов', timeMaterial);		
 
-		if(1==1)
+		if(1==2)
 		{
 			let cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 512, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
 			gCubeCam = new THREE.CubeCamera(0.1, 100, cubeRenderTarget);
@@ -1077,39 +1120,71 @@ scene.add( sphere );
 		}
 		
 		var timeCubeCam = new Date().getTime();
-		
-		var ss = 0;
-		for ( var i = 0; i < arrObj.length; i++ )
+
+
+		for ( var i = 0; i < reflectionProbe.length; i++ )
 		{
-			if(arrObj[i].o.material.userData.envMap)
-			{
-
-				for ( var i2 = 0; i2 < infProject.scene.lightMap.length; i2++ )
-				{
-					//if(child.userData == infProject.scene.lightMap[i2])
-				}
+			let cubeRenderTarget_2 = new THREE.WebGLCubeRenderTarget( 512, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+			let gCubeCam_2 = new THREE.CubeCamera(0.01, 10, cubeRenderTarget_2);
+			gCubeCam_2.position.copy(reflectionProbe[i].pos);
+			gCubeCam_2.update( renderer, scene );	
 			
-				if(1==2)
+			
+			//console.log(reflectionProbe);
+			for ( var i2 = 0; i2 < arrObj.length; i2++ )
+			{
+				if(!arrObj[i2].o.userData) continue;
+				
+				
+				if(arrObj[i2].o.userData.uuidRP)
 				{
-					//console.log(arrObj[i].o.material.name);
-					var size = 64;
-					var mirror = false;
-					if(new RegExp( 'mirror' ,'i').test( arrObj[i].o.material.name )){ mirror = true; size = 1024; }
 					
-					let cubeRenderTarget_2 = new THREE.WebGLCubeRenderTarget( size, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
-					let gCubeCam_2 = new THREE.CubeCamera(0.1, 10, cubeRenderTarget_2);
-					gCubeCam_2.position.copy(arrObj[i].pos);
-					gCubeCam_2.update( renderer, scene );
-
-					arrObj[i].o.material.envMap = gCubeCam_2.renderTarget.texture;
-					arrObj[i].o.material.needsUpdate = true;
-					
-					if(mirror)
+					if(arrObj[i2].o.userData.uuidRP == reflectionProbe[i].uuid)
 					{
-										
-					}					
+						//console.log(reflectionProbe[i].uuid);
+						arrObj[i2].o.material.envMap = gCubeCam_2.renderTarget.texture;
+						arrObj[i2].o.material.needsUpdate = true;						
+					}
 				}
 			}
+		}		
+		
+		if(1==2)
+		{
+			var ss = 0;
+			for ( var i = 0; i < arrObj.length; i++ )
+			{
+				if(arrObj[i].o.material.userData.envMap)
+				{
+
+					for ( var i2 = 0; i2 < infProject.scene.lightMap.length; i2++ )
+					{
+						//if(child.userData == infProject.scene.lightMap[i2])
+					}
+				
+					if(1==2)
+					{
+						//console.log(arrObj[i].o.material.name);
+						var size = 64;
+						var mirror = false;
+						if(new RegExp( 'mirror' ,'i').test( arrObj[i].o.material.name )){ mirror = true; size = 1024; }
+						
+						let cubeRenderTarget_2 = new THREE.WebGLCubeRenderTarget( size, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+						let gCubeCam_2 = new THREE.CubeCamera(0.1, 10, cubeRenderTarget_2);
+						gCubeCam_2.position.copy(arrObj[i].pos);
+						gCubeCam_2.update( renderer, scene );
+
+						arrObj[i].o.material.envMap = gCubeCam_2.renderTarget.texture;
+						arrObj[i].o.material.needsUpdate = true;
+						
+						if(mirror)
+						{
+											
+						}					
+					}
+				}
+			}
+			
 		}
 		
 		timeCubeCam = new Date().getTime() - timeCubeCam;
@@ -1385,6 +1460,8 @@ function getBoundObject_1(cdm)
 	var offset = new THREE.Vector3(-((bound.max.x - bound.min.x)/2 + bound.min.x), 0, -((bound.max.z - bound.min.z)/2 + bound.min.z));
 	obj.position.copy(offset);
 	
+	glPos = offset;
+	
 	for ( var i = 0; i < arrFloor.length; i++ )
 	{
 		arrFloor[i].pos.add(offset);		
@@ -1399,7 +1476,7 @@ function getBoundObject_1(cdm)
 }
 
 var boundG = null;
-
+var glPos = new THREE.Vector3();
 
 
 

@@ -136,8 +136,18 @@ var offset = new THREE.Vector3();
   
 var lightMap_1 = new THREE.TextureLoader().load('img/lightMap_1.png'); 
 
+var arrTextureFloor = [];
+arrTextureFloor[0] = new THREE.TextureLoader().load('img1/floor_1.jpg'); 
+arrTextureFloor[1] = new THREE.TextureLoader().load('img1/floor_2.jpg'); 
+arrTextureFloor[2] = new THREE.TextureLoader().load('img1/floor_3.jpg'); 
 
+arrTextureFloor[0].encoding = THREE.sRGBEncoding;
+arrTextureFloor[1].encoding = THREE.sRGBEncoding;
+arrTextureFloor[2].encoding = THREE.sRGBEncoding;
 
+arrTextureFloor[0].wrapS = arrTextureFloor[0].wrapT = THREE.RepeatWrapping;
+arrTextureFloor[1].wrapS = arrTextureFloor[1].wrapT = THREE.RepeatWrapping;
+arrTextureFloor[2].wrapS = arrTextureFloor[2].wrapT = THREE.RepeatWrapping;
 
 startPosCamera3D({radious: 15, theta: 90, phi: 65});		// стартовое положение 3D камеры
 
@@ -496,7 +506,7 @@ function IMGLoader_1(cdm)
 
 var objF = null;
 var pathname = '';
-
+var versLight = false;
 
 $(document).ready(function () 
 { 
@@ -504,6 +514,9 @@ $(document).ready(function ()
 	var searchParams = new URLSearchParams(paramsString);
 	
 	var url_2 = searchParams.get("flat");
+	versLight = searchParams.get("light");
+	
+	console.log(versLight);
 	
 	if(url_2)
 	{
@@ -551,7 +564,9 @@ async function getExr_2(cdm)
 		
 		//if(name == 'Lightmap-4_comp_light_LM') { url = 'exr1/00.exr'; }
 		
-		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( url, function ( texture ) 
+		var url = (versLight == 1) ? 'exr1/'+name+'_dwa.exr' : url;
+		
+		new THREE.EXRLoader().setDataType( THREE.FloatType ).load( url, function ( texture )
 		{		
 			infProject.scene.lightMap[infProject.scene.lightMap.length] = {name: name, texture: texture, uuid: cdm.uuid};
 			
@@ -592,10 +607,12 @@ async function getExr_2(cdm)
 	{
 		//console.log('img ->', type);
 		
+		var url = (versLight == 1) ? 'img2/'+name+'.jpg' : url;
+		
 		let xhr = new XMLHttpRequest();
 		xhr.responseType =	"blob";
 		xhr.open('GET', url, true);
-		//xhr.open('GET', 'img1/'+name+'.jpg', true);
+		//xhr.open('GET', 'img2/'+name+'.jpg', true);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.onreadystatechange = function() 
 		{		
@@ -962,6 +979,14 @@ async function loadStartSceneJson_2()
 				objPanorama.userData.viewImg[0] = new THREE.TextureLoader().load('panoram/view_01_6K_Light2.jpg');
 				objPanorama.userData.viewImg[1] = new THREE.TextureLoader().load('panoram/view_02_6K_Light2.jpg');
 				objPanorama.userData.viewImg[2] = new THREE.TextureLoader().load('panoram/view_03_6K_Light2.jpg');
+				
+				objPanorama.userData.viewImg[0].encoding = THREE.sRGBEncoding;
+				objPanorama.userData.viewImg[1].encoding = THREE.sRGBEncoding;
+				objPanorama.userData.viewImg[2].encoding = THREE.sRGBEncoding;
+				
+				objPanorama.userData.viewImg[0].needsUpdate = true;
+				objPanorama.userData.viewImg[1].needsUpdate = true;
+				objPanorama.userData.viewImg[2].needsUpdate = true;					
 			}
 			
 			if(child.type == 'Group')
@@ -976,19 +1001,7 @@ async function loadStartSceneJson_2()
 					reflectionProbe[n].pos = child.position.clone().add(glPos);
 					reflectionProbe[n].uuid = child.uuid;
 //console.log(99999, child.userData);
-	
-				for ( var i2 = 0; i2 < infProject.scene.lightMap.length; i2++ )
-				{
-					if(child.userData.uuidImage == infProject.scene.lightMap[i2].uuid)
-					{
-						infProject.scene.lightMap[i2].texture.mapping = THREE.EquirectangularReflectionMapping;
-						//infProject.scene.lightMap[i2].texture.mapping = THREE.CubeRefractionMapping;
-						infProject.scene.lightMap[i2].texture.needsUpdate = true;						
-						reflectionProbe[n].texture = infProject.scene.lightMap[i2].texture;
 						
-						break;
-					}
-				}					
 	
 //var cubeT = getReflectionProbeExr({userData: child.userData, n: n});
 	
@@ -1619,6 +1632,9 @@ async function setMatSetting_3(cdm)
 			//obj.material.name = list[i].new;
 			
 			obj.material.userData = userData;
+			
+			obj.userData.texture = obj.material.map.clone();			
+			obj.userData.click = 0;			
 
 			obj.material.metalness = list[i].metalness;
 			obj.material.roughness = list[i].roughness;

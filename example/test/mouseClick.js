@@ -3,6 +3,7 @@
 var dblclickPos = null;
 var clickInf = {event: null, th1: {clientX:0, clientY:0}, th2: {clientX:0, clientY:0}, ratio1: 0, camDist: 0 };
 clickInf.st = {clientX:0, clientY:0};
+clickInf.move = false;
 
 var onMouseDownPosition = new THREE.Vector2();
 var long_click = false;
@@ -39,6 +40,7 @@ function onDocumentMouseDown( event )
 function onDocumentMouseDown( event ) 
 {
 	vk_click = '';
+	clickInf.move = false;
 	
 	if(event.changedTouches)
 	{   
@@ -92,6 +94,9 @@ console.log(event);
 	clickSetCamera2D( clickInf.event, vk_click );
 	clickSetCamera3D( clickInf.event, vk_click );
 	
+	
+		
+	
 	renderCamera();
 }
 
@@ -106,7 +111,7 @@ function onDocumentMouseMove( event )
 		event.clientX = event.targetTouches[0].clientX;
 		event.clientY = event.targetTouches[0].clientY;
 	}
-	
+	clickInf.move = true;
 	clickInf.event = event;
 
 	if ( !long_click ) { long_click = ( lastClickTime - new Date().getTime() < catchTime ) ? true : false; }
@@ -121,6 +126,40 @@ function onDocumentMouseMove( event )
 
 function onDocumentMouseUp(event)  
 {	
+
+	if(!clickInf.move) 
+	{ 
+		var arrF = arrFloor.map(item => item.o);
+		
+		var ray = rayIntersect( event, arrF, 'arr' );
+		if(ray.length > 0) 
+		{ 
+			rayhit = ray[0]; 
+			var obj = rayhit.object;
+			
+			console.log(Number(obj.userData.click));
+			if(obj.userData.click == 3)
+			{
+				obj.material.map = obj.userData.texture.clone();
+				obj.material.map.encoding = THREE.sRGBEncoding;
+				obj.material.map.wrapS = obj.material.map.wrapT = THREE.RepeatWrapping;
+				
+				obj.userData.click = 0;
+			}
+			else
+			{
+				obj.material.map = arrTextureFloor[obj.userData.click];
+				obj.userData.click += 1;
+			}
+			
+			obj.material.needsUpdate = true;
+			obj.material.map.needsUpdate = true;
+
+			
+			
+			console.log(rayhit.object);
+		}
+	}
 
 	if(event.changedTouches)
 	{   
